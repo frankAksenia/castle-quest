@@ -52,7 +52,9 @@ public class GameController {
 			return;
 		}
 		if(actionType.equals(EActionType.LOST)) {
+			logger.debug("check");
 			logger.debug("YOU LOST!");
+
 			return;
 		}
 			Coordinate nextMoveCoordinate;
