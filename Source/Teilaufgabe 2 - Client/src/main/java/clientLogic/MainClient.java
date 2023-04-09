@@ -1,14 +1,14 @@
 package clientLogic;
 
-import clientData.GameModel;
+import clientData.GameMap;
 
 public class MainClient {
 	
 	public static void main(String[] args) {
 		
-		GameModel gameData = new GameModel();
-		
-		GameController gameController = new GameController(gameData);
+		GameMap gameMap = new GameMap();
+				
+		GameController gameController = new GameController(gameMap);
 
 		gameController.startGame();
 	}

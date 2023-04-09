@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import clientData.Coordinate;
 import clientData.EGameMove;
-import clientData.GameModel;
+import clientData.GameMap;
 import clientData.MapGenerator;
 import clientData.MoveMaker;
 import clientData.TargetChooser;
@@ -17,7 +17,7 @@ public class GameController {
 	
 	private static Logger logger = LoggerFactory.getLogger(GameController.class);
 	
-	private GameModel gameData;
+	private GameMap gameMap;
 	
 	private MoveMaker moveMaker = new MoveMaker();
 	
@@ -25,8 +25,8 @@ public class GameController {
 	
 	private Network gameNetwork = new Network();
 	
-	public GameController(GameModel gameModel) {
-		this.gameData = gameModel;
+	public GameController(GameMap gameMap) {
+		this.gameMap = gameMap;
 	}
 
 	public void startGame() {
@@ -46,7 +46,7 @@ public class GameController {
 		boolean print = true;
 		while(true) {
 		EActionType actionType = this.requestStatus();
-		if(print) { gameData.getGameMap().printMap(); print = false; }
+		if(print) { gameMap.printMap(); print = false; }
 		if(actionType.equals(EActionType.WON)) {
 			logger.debug("YOU WON!");
 			return;
@@ -58,11 +58,11 @@ public class GameController {
 			return;
 		}
 			Coordinate nextMoveCoordinate;
-			if(gameData.getGameMap().getEnemyFort() != null)
-				nextMoveCoordinate = targetChooser.moveToFort(gameData.getGameMap());
+			if(gameMap.getEnemyFort() != null)
+				nextMoveCoordinate = targetChooser.moveToFort(gameMap);
 			else 
-				nextMoveCoordinate = targetChooser.chooseTarget(this.gameData.getGameMap());
-			EGameMove nextMove = moveMaker.makeMove(nextMoveCoordinate, gameData.getGameMap().getPlayerPosition());
+				nextMoveCoordinate = targetChooser.chooseTarget(gameMap);
+			EGameMove nextMove = moveMaker.makeMove(nextMoveCoordinate, gameMap.getPlayerPosition());
 			
 			gameNetwork.makeMove(nextMove);	
 		}
@@ -76,15 +76,15 @@ public class GameController {
 			} catch (InterruptedException exception) {
 				logger.error(exception.toString());
 			}
-			action = gameNetwork.getStatus(gameData.getGameMap());
+			action = gameNetwork.getStatus(gameMap);
 		} while (action.equals(EActionType.WAIT));
 		return action;
 	}
 	
 	private void sendMap() {
-		MapGenerator mapGenerator = new MapGenerator(gameData.getGameMap());
+		MapGenerator mapGenerator = new MapGenerator(gameMap);
 		mapGenerator.generateMap();
-		gameNetwork.sendMap(gameData.getGameMap());
+		gameNetwork.sendMap(gameMap);
 	}
 	
 
