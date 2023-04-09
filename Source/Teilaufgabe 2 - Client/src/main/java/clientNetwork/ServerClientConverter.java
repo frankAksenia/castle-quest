@@ -87,9 +87,7 @@ public class ServerClientConverter {
 			MapField newField = oldMap.getGameMap().get(oldMap.getCoordinate(node.getX(), node.getY()));
 			if(newField == null) {
 				newField = new MapField(this.convertTerrain(node.getTerrain()));
-				Coordinate newCoordinate = new Coordinate();
-				newCoordinate.setX(node.getX());
-				newCoordinate.setY(node.getY());
+				Coordinate newCoordinate = new Coordinate(node.getX(), node.getY());
 				oldMap.getGameMap().put(newCoordinate, newField);
 			}
 			switch(node.getPlayerPositionState()) {
@@ -111,13 +109,15 @@ public class ServerClientConverter {
 			if(node.getFortState().equals(EFortState.EnemyFortPresent))
 				newField.setEnemyFort(true); 
 			if(node.getTreasureState().equals(ETreasureState.MyTreasureIsPresent)) {
-				oldMap.setMyTreasure(oldMap.getCoordinate(node.getX(), node.getY()));
+				oldMap.getGameMap().get(new Coordinate(node.getX(), node.getY())).setMyTreasure(true);
+				//oldMap.setMyTreasure(oldMap.getCoordinate(node.getX(), node.getY()));
 				newField.setMyTreasure(true); 
 				logger.debug("MY TREASURE FOUND ON {} {}", node.getX(), node.getY());
 			}
 			if(node.getFortState().equals(EFortState.EnemyFortPresent)) {
 				newField.setEnemyFort(true);
-				oldMap.setEnemyFort(oldMap.getCoordinate(node.getX(), node.getY()));
+				oldMap.getGameMap().get(new Coordinate(node.getX(), node.getY())).setEnemyFort(true);;
+				//oldMap.setEnemyFort(oldMap.getCoordinate(node.getX(), node.getY()));
 				logger.debug("ENEMY FORT WAS FOUND ON {} {}", node.getX(), node.getY());
 			}
 		}

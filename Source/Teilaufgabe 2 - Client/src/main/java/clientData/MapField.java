@@ -23,11 +23,11 @@ public class MapField {
 	}
 	
 	public EMapTerrain getTerrain() {
-		return terrain;
+		return this.terrain;
 	}
 
 	public boolean isMyFigure() {
-		return myFigure;
+		return this.myFigure;
 	}
 
 	public void setMyFigure(boolean myFigure) {
@@ -35,7 +35,7 @@ public class MapField {
 	}
 
 	public boolean isMyFort() {
-		return myFort;
+		return this.myFort;
 	}
 
 	public void setMyFort(boolean myFort) {
@@ -43,7 +43,7 @@ public class MapField {
 	}
 
 	public boolean isMyTreasure() {
-		return myTreasure;
+		return this.myTreasure;
 	}
 
 	public void setMyTreasure(boolean myTreasure) {
@@ -51,7 +51,7 @@ public class MapField {
 	}
 
 	public boolean isEnemyFigure() {
-		return enemyFigure;
+		return this.enemyFigure;
 	}
 
 	public void setEnemyFigure(boolean enemyFigure) {
@@ -59,7 +59,7 @@ public class MapField {
 	}
 
 	public boolean isEnemyFort() {
-		return enemyFort;
+		return this.enemyFort;
 	}
 
 	public void setEnemyFort(boolean enemyFort) {
@@ -67,7 +67,7 @@ public class MapField {
 	}
 
 	public boolean isEnemyTreasure() {
-		return enemyTreasure;
+		return this.enemyTreasure;
 	}
 
 	public void setEnemyTreasure(boolean enemyTreasure) {

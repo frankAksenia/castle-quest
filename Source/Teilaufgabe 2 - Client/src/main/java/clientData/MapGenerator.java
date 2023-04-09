@@ -38,9 +38,7 @@ public class MapGenerator {
 	private void generateTerrains() {
 		for(int x = 0; x <= 9; ++x) {
 			for(int y = 0; y <= 4; ++y) {
-				Coordinate coordinate = new Coordinate();
-				coordinate.setX(x);
-				coordinate.setY(y);
+				Coordinate coordinate = new Coordinate(x, y);
 				EMapTerrain terrain = EMapTerrain.getRandomTerrain();
 				switch(terrain) {
 				case WATER: 	++this.waterFieldCount; 	 break;

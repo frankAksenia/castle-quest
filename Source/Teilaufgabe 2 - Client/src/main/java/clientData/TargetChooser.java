@@ -37,24 +37,24 @@ public class TargetChooser {
 		return nextMoveCoordinate;
 	}
 	
-	public Coordinate moveToFort(GameMap gameMap) {
-		Coordinate fortCoordinate = gameMap.getEnemyFort();
-		Coordinate playerPosition = gameMap.getPlayerPosition();
-		if(fortCoordinate.getX() < playerPosition.getX() && 
-				gameMap.getGameMap().get(gameMap.getCoordinateBasedOnMove(EGameMove.LEFT)).getTerrain() != EMapTerrain.WATER)
-			return gameMap.getCoordinateBasedOnMove(EGameMove.LEFT);
-		if(fortCoordinate.getX() > playerPosition.getX() && 
-				gameMap.getGameMap().get(gameMap.getCoordinateBasedOnMove(EGameMove.RIGHT)).getTerrain() != EMapTerrain.WATER)
-			return gameMap.getCoordinateBasedOnMove(EGameMove.RIGHT);
-		if(fortCoordinate.getY() < playerPosition.getY() && 
-				gameMap.getGameMap().get(gameMap.getCoordinateBasedOnMove(EGameMove.UP)).getTerrain() != EMapTerrain.WATER)
-			return gameMap.getCoordinateBasedOnMove(EGameMove.UP);
-		if(fortCoordinate.getY() > playerPosition.getY() && 
-				gameMap.getGameMap().get(gameMap.getCoordinateBasedOnMove(EGameMove.DOWN)).getTerrain() != EMapTerrain.WATER)
-			return gameMap.getCoordinateBasedOnMove(EGameMove.DOWN);
-		
-		return this.chooseTarget(gameMap);
-	}
+//	public Coordinate moveToFort(GameMap gameMap) {
+//		Coordinate fortCoordinate = gameMap.getEnemyFort();
+//		Coordinate playerPosition = gameMap.getPlayerPosition();
+//		if(fortCoordinate.getX() < playerPosition.getX() && 
+//				gameMap.getGameMap().get(gameMap.getCoordinateBasedOnMove(EGameMove.LEFT)).getTerrain() != EMapTerrain.WATER)
+//			return gameMap.getCoordinateBasedOnMove(EGameMove.LEFT);
+//		if(fortCoordinate.getX() > playerPosition.getX() && 
+//				gameMap.getGameMap().get(gameMap.getCoordinateBasedOnMove(EGameMove.RIGHT)).getTerrain() != EMapTerrain.WATER)
+//			return gameMap.getCoordinateBasedOnMove(EGameMove.RIGHT);
+//		if(fortCoordinate.getY() < playerPosition.getY() && 
+//				gameMap.getGameMap().get(gameMap.getCoordinateBasedOnMove(EGameMove.UP)).getTerrain() != EMapTerrain.WATER)
+//			return gameMap.getCoordinateBasedOnMove(EGameMove.UP);
+//		if(fortCoordinate.getY() > playerPosition.getY() && 
+//				gameMap.getGameMap().get(gameMap.getCoordinateBasedOnMove(EGameMove.DOWN)).getTerrain() != EMapTerrain.WATER)
+//			return gameMap.getCoordinateBasedOnMove(EGameMove.DOWN);
+//		
+//		return this.chooseTarget(gameMap);
+//	}
 	
 	private Coordinate tryGrassFields(GameMap gameMap, List<Coordinate> fieldsAround) {
 		

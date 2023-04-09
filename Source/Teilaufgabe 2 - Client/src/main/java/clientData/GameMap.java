@@ -18,25 +18,21 @@ public class GameMap {
 	
 	private static Logger logger = LoggerFactory.getLogger(GameMap.class);
 
-	private Map<Coordinate, MapField> gameMap;
-	
-	private Coordinate myTreasure = null;
-	
-	private Coordinate enemyFort = null;
+	private Map<Coordinate, MapField> map;
 	
 	public GameMap() {
-		this.gameMap = new HashMap<Coordinate, MapField>();
+		this.map = new HashMap<Coordinate, MapField>();
 	}
 	
 	public Map<Coordinate, MapField> getGameMap() {
-		return this.gameMap;
+		return this.map;
 	}
 	
 	public Coordinate getPlayerPosition() {
 		
 		Coordinate playerPosition = null;
 		
-		for(Entry<Coordinate, MapField> field: this.gameMap.entrySet()) 
+		for(Entry<Coordinate, MapField> field: this.map.entrySet()) 
 			if(field.getValue().isMyFigure()) 
 				playerPosition = field.getKey();
 		
@@ -47,7 +43,7 @@ public class GameMap {
 	}
 	
 	public Coordinate getCoordinate(int x, int y) {
-		for(Entry<Coordinate, MapField> entry: this.gameMap.entrySet()) {
+		for(Entry<Coordinate, MapField> entry: this.map.entrySet()) {
 			if(entry.getKey().getX() == x && entry.getKey().getY() == y)
 				return entry.getKey();
 		}
@@ -77,45 +73,29 @@ public class GameMap {
 	
 	public Coordinate getCoordinateBasedOnMove(EGameMove move) {
 		switch(move) {
-		case LEFT:  return this.getCoordinate(this.getPlayerPosition().getX()-1, this.getPlayerPosition().getY());
-		case RIGHT: return this.getCoordinate(this.getPlayerPosition().getX()+1, this.getPlayerPosition().getY());
-		case UP:    return this.getCoordinate(this.getPlayerPosition().getX(),   this.getPlayerPosition().getY()-1);
-		case DOWN:  return this.getCoordinate(this.getPlayerPosition().getX(),   this.getPlayerPosition().getY()+1);
+			case LEFT:  return this.getCoordinate(this.getPlayerPosition().getX()-1, this.getPlayerPosition().getY()); 
+			case RIGHT: return this.getCoordinate(this.getPlayerPosition().getX()+1, this.getPlayerPosition().getY());
+			case UP:    return this.getCoordinate(this.getPlayerPosition().getX(),   this.getPlayerPosition().getY()-1);
+			case DOWN:  return this.getCoordinate(this.getPlayerPosition().getX(),   this.getPlayerPosition().getY()+1);
 		}
 		throw new GetCoordinateBasedOnMoveException("Null exception", "Not existing move");
 	}
 	
 	// TODO remove before term
 	public void printMap() {
-		for(Map.Entry<Coordinate, MapField> entry: this.gameMap.entrySet()) {
+		for(Map.Entry<Coordinate, MapField> entry: this.map.entrySet()) {
 			logger.debug("Coordinate  X: {} Y: {} with Terrain: {}", entry.getKey().getX(), entry.getKey().getY(), entry.getValue().getTerrain());
 		}
 	}
 
 	public void deleteMap() { 
-		gameMap.clear();
-		gameMap = new HashMap<Coordinate, MapField>();
+		map = new HashMap<Coordinate, MapField>();
 	}
 
-	public Coordinate getEnemyFort() {
-		return enemyFort;
-	}
-
-	public void setEnemyFort(Coordinate enemyFort) {
-		this.enemyFort = enemyFort;
-	}
-
-	public Coordinate getMyTreasure() {
-		return myTreasure;
-	}
-
-	public void setMyTreasure(Coordinate myTreasure) {
-		this.myTreasure = myTreasure;
-	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(gameMap);
+		return Objects.hash(map);
 	}
 
 	@Override
@@ -127,6 +107,6 @@ public class GameMap {
 		if (getClass() != obj.getClass())
 			return false;
 		GameMap other = (GameMap) obj;
-		return Objects.equals(gameMap, other.gameMap);
+		return Objects.equals(map, other.map);
 	}
 }
