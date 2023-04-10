@@ -27,11 +27,9 @@ public class MapGenerator {
 			grassFieldCount = 0;
 			mountainFieldCount = 0;
 			this.generateTerrains();
-		} while(mapValidator.validateAllRequiredTerrains(waterFieldCount, grassFieldCount, mountainFieldCount) 
-				|| mapValidator.validateIslandsPresent()
-				|| mapValidator.validateMapSize()
-				|| mapValidator.validateWaterOnBorders());
+		} while(mapValidator.validateMap(waterFieldCount, grassFieldCount, mountainFieldCount));
 		logger.debug("Map successfully validated on client side. Grass: {}; Mountains: {}; Water: {}", grassFieldCount, mountainFieldCount, waterFieldCount);
+		this.gameMap.printMap();
 		this.chooseFortPosition();
 	}
 	
@@ -46,7 +44,6 @@ public class MapGenerator {
 				case MOUNTAIN:  ++this.mountainFieldCount;   break;
 				}
 				this.gameMap.getGameMap().put(coordinate, new MapField(terrain));
-				
 			}
 		}
 	}

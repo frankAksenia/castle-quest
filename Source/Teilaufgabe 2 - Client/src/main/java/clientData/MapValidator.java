@@ -22,8 +22,16 @@ public class MapValidator {
 	public MapValidator(GameMap gameMap) {
 		this.gameMap = gameMap;
 	}
+	
+	public boolean validateMap(int water, int grass, int mountain) {
+		return this.validateAllRequiredTerrains(water, grass, mountain) ||
+				this.validateMapSize() ||
+				this.validateWaterOnBorders() ||
+				this.validateIslandsPresent();
+		
+	}
 
-	public boolean validateAllRequiredTerrains(int water, int grass, int mountain) {
+	private boolean validateAllRequiredTerrains(int water, int grass, int mountain) {
 		if(water < MIN_WATER || grass < MIN_GRASS || mountain < MIN_MOUNTAIN) {
 			gameMap.deleteMap();
 			return true;
@@ -36,7 +44,7 @@ public class MapValidator {
 	}
 	
 	// TODO still creating with islands -> change for borders
-	public boolean validateIslandsPresent() {
+	private boolean validateIslandsPresent() {
 		int numberFieldsAround = 0;
 		for(Entry<Coordinate,MapField> field: gameMap.getGameMap().entrySet()) {
 			List<Coordinate> fieldsAround = this.gameMap.getCoordinatesAround(field.getKey());
@@ -55,7 +63,7 @@ public class MapValidator {
 		return false;
 	}
 	
-	public boolean validateWaterOnBorders() {
+	private boolean validateWaterOnBorders() {
 		// TODO change on Map to map name with value
 		int[] borders = {0,0,0,0}; // Up, Down, Left, Right
 		
@@ -80,7 +88,7 @@ public class MapValidator {
 				borders[3] >= Math.ceil(Double.valueOf(MAP_SIZE[0])/2);
 	}
 	
-	public boolean validateMapSize() {
+	private boolean validateMapSize() {
 		if(MAP_SIZE[0]*MAP_SIZE[1] != gameMap.getGameMap().size()) {
 			gameMap.deleteMap();
 			return true;
