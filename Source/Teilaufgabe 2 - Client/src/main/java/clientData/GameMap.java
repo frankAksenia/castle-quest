@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import exceptions.GetCoordinateBasedOnMoveException;
+//import exceptions.GetCoordinateBasedOnMoveException;
 import exceptions.PlayerPositionException;
 
 import java.util.Objects;

@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 public class TargetChooser {
 	
+	// TODO still goes outside of the map!
+	
 	private static Logger logger = LoggerFactory.getLogger(TargetChooser.class);
 			
 	private List<Coordinate> visitedFields = new ArrayList<>();

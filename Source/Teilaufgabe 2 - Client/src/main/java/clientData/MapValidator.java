@@ -23,16 +23,33 @@ public class MapValidator {
 		this.gameMap = gameMap;
 	}
 	
-	public boolean validateMap(int water, int grass, int mountain) {
-		return this.validateAllRequiredTerrains(water, grass, mountain) ||
+	public boolean validateMap() {
+		return this.validateAllRequiredTerrains() ||
 				this.validateMapSize() ||
 				this.validateWaterOnBorders() ||
 				this.validateIslandsPresent();
 		
 	}
 
-	private boolean validateAllRequiredTerrains(int water, int grass, int mountain) {
-		if(water < MIN_WATER || grass < MIN_GRASS || mountain < MIN_MOUNTAIN) {
+//	private boolean validateAllRequiredTerrains(int water, int grass, int mountain) {
+//		if(water < MIN_WATER || grass < MIN_GRASS || mountain < MIN_MOUNTAIN) {
+//			gameMap.deleteMap();
+//			return true;
+//		}
+//		return false;
+//	}
+	
+	private boolean validateAllRequiredTerrains() {
+        int waterCount = 0, grassCount = 0, mountainCount = 0;
+		for(Map.Entry<Coordinate, MapField> entry : gameMap.getGameMap().entrySet()) {
+			EMapTerrain currentTerrain = entry.getValue().getTerrain();
+			switch(currentTerrain) {
+			case WATER: ++waterCount; break;
+			case GRASS: ++grassCount; break;
+			case MOUNTAIN: ++mountainCount; break;
+			}
+		}
+		if(waterCount < MIN_WATER || grassCount < MIN_GRASS || mountainCount < MIN_MOUNTAIN) {
 			gameMap.deleteMap();
 			return true;
 		}

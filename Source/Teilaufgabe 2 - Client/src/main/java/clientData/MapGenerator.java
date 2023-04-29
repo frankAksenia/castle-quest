@@ -10,8 +10,6 @@ public class MapGenerator {
 	
 	private static Logger logger = LoggerFactory.getLogger(MapGenerator.class);
 	
-	private int waterFieldCount, grassFieldCount, mountainFieldCount;
-
 	private GameMap gameMap;
 	
 	private MapValidator mapValidator;
@@ -23,13 +21,10 @@ public class MapGenerator {
 	
 	public void generateMap() {
 		do {
-			waterFieldCount = 0;
-			grassFieldCount = 0;
-			mountainFieldCount = 0;
 			this.generateTerrains();
-		} while(mapValidator.validateMap(waterFieldCount, grassFieldCount, mountainFieldCount));
-		logger.debug("Map successfully validated on client side. Grass: {}; Mountains: {}; Water: {}", grassFieldCount, mountainFieldCount, waterFieldCount);
-		//this.gameMap.printMap();
+		} while(mapValidator.validateMap());
+		logger.debug("Map successfully validated on client side.");
+		// this.gameMap.printMap();
 		this.chooseFortPosition();
 	}
 	
@@ -38,11 +33,6 @@ public class MapGenerator {
 			for(int y = 0; y <= 4; ++y) {
 				Coordinate coordinate = new Coordinate(x, y);
 				EMapTerrain terrain = EMapTerrain.getRandomTerrain();
-				switch(terrain) {
-				case WATER: 	++this.waterFieldCount; 	 break;
-				case GRASS: 	++this.grassFieldCount; 	 break;
-				case MOUNTAIN:  ++this.mountainFieldCount;   break;
-				}
 				this.gameMap.getGameMap().put(coordinate, new MapField(terrain));
 			}
 		}

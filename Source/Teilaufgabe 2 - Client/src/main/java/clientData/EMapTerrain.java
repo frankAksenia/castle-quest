@@ -26,7 +26,6 @@ public enum EMapTerrain {
 	private static final List<EMapTerrain> TERRAINS =
 	    Collections.unmodifiableList(Arrays.asList(values()));
 	    
-	    
 	// https://stackoverflow.com/questions/5269250/random-value-from-enum-with-probability
 	private static int sumWeigts() {
 		int sum = 0;
@@ -41,7 +40,7 @@ public enum EMapTerrain {
 	public static EMapTerrain getRandomTerrain() {
 		int randomNum = RANDOM.nextInt(SIZE);
 	    int currentWeightSumm = 0;
-	    EMapTerrain terrain = EMapTerrain.GRASS;
+	    EMapTerrain terrain = EMapTerrain.GRASS; // default return
 	    for(EMapTerrain currentValue: TERRAINS) {
 	    	terrain = currentValue;
 	    	if(randomNum > currentWeightSumm && randomNum <= (currentWeightSumm + currentValue.getWeight())) 

@@ -6,17 +6,19 @@ public class MapField {
 	
 	private EMapTerrain terrain;
 	
-	private boolean myFigure;
+	// save player position coordinate here?
 	
-	private boolean myFort;
+	private boolean myFigure = false;
 	
-	private boolean myTreasure;
+	private boolean myFort = false;
 	
-	private boolean enemyFigure;
+	private boolean myTreasure = false;
 	
-	private boolean enemyFort;
+	private boolean enemyFigure = false;
 	
-	private boolean enemyTreasure;
+	private boolean enemyFort = false;
+	
+	private boolean enemyTreasure = false;
 	
 	public MapField(EMapTerrain terrain) {
 		this.terrain = terrain;
