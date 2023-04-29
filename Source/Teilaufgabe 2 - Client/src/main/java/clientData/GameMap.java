@@ -28,6 +28,7 @@ public class GameMap {
 		return this.map;
 	}
 	
+	// add try catch to calling methods
 	public Coordinate getPlayerPosition() {
 		
 		Coordinate playerPosition = null;
@@ -54,44 +55,48 @@ public class GameMap {
 		List<Coordinate> fieldsAround = new ArrayList<>();
 		
 		Coordinate coordinateDown = this.getCoordinate(coordinate.getX(), coordinate.getY() + 1);
-		if(coordinateDown != null) 
+		if(this.isCoordinateInRange(coordinateDown))
 			fieldsAround.add(coordinateDown);
 		
 		Coordinate coordinateUp = this.getCoordinate(coordinate.getX(), coordinate.getY() - 1);
-		if(coordinateUp != null)
+		if(this.isCoordinateInRange(coordinateUp))
 			fieldsAround.add(coordinateUp);
 		
 		Coordinate coordinateRight = this.getCoordinate(coordinate.getX() + 1, coordinate.getY());
-		if(coordinateRight != null)
+		if(this.isCoordinateInRange(coordinateRight))
 			fieldsAround.add(coordinateRight);	
 		
 		Coordinate coordinateLeft = this.getCoordinate(coordinate.getX() - 1, coordinate.getY());
-		if(coordinateLeft != null)
+		if(this.isCoordinateInRange(coordinateLeft))
 			fieldsAround.add(coordinateLeft);		
 		return fieldsAround;
 	}
 	
-	public Coordinate getCoordinateBasedOnMove(EGameMove move) {
-		switch(move) {
-			case LEFT:  return this.getCoordinate(this.getPlayerPosition().getX()-1, this.getPlayerPosition().getY()); 
-			case RIGHT: return this.getCoordinate(this.getPlayerPosition().getX()+1, this.getPlayerPosition().getY());
-			case UP:    return this.getCoordinate(this.getPlayerPosition().getX(),   this.getPlayerPosition().getY()-1);
-			case DOWN:  return this.getCoordinate(this.getPlayerPosition().getX(),   this.getPlayerPosition().getY()+1);
-		}
-		throw new GetCoordinateBasedOnMoveException("Null exception", "Not existing move");
-	}
-	
-	// TODO remove before term
-	public void printMap() {
-		for(Map.Entry<Coordinate, MapField> entry: this.map.entrySet()) {
-			logger.debug("Coordinate  X: {} Y: {} with Terrain: {}", entry.getKey().getX(), entry.getKey().getY(), entry.getValue().getTerrain());
-		}
-	}
-
 	public void deleteMap() { 
 		map = new HashMap<Coordinate, MapField>();
 	}
+	
+	private boolean isCoordinateInRange(Coordinate coordinate) {
+		return coordinate != null;
+	}
 
+	
+//	public Coordinate getCoordinateBasedOnMove(EGameMove move) {
+//		switch(move) {
+//			case LEFT:  return this.getCoordinate(this.getPlayerPosition().getX()-1, this.getPlayerPosition().getY()); 
+//			case RIGHT: return this.getCoordinate(this.getPlayerPosition().getX()+1, this.getPlayerPosition().getY());
+//			case UP:    return this.getCoordinate(this.getPlayerPosition().getX(),   this.getPlayerPosition().getY()-1);
+//			case DOWN:  return this.getCoordinate(this.getPlayerPosition().getX(),   this.getPlayerPosition().getY()+1);
+//		}
+//		throw new GetCoordinateBasedOnMoveException("Null exception", "Not existing move");
+//	}
+	
+	// TODO remove before term
+//	public void printMap() {
+//		for(Map.Entry<Coordinate, MapField> entry: this.map.entrySet()) {
+//			logger.debug("Coordinate  X: {} Y: {} with Terrain: {}", entry.getKey().getX(), entry.getKey().getY(), entry.getValue().getTerrain());
+//		}
+//	}
 
 	@Override
 	public int hashCode() {

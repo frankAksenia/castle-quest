@@ -29,7 +29,7 @@ public class MapGenerator {
 			this.generateTerrains();
 		} while(mapValidator.validateMap(waterFieldCount, grassFieldCount, mountainFieldCount));
 		logger.debug("Map successfully validated on client side. Grass: {}; Mountains: {}; Water: {}", grassFieldCount, mountainFieldCount, waterFieldCount);
-		this.gameMap.printMap();
+		//this.gameMap.printMap();
 		this.chooseFortPosition();
 	}
 	

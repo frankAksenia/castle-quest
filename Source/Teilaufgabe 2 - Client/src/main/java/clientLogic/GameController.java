@@ -43,10 +43,8 @@ public class GameController {
 	}
 	
 	private void playGame() {
-		boolean print = true;
 		while(true) {
 		EActionType actionType = this.requestStatus();
-		if(print) { gameMap.printMap(); print = false; }
 		if(actionType.equals(EActionType.WON)) {
 			logger.debug("YOU WON!");
 			return;
