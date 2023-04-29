@@ -5,9 +5,7 @@ import java.util.Objects;
 public class MapField {
 	
 	private EMapTerrain terrain;
-	
-	// save player position coordinate here?
-	
+		
 	private boolean myFigure = false;
 	
 	private boolean myFort = false;

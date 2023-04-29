@@ -35,10 +35,14 @@ public class ServerClientConverter {
 	
 	private String playerID = "";
 	
+	private boolean firstMapResponse = true;
+	
 	public ServerClientConverter() {}
+	
 	
 	public String convertPlayerRegistration(ResponseEnvelope<UniquePlayerIdentifier> response) {
 		
+		// throws NoSuchElementException 
 		this.playerID = response.getData().get().getUniquePlayerID();
 		
 		if (response.getState() == ERequestState.Error) 
@@ -50,7 +54,8 @@ public class ServerClientConverter {
 	}
 	
 	public EActionType convertRequestState(ResponseEnvelope<GameState> response, GameMap oldMap) {
-		EActionType actionType = EActionType.WAIT;
+		
+		EActionType actionType = EActionType.WAIT; // default state to return
 		if(response.getState() == ERequestState.Error) {
 			requestStateException(response.getExceptionName(), response.getExceptionMessage());
 		} else {
@@ -83,7 +88,7 @@ public class ServerClientConverter {
 	
 	private void convertGameMap(FullMap map, GameMap oldMap) {
 		ArrayList<FullMapNode> mapFields = new ArrayList<>(map.getMapNodes());
-		for(FullMapNode node : mapFields) {
+		for(FullMapNode node: mapFields) {
 			MapField newField = oldMap.getGameMap().get(oldMap.getCoordinate(node.getX(), node.getY()));
 			if(newField == null) {
 				newField = new MapField(this.convertTerrain(node.getTerrain()));
@@ -96,21 +101,22 @@ public class ServerClientConverter {
 				newField.setEnemyFigure(false); 
 				break;
 			case BothPlayerPosition:  
-				newField.setMyFigure(true); 
+				newField.setMyFigure(true);
 				newField.setEnemyFigure(true); 
 				break;
 			case MyPlayerPosition: 	  
 				newField.setMyFigure(true); 
+				if(this.firstMapResponse == true) {
+					oldMap.setMyMapCoordinates(node.getX(), node.getY());
+					firstMapResponse = false;
+				}
 				break;
 			case EnemyPlayerPosition: 
 				newField.setEnemyFigure(true); 
 				break;
 			}
-			if(node.getFortState().equals(EFortState.EnemyFortPresent))
-				newField.setEnemyFort(true); 
 			if(node.getTreasureState().equals(ETreasureState.MyTreasureIsPresent)) {
 				oldMap.getGameMap().get(new Coordinate(node.getX(), node.getY())).setMyTreasure(true);
-				//oldMap.setMyTreasure(oldMap.getCoordinate(node.getX(), node.getY()));
 				newField.setMyTreasure(true); 
 				logger.debug("MY TREASURE FOUND ON {} {}", node.getX(), node.getY());
 			}

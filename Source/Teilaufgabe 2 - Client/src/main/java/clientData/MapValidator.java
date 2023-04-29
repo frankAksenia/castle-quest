@@ -30,14 +30,6 @@ public class MapValidator {
 				this.validateIslandsPresent();
 		
 	}
-
-//	private boolean validateAllRequiredTerrains(int water, int grass, int mountain) {
-//		if(water < MIN_WATER || grass < MIN_GRASS || mountain < MIN_MOUNTAIN) {
-//			gameMap.deleteMap();
-//			return true;
-//		}
-//		return false;
-//	}
 	
 	private boolean validateAllRequiredTerrains() {
         int waterCount = 0, grassCount = 0, mountainCount = 0;
@@ -81,7 +73,7 @@ public class MapValidator {
 	}
 	
 	private boolean validateWaterOnBorders() {
-		// TODO change on Map to map name with value
+		// TODO: change on Map to map name with value
 		int[] borders = {0,0,0,0}; // Up, Down, Left, Right
 		
 		for(Map.Entry<Coordinate, MapField> entry : gameMap.getGameMap().entrySet()) {
@@ -105,6 +97,7 @@ public class MapValidator {
 				borders[3] >= Math.ceil(Double.valueOf(MAP_SIZE[0])/2);
 	}
 	
+	// TODO: maybe check if coordinates X and Y are correct
 	private boolean validateMapSize() {
 		if(MAP_SIZE[0]*MAP_SIZE[1] != gameMap.getGameMap().size()) {
 			gameMap.deleteMap();

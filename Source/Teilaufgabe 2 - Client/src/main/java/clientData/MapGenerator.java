@@ -24,7 +24,6 @@ public class MapGenerator {
 			this.generateTerrains();
 		} while(mapValidator.validateMap());
 		logger.debug("Map successfully validated on client side.");
-		// this.gameMap.printMap();
 		this.chooseFortPosition();
 	}
 	

@@ -21,7 +21,7 @@ public class GameController {
 	
 	private MoveMaker moveMaker = new MoveMaker();
 	
-	private TargetChooser targetChooser = new TargetChooser();
+	private TargetChooser targetChooser = new TargetChooser(this.gameMap);
 	
 	private Network gameNetwork = new Network();
 	
@@ -67,7 +67,7 @@ public class GameController {
 	}
 	 
 	private synchronized EActionType requestStatus() {
-		EActionType action;
+		EActionType action = EActionType.WAIT;
 		do {
 			try {
 				wait(4000);

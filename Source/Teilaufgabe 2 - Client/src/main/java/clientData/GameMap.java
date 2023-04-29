@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 //import exceptions.GetCoordinateBasedOnMoveException;
 import exceptions.PlayerPositionException;
@@ -16,10 +16,12 @@ import java.util.Objects;
 
 public class GameMap {
 	
-	private static Logger logger = LoggerFactory.getLogger(GameMap.class);
+	// private static Logger logger = LoggerFactory.getLogger(GameMap.class);
 
 	private Map<Coordinate, MapField> map;
 	
+	private int[] myMapCoordinates = {0,0};
+			
 	public GameMap() {
 		this.map = new HashMap<Coordinate, MapField>();
 	}
@@ -43,6 +45,7 @@ public class GameMap {
 			return playerPosition;
 	}
 	
+	// change return default instead of null...
 	public Coordinate getCoordinate(int x, int y) {
 		for(Entry<Coordinate, MapField> entry: this.map.entrySet()) {
 			if(entry.getKey().getX() == x && entry.getKey().getY() == y)
@@ -72,6 +75,21 @@ public class GameMap {
 		return fieldsAround;
 	}
 	
+	public void setMyMapCoordinates(int x, int y) {
+		if(x <= 9) 
+			myMapCoordinates[0] = 9;
+		else	
+			myMapCoordinates[0] = 19;
+		if(y > 4) 
+			myMapCoordinates[1] = 9;
+		else
+			myMapCoordinates[1] = 4;	
+	}
+		
+	public int[] getMyMapCoordinates() {
+		return this.myMapCoordinates;
+	}
+	
 	public void deleteMap() { 
 		map = new HashMap<Coordinate, MapField>();
 	}
@@ -79,7 +97,6 @@ public class GameMap {
 	private boolean isCoordinateInRange(Coordinate coordinate) {
 		return coordinate != null;
 	}
-
 	
 //	public Coordinate getCoordinateBasedOnMove(EGameMove move) {
 //		switch(move) {
