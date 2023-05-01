@@ -113,11 +113,12 @@ public class ServerClientConverter {
 				break;
 			case EnemyPlayerPosition: 
 				newField.setEnemyFigure(true); 
+				oldMap.setEnemyMapCoordinates(node.getX(), node.getY());
 				break;
 			}
 			if(node.getTreasureState().equals(ETreasureState.MyTreasureIsPresent)) {
 				oldMap.getGameMap().get(new Coordinate(node.getX(), node.getY())).setMyTreasure(true);
-				newField.setMyTreasure(true); 
+				newField.setMyTreasure(true);
 				logger.debug("MY TREASURE FOUND ON {} {}", node.getX(), node.getY());
 			}
 			if(node.getFortState().equals(EFortState.EnemyFortPresent)) {

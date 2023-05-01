@@ -20,8 +20,15 @@ public class GameMap {
 
 	private Map<Coordinate, MapField> map;
 	
-	private int[] myMapCoordinates = {0,0};
-			
+		
+	private Coordinate myStartCoordinate = new Coordinate();
+	
+	private Coordinate myEndCoordinate = new Coordinate();
+	
+	private Coordinate enemyStartCoordinate = new Coordinate();
+	
+	private Coordinate enemyEndCoordinate = new Coordinate();
+	
 	public GameMap() {
 		this.map = new HashMap<Coordinate, MapField>();
 	}
@@ -77,17 +84,52 @@ public class GameMap {
 	
 	public void setMyMapCoordinates(int x, int y) {
 		if(x <= 9) 
-			myMapCoordinates[0] = 9;
-		else	
-			myMapCoordinates[0] = 19;
-		if(y > 4) 
-			myMapCoordinates[1] = 9;
-		else
-			myMapCoordinates[1] = 4;	
+			if(y <= 4) {
+				myStartCoordinate = new Coordinate(0,0);
+				myEndCoordinate= new Coordinate(9,4);
+			}
+			else {
+				myStartCoordinate = new Coordinate(0,5);
+				myEndCoordinate = new Coordinate(9,9);
+			}
+		
+		else {
+			myStartCoordinate = new Coordinate(10,0);
+			myEndCoordinate = new Coordinate(19,4);
+		}
+	}
+	
+	public void setEnemyMapCoordinates(int x, int y) {
+		if(x <= 9) 
+			if(y <= 4) {
+				enemyStartCoordinate = new Coordinate(0,0);
+				enemyEndCoordinate= new Coordinate(9,4);
+			}
+			else {
+				enemyStartCoordinate = new Coordinate(0,5);
+				enemyEndCoordinate = new Coordinate(9,9);
+			}
+		
+		else {
+			enemyStartCoordinate = new Coordinate(10,0);
+			enemyEndCoordinate = new Coordinate(19,4);
+		}
 	}
 		
-	public int[] getMyMapCoordinates() {
-		return this.myMapCoordinates;
+	public Coordinate getMyStartCoordinate() {
+		return this.myStartCoordinate;
+	}
+	
+	public Coordinate getMyEndCoordinate() {
+		return this.myEndCoordinate;
+	}
+	
+	public Coordinate getEnemyStartCoordinate() {
+		return this.enemyStartCoordinate;
+	}
+	
+	public Coordinate getEnemyEndCoordinate() {
+		return this.enemyEndCoordinate;
 	}
 	
 	public void deleteMap() { 
@@ -97,23 +139,6 @@ public class GameMap {
 	private boolean isCoordinateInRange(Coordinate coordinate) {
 		return coordinate != null;
 	}
-	
-//	public Coordinate getCoordinateBasedOnMove(EGameMove move) {
-//		switch(move) {
-//			case LEFT:  return this.getCoordinate(this.getPlayerPosition().getX()-1, this.getPlayerPosition().getY()); 
-//			case RIGHT: return this.getCoordinate(this.getPlayerPosition().getX()+1, this.getPlayerPosition().getY());
-//			case UP:    return this.getCoordinate(this.getPlayerPosition().getX(),   this.getPlayerPosition().getY()-1);
-//			case DOWN:  return this.getCoordinate(this.getPlayerPosition().getX(),   this.getPlayerPosition().getY()+1);
-//		}
-//		throw new GetCoordinateBasedOnMoveException("Null exception", "Not existing move");
-//	}
-	
-	// TODO remove before term
-//	public void printMap() {
-//		for(Map.Entry<Coordinate, MapField> entry: this.map.entrySet()) {
-//			logger.debug("Coordinate  X: {} Y: {} with Terrain: {}", entry.getKey().getX(), entry.getKey().getY(), entry.getValue().getTerrain());
-//		}
-//	}
 
 	@Override
 	public int hashCode() {

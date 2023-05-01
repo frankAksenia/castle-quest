@@ -6,9 +6,10 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+// TODO implement Strategy for chooseTarget() ?!
 
 public class TargetChooser {
 	
@@ -24,6 +25,8 @@ public class TargetChooser {
 	
 	private boolean treasureFound = false;
 	
+	private boolean onEnemyMap = false;
+	
 	private Coordinate lastTargetCoordinate = new Coordinate();
 	
 	public TargetChooser(GameMap gameMap) {
@@ -31,109 +34,81 @@ public class TargetChooser {
 	}
 		
 	public Coordinate chooseTarget(GameMap gameMap) {
-		
-		Coordinate nextMoveCoordinate = null;
-		
+				
 		Coordinate currentPosition = gameMap.getPlayerPosition();
 		
 		// if one move already made and figure on the same field return last target
 		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(currentPosition))) 
 			return lastTargetCoordinate;
 		
-		
-		List<Coordinate> fieldsAround = gameMap.getCoordinatesAround(currentPosition);
-		
-		nextMoveCoordinate = tryGrassFields(gameMap, fieldsAround);
-		if(nextMoveCoordinate == null) 
-			nextMoveCoordinate = tryMountainFields(gameMap, fieldsAround);
-		if(nextMoveCoordinate == null) 
-			nextMoveCoordinate = chooseAnyGrasOrMountain(gameMap, fieldsAround);
-			
-		lastTargetCoordinate = nextMoveCoordinate;
-		
-		return nextMoveCoordinate;
+		if(treasureFound)
+			return findTreasure(currentPosition);
+		else {
+			if(onEnemyMap)
+				return findEnemyFort(currentPosition);
+			else 
+				return goToEnemyMap(currentPosition);
+		}
 	}
 	
-	// add search only on my half
 	private Coordinate findTreasure(Coordinate currentPosition) {
-		visitedFields.add(currentPosition);
-		queue.add(currentPosition);
+		if(gameMap.getGameMap().get(currentPosition).isMyTreasure())
+			treasureFound = true;
+		if(!visitedFields.contains(currentPosition)) {
+			visitedFields.add(currentPosition);
+			queue.add(currentPosition); // push to the tail
+		}
+		Coordinate atCoordinate = new Coordinate();
 		if(!queue.isEmpty()) {
-			Coordinate atCoordinate = queue.poll();
-			if(gameMap.getGameMap().get(atCoordinate).isMyTreasure())
-				treasureFound = true;
+			atCoordinate = queue.poll(); // poll from the head
 			for(Coordinate coordinate: gameMap.getCoordinatesAround(atCoordinate)) {
-				if(gameMap.getGameMap().get(coordinate).getTerrain() == EMapTerrain.GRASS) {
+				if(gameMap.getGameMap().get(coordinate).getTerrain() != EMapTerrain.WATER &&
+						coordinate.getX() >= gameMap.getMyStartCoordinate().getX() &&
+						coordinate.getX() <= gameMap.getMyEndCoordinate().getX() &&
+						coordinate.getY() >= gameMap.getMyStartCoordinate().getY() &&
+						coordinate.getY() <= gameMap.getMyEndCoordinate().getY()) {
 					queue.add(coordinate);	
 				}
 			}
 		}
-		return new Coordinate();
+		return atCoordinate;
 	}
 	
-	private Coordinate tryGrassFields(GameMap gameMap, List<Coordinate> fieldsAround) {
-		
-		List<Coordinate> grasFields = new ArrayList<>();
-		
-		for(Coordinate coordinate: fieldsAround) 
-			if(gameMap.getGameMap().get(coordinate).getTerrain() == EMapTerrain.GRASS && !visitedFields.contains(coordinate)) 
-				grasFields.add(coordinate);
-			
-		
-		Coordinate chosenGrasField = null;
-		
-		if(grasFields.size() > 0) {
-			chosenGrasField = grasFields.get(getRandomNumberInRange(0, grasFields.size()-1));
-			visitedFields.add(chosenGrasField);
+	private Coordinate findEnemyFort(Coordinate currentPosition) {
+		if(!visitedFields.contains(currentPosition)) {
+			visitedFields.add(currentPosition);
+			queue.add(currentPosition); // push to the tail
 		}
-		return chosenGrasField;
-	}
-	
-	private Coordinate tryMountainFields(GameMap gameMap, List<Coordinate> fieldsAround) {
-		List<Coordinate> mountainFields = new ArrayList<>();
-		for(Coordinate coordinate: fieldsAround) {
-			if(gameMap.getGameMap().get(coordinate).getTerrain() == EMapTerrain.MOUNTAIN && !visitedFields.contains(coordinate)) {
-				mountainFields.add(coordinate);
+		Coordinate atCoordinate = new Coordinate();
+		if(!queue.isEmpty()) {
+			atCoordinate = queue.poll(); // poll from the head
+			for(Coordinate coordinate: gameMap.getCoordinatesAround(atCoordinate)) {
+				if(gameMap.getGameMap().get(coordinate).getTerrain() != EMapTerrain.WATER &&
+						coordinate.getX() >= gameMap.getEnemyStartCoordinate().getX() &&
+						coordinate.getX() <= gameMap.getEnemyEndCoordinate().getX() &&
+						coordinate.getY() >= gameMap.getEnemyStartCoordinate().getY() &&
+						coordinate.getY() <= gameMap.getEnemyEndCoordinate().getY()) {
+					queue.add(coordinate);	
+				}
 			}
 		}
-		Coordinate chosenMountainField = null;
-		if(mountainFields.size() > 0) {
-			chosenMountainField = mountainFields.get(getRandomNumberInRange(0, mountainFields.size()-1));
-			visitedFields.add(chosenMountainField);
-		}
-		return chosenMountainField;
+		return atCoordinate;
 	}
 	
-	private Coordinate chooseAnyGrasOrMountain(GameMap gameMap, List<Coordinate> fieldsAround) {
-		for(Coordinate coordinate: fieldsAround) 
-			if(gameMap.getGameMap().get(coordinate).getTerrain() != EMapTerrain.WATER) 
-				return coordinate;
-		logger.debug("Choose any field returned null!");
-		return null;
+	private Coordinate goToEnemyMap(Coordinate currentPostion) {
+		if(currentPostion.getX() < gameMap.getEnemyStartCoordinate().getX() && 
+				gameMap.getGameMap().get(gameMap.getCoordinate(currentPostion.getX()+1, currentPostion.getY())).getTerrain() != EMapTerrain.WATER)
+			return gameMap.getCoordinate(currentPostion.getX()+1, currentPostion.getY());
+		if(currentPostion.getY() < gameMap.getEnemyStartCoordinate().getY() && 
+				gameMap.getGameMap().get(gameMap.getCoordinate(currentPostion.getX(), currentPostion.getY()+1)).getTerrain() != EMapTerrain.WATER)
+			return gameMap.getCoordinate(currentPostion.getX(), currentPostion.getY()-1);
+		if(currentPostion.getX() > gameMap.getEnemyStartCoordinate().getX() && 
+				gameMap.getGameMap().get(gameMap.getCoordinate(currentPostion.getX()-1, currentPostion.getY())).getTerrain() != EMapTerrain.WATER)
+			return gameMap.getCoordinate(currentPostion.getX()-1, currentPostion.getY());
+		if(currentPostion.getY() < gameMap.getEnemyStartCoordinate().getY() && 
+				gameMap.getGameMap().get(gameMap.getCoordinate(currentPostion.getX(), currentPostion.getY()-1)).getTerrain() != EMapTerrain.WATER)
+			return gameMap.getCoordinate(currentPostion.getX(), currentPostion.getY()-1);
+		
+		return new Coordinate(0,0); // not a good idea --> change it!
 	}
-	
-	private int getRandomNumberInRange(int min, int max) {
-		Random r = new Random();
-		return r.nextInt((max - min) + 1) + min;
-	}
-	
-//	public Coordinate moveToFort(GameMap gameMap) {
-//	Coordinate fortCoordinate = gameMap.getEnemyFort();
-//	Coordinate playerPosition = gameMap.getPlayerPosition();
-//	if(fortCoordinate.getX() < playerPosition.getX() && 
-//			gameMap.getGameMap().get(gameMap.getCoordinateBasedOnMove(EGameMove.LEFT)).getTerrain() != EMapTerrain.WATER)
-//		return gameMap.getCoordinateBasedOnMove(EGameMove.LEFT);
-//	if(fortCoordinate.getX() > playerPosition.getX() && 
-//			gameMap.getGameMap().get(gameMap.getCoordinateBasedOnMove(EGameMove.RIGHT)).getTerrain() != EMapTerrain.WATER)
-//		return gameMap.getCoordinateBasedOnMove(EGameMove.RIGHT);
-//	if(fortCoordinate.getY() < playerPosition.getY() && 
-//			gameMap.getGameMap().get(gameMap.getCoordinateBasedOnMove(EGameMove.UP)).getTerrain() != EMapTerrain.WATER)
-//		return gameMap.getCoordinateBasedOnMove(EGameMove.UP);
-//	if(fortCoordinate.getY() > playerPosition.getY() && 
-//			gameMap.getGameMap().get(gameMap.getCoordinateBasedOnMove(EGameMove.DOWN)).getTerrain() != EMapTerrain.WATER)
-//		return gameMap.getCoordinateBasedOnMove(EGameMove.DOWN);
-//	
-//	return this.chooseTarget(gameMap);
-//}
-
 }

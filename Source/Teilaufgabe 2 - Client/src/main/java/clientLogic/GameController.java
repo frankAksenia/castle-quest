@@ -55,11 +55,7 @@ public class GameController {
 
 			return;
 		}
-			Coordinate nextMoveCoordinate;
-//			if(gameMap.getEnemyFort() != null)
-//				nextMoveCoordinate = targetChooser.moveToFort(gameMap);
-//			else 
-			nextMoveCoordinate = targetChooser.chooseTarget(gameMap);
+			Coordinate nextMoveCoordinate = targetChooser.chooseTarget(gameMap);
 			EGameMove nextMove = moveMaker.makeMove(nextMoveCoordinate, gameMap.getPlayerPosition());
 			
 			gameNetwork.makeMove(nextMove);	
