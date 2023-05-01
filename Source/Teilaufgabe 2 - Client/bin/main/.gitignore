@@ -1,3 +1,5 @@
 /clientData/
 /clientNetwork/
 /clientLogic/
+/.metadata/
+/exceptions/

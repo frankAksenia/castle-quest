@@ -27,21 +27,21 @@ public class TargetChooser {
 	
 	private boolean onEnemyMap = false;
 	
-	private Coordinate lastTargetCoordinate = new Coordinate();
+	private Coordinate lastTargetCoordinate = null;
 	
 	public TargetChooser(GameMap gameMap) {
 		this.gameMap = gameMap;
 	}
 		
-	public Coordinate chooseTarget(GameMap gameMap) {
-				
+	public Coordinate chooseTarget() {
+						
 		Coordinate currentPosition = gameMap.getPlayerPosition();
 		
 		// if one move already made and figure on the same field return last target
 		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(currentPosition))) 
 			return lastTargetCoordinate;
 		
-		if(treasureFound)
+		if(!treasureFound)
 			return findTreasure(currentPosition);
 		else {
 			if(onEnemyMap)
@@ -71,6 +71,7 @@ public class TargetChooser {
 				}
 			}
 		}
+		lastTargetCoordinate = atCoordinate;
 		return atCoordinate;
 	}
 	
@@ -92,23 +93,26 @@ public class TargetChooser {
 				}
 			}
 		}
+		lastTargetCoordinate = atCoordinate;
 		return atCoordinate;
 	}
 	
 	private Coordinate goToEnemyMap(Coordinate currentPostion) {
+		Coordinate nextCoordinate = new Coordinate(); // not a good idea --> change it!
 		if(currentPostion.getX() < gameMap.getEnemyStartCoordinate().getX() && 
 				gameMap.getGameMap().get(gameMap.getCoordinate(currentPostion.getX()+1, currentPostion.getY())).getTerrain() != EMapTerrain.WATER)
-			return gameMap.getCoordinate(currentPostion.getX()+1, currentPostion.getY());
-		if(currentPostion.getY() < gameMap.getEnemyStartCoordinate().getY() && 
+			nextCoordinate = gameMap.getCoordinate(currentPostion.getX()+1, currentPostion.getY());
+		else if(currentPostion.getY() < gameMap.getEnemyStartCoordinate().getY() && 
 				gameMap.getGameMap().get(gameMap.getCoordinate(currentPostion.getX(), currentPostion.getY()+1)).getTerrain() != EMapTerrain.WATER)
-			return gameMap.getCoordinate(currentPostion.getX(), currentPostion.getY()-1);
-		if(currentPostion.getX() > gameMap.getEnemyStartCoordinate().getX() && 
+			nextCoordinate = gameMap.getCoordinate(currentPostion.getX(), currentPostion.getY()-1);
+		else if(currentPostion.getX() > gameMap.getEnemyStartCoordinate().getX() && 
 				gameMap.getGameMap().get(gameMap.getCoordinate(currentPostion.getX()-1, currentPostion.getY())).getTerrain() != EMapTerrain.WATER)
-			return gameMap.getCoordinate(currentPostion.getX()-1, currentPostion.getY());
-		if(currentPostion.getY() < gameMap.getEnemyStartCoordinate().getY() && 
+			nextCoordinate = gameMap.getCoordinate(currentPostion.getX()-1, currentPostion.getY());
+		else if(currentPostion.getY() < gameMap.getEnemyStartCoordinate().getY() && 
 				gameMap.getGameMap().get(gameMap.getCoordinate(currentPostion.getX(), currentPostion.getY()-1)).getTerrain() != EMapTerrain.WATER)
-			return gameMap.getCoordinate(currentPostion.getX(), currentPostion.getY()-1);
+			nextCoordinate = gameMap.getCoordinate(currentPostion.getX(), currentPostion.getY()-1);
 		
-		return new Coordinate(0,0); // not a good idea --> change it!
+		lastTargetCoordinate = nextCoordinate;
+		return nextCoordinate;
 	}
 }

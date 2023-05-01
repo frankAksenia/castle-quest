@@ -9,7 +9,7 @@ public class MoveMaker {
 			
 	public EGameMove makeMove(Coordinate nextMove, Coordinate playerPosition) {
 		
-		//logger.debug("Next move: {} {}, Player position {} {}", nextMove.getX(), nextMove.getY(), playerPosition.getX(), playerPosition.getY());
+		logger.debug("Next move: {} {}, Player position {} {}", nextMove.getX(), nextMove.getY(), playerPosition.getX(), playerPosition.getY());
 		
 		if(nextMove.getX() < playerPosition.getX()) 
 			return EGameMove.LEFT;

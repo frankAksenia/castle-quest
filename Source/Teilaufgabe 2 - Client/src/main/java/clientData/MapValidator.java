@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO validation of island and map borders does not work always!
 
 public class MapValidator {
 	

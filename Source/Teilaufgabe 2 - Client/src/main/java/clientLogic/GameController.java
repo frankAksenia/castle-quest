@@ -55,7 +55,7 @@ public class GameController {
 
 			return;
 		}
-			Coordinate nextMoveCoordinate = targetChooser.chooseTarget(gameMap);
+			Coordinate nextMoveCoordinate = targetChooser.chooseTarget();
 			EGameMove nextMove = moveMaker.makeMove(nextMoveCoordinate, gameMap.getPlayerPosition());
 			
 			gameNetwork.makeMove(nextMove);	
