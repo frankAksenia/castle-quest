@@ -52,6 +52,7 @@ public class TargetChooser {
 	}
 	
 	private Coordinate findTreasure(Coordinate currentPosition) {
+		logger.debug("Find treasure: {}", treasureFound);
 		if(gameMap.getGameMap().get(currentPosition).isMyTreasure())
 			treasureFound = true;
 		if(!visitedFields.contains(currentPosition)) {
@@ -62,7 +63,8 @@ public class TargetChooser {
 		if(!queue.isEmpty()) {
 			atCoordinate = queue.poll(); // poll from the head
 			for(Coordinate coordinate: gameMap.getCoordinatesAround(atCoordinate)) {
-				if(gameMap.getGameMap().get(coordinate).getTerrain() != EMapTerrain.WATER &&
+				if(!visitedFields.contains(coordinate) &&
+						gameMap.getGameMap().get(coordinate).getTerrain() != EMapTerrain.WATER &&
 						coordinate.getX() >= gameMap.getMyStartCoordinate().getX() &&
 						coordinate.getX() <= gameMap.getMyEndCoordinate().getX() &&
 						coordinate.getY() >= gameMap.getMyStartCoordinate().getY() &&
@@ -76,6 +78,7 @@ public class TargetChooser {
 	}
 	
 	private Coordinate findEnemyFort(Coordinate currentPosition) {
+		logger.debug("findEnemyFort. Treasure found {}", treasureFound);
 		if(!visitedFields.contains(currentPosition)) {
 			visitedFields.add(currentPosition);
 			queue.add(currentPosition); // push to the tail
@@ -98,6 +101,7 @@ public class TargetChooser {
 	}
 	
 	private Coordinate goToEnemyMap(Coordinate currentPostion) {
+		logger.debug("goToEnemyMap");
 		Coordinate nextCoordinate = new Coordinate(); // not a good idea --> change it!
 		if(currentPostion.getX() < gameMap.getEnemyStartCoordinate().getX() && 
 				gameMap.getGameMap().get(gameMap.getCoordinate(currentPostion.getX()+1, currentPostion.getY())).getTerrain() != EMapTerrain.WATER)
@@ -111,6 +115,8 @@ public class TargetChooser {
 		else if(currentPostion.getY() < gameMap.getEnemyStartCoordinate().getY() && 
 				gameMap.getGameMap().get(gameMap.getCoordinate(currentPostion.getX(), currentPostion.getY()-1)).getTerrain() != EMapTerrain.WATER)
 			nextCoordinate = gameMap.getCoordinate(currentPostion.getX(), currentPostion.getY()-1);
+		else
+			onEnemyMap = true;
 		
 		lastTargetCoordinate = nextCoordinate;
 		return nextCoordinate;

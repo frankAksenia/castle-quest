@@ -2,7 +2,12 @@ package clientData;
 
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MapField {
+	
+	private static Logger logger = LoggerFactory.getLogger(MapField.class);
 	
 	private EMapTerrain terrain;
 		
@@ -47,6 +52,7 @@ public class MapField {
 	}
 
 	public void setMyTreasure(boolean myTreasure) {
+		logger.debug("My treasure found: {}", myTreasure);
 		this.myTreasure = myTreasure;
 	}
 

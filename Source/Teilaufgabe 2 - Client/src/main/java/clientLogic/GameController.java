@@ -19,9 +19,9 @@ public class GameController {
 	
 	private GameMap gameMap;
 	
-	private MoveMaker moveMaker = new MoveMaker();
+	private MoveMaker moveMaker;
 	
-	private TargetChooser targetChooser = new TargetChooser(this.gameMap);
+	private TargetChooser targetChooser;
 	
 	private Network gameNetwork = new Network();
 	
@@ -39,6 +39,8 @@ public class GameController {
 		default:
 			break;
 		}
+		this.targetChooser = new TargetChooser(this.gameMap);
+		this.moveMaker = new MoveMaker(this.gameMap);
 		this.playGame();
 	}
 	
