@@ -20,7 +20,7 @@ public class GameController {
 	
 	private GameMap gameMap; // Model class
 	
-	private CLI cli; // View class
+	//private CLI cli; // View class
 	
 	boolean firstAction = true;
 	
@@ -32,7 +32,7 @@ public class GameController {
 	
 	public GameController(GameMap gameMap, CLI cli) {
 		this.gameMap = gameMap;
-		this.cli = cli;
+		//this.cli = cli;
 		this.gameMap.addPropertyChangeListener(cli);
 	}
 
@@ -75,6 +75,7 @@ public class GameController {
 		}
 	}
 	 
+	// TODO override exception
 	private synchronized EActionType requestStatus() {
 		EActionType action = EActionType.WAIT;
 		do {

@@ -86,15 +86,15 @@ public class ServerClientConverter {
 		
 	}
 	
-	private void convertGameMap(FullMap map, GameMap oldMap) {
-		GameMap old = oldMap;
+	private void convertGameMap(FullMap map, GameMap myMap) {
+		GameMap old = myMap;
 		ArrayList<FullMapNode> mapFields = new ArrayList<>(map.getMapNodes());
 		for(FullMapNode node: mapFields) {
-			MapField newField = oldMap.getGameMap().get(oldMap.getCoordinate(node.getX(), node.getY()));
+			MapField newField = myMap.getGameMap().get(myMap.getCoordinate(node.getX(), node.getY()));
 			if(newField == null) {
 				newField = new MapField(this.convertTerrain(node.getTerrain()));
 				Coordinate newCoordinate = new Coordinate(node.getX(), node.getY());
-				oldMap.getGameMap().put(newCoordinate, newField);
+				myMap.getGameMap().put(newCoordinate, newField);
 			}
 			switch(node.getPlayerPositionState()) {
 			case NoPlayerPresent: 
@@ -108,28 +108,30 @@ public class ServerClientConverter {
 			case MyPlayerPosition: 	  
 				newField.setMyFigure(true); 
 				if(this.firstMapResponse == true) {
-					oldMap.setMyMapCoordinates(node.getX(), node.getY());
+					myMap.setMyMapCoordinates(node.getX(), node.getY());
 					firstMapResponse = false;
 				}
 				break;
 			case EnemyPlayerPosition: 
 				newField.setEnemyFigure(true); 
-				oldMap.setEnemyMapCoordinates(node.getX(), node.getY());
+				myMap.setEnemyMapCoordinates(node.getX(), node.getY());
 				break;
 			}
 			if(node.getTreasureState().equals(ETreasureState.MyTreasureIsPresent)) {
-				oldMap.getGameMap().get(new Coordinate(node.getX(), node.getY())).setMyTreasure(true);
+				//oldMap.getGameMap().get(new Coordinate(node.getX(), node.getY())).setMyTreasure(true);
+				myMap.setFoundTargetCoordinate(myMap.getCoordinate(node.getX(), node.getY()));
 				newField.setMyTreasure(true);
+				
 				logger.debug("MY TREASURE FOUND ON {} {}", node.getX(), node.getY());
 			}
 			if(node.getFortState().equals(EFortState.EnemyFortPresent)) {
 				newField.setEnemyFort(true);
-				oldMap.getGameMap().get(new Coordinate(node.getX(), node.getY())).setEnemyFort(true);;
+				//oldMap.getGameMap().get(new Coordinate(node.getX(), node.getY())).setEnemyFort(true);
 				//oldMap.setEnemyFort(oldMap.getCoordinate(node.getX(), node.getY()));
 				logger.debug("ENEMY FORT WAS FOUND ON {} {}", node.getX(), node.getY());
 			}
 		}
-		oldMap.updateMap(old);
+		myMap.updateMap(old);
 	}
 	
 	public void convertSendingMove(@SuppressWarnings("rawtypes") ResponseEnvelope response) {

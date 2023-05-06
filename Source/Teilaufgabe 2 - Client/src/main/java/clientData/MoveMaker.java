@@ -7,9 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MoveMaker {
-	
-	// DOES NOT GET THE FIELDS WHICH IN AROUND! CHANGE MOVES!
-	
+		
 	private static Logger logger = LoggerFactory.getLogger(MoveMaker.class);
 	
 	private GameMap gameMap;
@@ -21,9 +19,7 @@ public class MoveMaker {
 	public EGameMove makeMove(Coordinate nextMove, Coordinate playerPosition) {
 		
 		logger.debug("Next move: {} {}, Player position {} {}", nextMove.getX(), nextMove.getY(), playerPosition.getX(), playerPosition.getY());
-		
-		//Coordinate nextCoordinate = nextMove;
-		
+				
 		List<Coordinate> around = this.gameMap.getCoordinatesAround(nextMove);
 		
 		Collections.shuffle(around);

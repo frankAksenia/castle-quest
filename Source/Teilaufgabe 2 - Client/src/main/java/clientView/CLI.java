@@ -18,15 +18,23 @@ public class CLI implements PropertyChangeListener {
 		for(int y = 0; y <= gameMap.getHeight(); y++) {
 			for(int x = 0; x <= gameMap.getWidth(); x++) {
 				MapField currentField = gameMap.getGameMap().get(gameMap.getCoordinate(x, y));
-				if(currentField.isMyFigure())
-					System.out.print(" 1 ");
-				else if(currentField.isEnemyFigure())
-					System.out.print(" 2 ");
-				else {
-					switch(gameMap.getGameMap().get(gameMap.getCoordinate(x, y)).getTerrain()) {
-						case WATER: System.out.print(" ~ "); break;
-						case MOUNTAIN: System.out.print(" ^ "); break;
-						case GRASS: System.out.print(" . "); break;
+				if(currentField != null) {
+					if(currentField.isMyFort())
+						System.out.print(" 1# ");
+					else if(currentField.isEnemyFort())
+						System.out.print(" 1# ");
+					else if(currentField.isMyFigure())
+						System.out.print(" 1 ");
+					else if(currentField.isEnemyFigure())
+						System.out.print(" 2 ");
+					else if(currentField.isMyTreasure())
+						System.out.print(" $ ");
+					else {
+						switch(gameMap.getGameMap().get(gameMap.getCoordinate(x, y)).getTerrain()) {
+							case WATER: System.out.print(" ~ "); break;
+							case MOUNTAIN: System.out.print(" ^ "); break;
+							case GRASS: System.out.print(" . "); break;
+						}
 					}
 				}
 			}

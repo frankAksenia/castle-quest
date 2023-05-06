@@ -10,25 +10,24 @@ import org.slf4j.LoggerFactory;
 // TODO implement Strategy for chooseTarget() ?!
 
 public class TargetChooser {
-	
-	// TODO still goes outside of the map!
-	
+		
 	private static Logger logger = LoggerFactory.getLogger(TargetChooser.class);
 			
-	private Set<Coordinate> visitedFields = new HashSet<>();
+	private Set<Coordinate> visitedFields;
 	
 	private GameMap gameMap;
 	
 	private Deque<Coordinate> queue = new ArrayDeque<>();
 	
 	private boolean treasureFound = false;
-	
+		
 	private boolean onEnemyMap = false;
 	
 	private Coordinate lastTargetCoordinate = null;
 	
 	public TargetChooser(GameMap gameMap) {
 		this.gameMap = gameMap;
+		visitedFields = new HashSet<>();
 	}
 		
 	public Coordinate chooseTarget() {
@@ -51,6 +50,8 @@ public class TargetChooser {
 	
 	
 	private Coordinate findTreasure(Coordinate currentPosition) {
+		if(this.gameMap.getFoundTargetCoordinate() != null)
+			return this.gameMap.getFoundTargetCoordinate();
 		logger.debug("Find treasure: {}", treasureFound);
 		if(gameMap.getGameMap().get(currentPosition).isMyTreasure())
 			treasureFound = true;
@@ -61,14 +62,14 @@ public class TargetChooser {
 		Coordinate atCoordinate = new Coordinate();
 		if(!queue.isEmpty()) {
 			atCoordinate = queue.poll(); // poll from the head
+			this.visitedFields.add(atCoordinate);
 			for(Coordinate coordinate: gameMap.getCoordinatesAround(atCoordinate)) {
 				if(!visitedFields.contains(coordinate) &&
 						gameMap.getGameMap().get(coordinate).getTerrain() != EMapTerrain.WATER &&
 						coordinate.getX() >= gameMap.getMyStartCoordinate().getX() &&
 						coordinate.getX() <= gameMap.getMyEndCoordinate().getX() &&
 						coordinate.getY() >= gameMap.getMyStartCoordinate().getY() &&
-						coordinate.getY() <= gameMap.getMyEndCoordinate().getY() &&
-						!visitedFields.contains(coordinate)) {
+						coordinate.getY() <= gameMap.getMyEndCoordinate().getY()) {
 					queue.add(coordinate);	
 				}
 			}
@@ -120,5 +121,5 @@ public class TargetChooser {
 		
 		lastTargetCoordinate = nextCoordinate;
 		return nextCoordinate;
-	}
+	} 
 }

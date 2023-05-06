@@ -23,7 +23,7 @@ public class GameMap {
 	private Map<Coordinate, MapField> map;
 	
 	private PropertyChangeSupport propertyChangeSupport;
-		
+			
 	private Coordinate myStartCoordinate = new Coordinate();
 	
 	private Coordinate myEndCoordinate = new Coordinate();
@@ -32,9 +32,19 @@ public class GameMap {
 	
 	private Coordinate enemyEndCoordinate = new Coordinate();
 	
-	int height = 0;
+	private Coordinate foundTargetCoordinate = null;
 	
-	int width = 0;
+	int wholeMapHeight = 0;
+	
+	public Coordinate getFoundTargetCoordinate() {
+		return foundTargetCoordinate;
+	}
+
+	public void setFoundTargetCoordinate(Coordinate foundTargetCoordinate) {
+		this.foundTargetCoordinate = foundTargetCoordinate;
+	}
+
+	int wholeMapWidth = 0;
 	
 	public GameMap() {
 		this.map = new HashMap<Coordinate, MapField>();
@@ -151,21 +161,21 @@ public class GameMap {
 	
 	public void setMapSize() {
 		for (Coordinate coordinate : this.getGameMap().keySet()) {
-		    if (coordinate.getY() > this.height) {
-		        this.height = coordinate.getY();
+		    if (coordinate.getY() > this.wholeMapHeight) {
+		        this.wholeMapHeight = coordinate.getY();
 		    }
-		    if (coordinate.getX() > this.width) {
-		        this.width = coordinate.getX();
+		    if (coordinate.getX() > this.wholeMapWidth) {
+		        this.wholeMapWidth = coordinate.getX();
 		    }
 		}
 	}
 	
 	public int getHeight() {
-		return height;
+		return wholeMapHeight;
 	}
 
 	public int getWidth() {
-		return width;
+		return wholeMapWidth;
 	}
 
 	public void deleteMap() { 
@@ -178,10 +188,6 @@ public class GameMap {
 	
 	public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
     }
     
 	@Override

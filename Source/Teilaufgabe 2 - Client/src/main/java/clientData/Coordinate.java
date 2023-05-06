@@ -22,6 +22,10 @@ public class Coordinate {
 	public int getY() {
 		return y;
 	}
+	
+	public int getDistanceBetweenCoordinates(Coordinate other) {
+	    return Math.abs(this.getX() - other.getX()) + Math.abs(this.getY() - other.getY());
+	}
 
 	@Override
 	public int hashCode() {
@@ -39,10 +43,4 @@ public class Coordinate {
 		Coordinate other = (Coordinate) obj;
 		return x == other.x && y == other.y;
 	}
-
-	@Override
-	public String toString() {
-		return "Coordinate [x=" + x + ", y=" + y + "]";
-	}
-	
 }
