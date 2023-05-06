@@ -12,31 +12,21 @@ public class MoveMaker {
 	
 	private GameMap gameMap;
 	
+	private TargetChooser targetChooser; 
+	
 	public MoveMaker(GameMap gameMap) {
 		this.gameMap = gameMap;
+		this.targetChooser = new TargetChooser(gameMap);
 	}
 			
-	public EGameMove makeMove(Coordinate nextMove, Coordinate playerPosition) {
-		
-		logger.debug("Next move: {} {}, Player position {} {}", nextMove.getX(), nextMove.getY(), playerPosition.getX(), playerPosition.getY());
-				
-		List<Coordinate> around = this.gameMap.getCoordinatesAround(nextMove);
-		
-		Collections.shuffle(around);
-		
-		EGameMove next = this.getDirection(nextMove, playerPosition);
-		
-		int i = 0;
-		while(next == EGameMove.DEFAULT)
-		{
-			Coordinate elem = around.get(i++);
-			next = this.getDirection(elem, playerPosition);
-		}
-		
-		return next;	
+	public EGameMove makeMove() {
+		return this.getDirection(this.targetChooser.chooseTarget());
 	}
 	
-	private EGameMove getDirection(Coordinate nextMove, Coordinate playerPosition) {
+	private EGameMove getDirection(Coordinate nextMove) {
+		
+		Coordinate playerPosition = this.gameMap.getPlayerPosition();
+		
 		if(nextMove.getX() < playerPosition.getX()) {
 			if(this.gameMap.getNeigbouringTerrain(playerPosition.getX()-1, playerPosition.getY()) != EMapTerrain.WATER)
 				return EGameMove.LEFT;
@@ -59,11 +49,6 @@ public class MoveMaker {
 		
 		return EGameMove.DEFAULT;
 	}
-	
-//	private boolean isWaterField(Coordinate coordinate) {
-//		return (gameMap.getGameMap().get(coordinate).getTerrain() != EMapTerrain.WATER);
-//	}
-		
 		
 }
 	
