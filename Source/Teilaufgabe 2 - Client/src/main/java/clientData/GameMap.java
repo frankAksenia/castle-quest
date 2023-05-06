@@ -120,6 +120,10 @@ public class GameMap {
 		return this.myStartCoordinate;
 	}
 	
+	public EMapTerrain getNeigbouringTerrain(int x, int y) {
+		return this.getGameMap().get(this.getCoordinate(x, y)).getTerrain();
+	}
+	
 	public Coordinate getMyEndCoordinate() {
 		return this.myEndCoordinate;
 	}

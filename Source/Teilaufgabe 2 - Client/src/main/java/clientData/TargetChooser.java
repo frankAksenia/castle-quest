@@ -1,11 +1,9 @@
 package clientData;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.IntStream;
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +15,7 @@ public class TargetChooser {
 	
 	private static Logger logger = LoggerFactory.getLogger(TargetChooser.class);
 			
-	private List<Coordinate> visitedFields = new ArrayList<>();
+	private Set<Coordinate> visitedFields = new HashSet<>();
 	
 	private GameMap gameMap;
 	
@@ -50,6 +48,10 @@ public class TargetChooser {
 				return goToEnemyMap(currentPosition);
 		}
 	}
+	
+//	private Coordinate findNextTargetField(Coordinate currentPosition) {
+//		
+//	}
 	
 	private Coordinate findTreasure(Coordinate currentPosition) {
 		logger.debug("Find treasure: {}", treasureFound);
