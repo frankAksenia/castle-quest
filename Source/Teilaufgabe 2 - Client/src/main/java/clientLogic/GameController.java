@@ -11,13 +11,18 @@ import clientData.MoveMaker;
 import clientData.TargetChooser;
 import clientNetwork.EActionType;
 import clientNetwork.Network;
+import clientView.CLI;
 
 
 public class GameController {
 	
 	private static Logger logger = LoggerFactory.getLogger(GameController.class);
 	
-	private GameMap gameMap;
+	private GameMap gameMap; // Model class
+	
+	private CLI cli; // View class
+	
+	boolean firstAction = true;
 	
 	private MoveMaker moveMaker;
 	
@@ -25,8 +30,10 @@ public class GameController {
 	
 	private Network gameNetwork = new Network();
 	
-	public GameController(GameMap gameMap) {
+	public GameController(GameMap gameMap, CLI cli) {
 		this.gameMap = gameMap;
+		this.cli = cli;
+		this.gameMap.addPropertyChangeListener(cli);
 	}
 
 	public void startGame() {
@@ -44,7 +51,7 @@ public class GameController {
 		this.playGame();
 	}
 	
-	private void playGame() {
+	private void playGame() {		
 		while(true) {
 		EActionType actionType = this.requestStatus();
 		if(actionType.equals(EActionType.WON)) {
@@ -52,11 +59,15 @@ public class GameController {
 			return;
 		}
 		if(actionType.equals(EActionType.LOST)) {
-			logger.debug("check");
 			logger.debug("YOU LOST!");
 
 			return;
 		}
+			if(firstAction) {
+				this.gameMap.setMapSize();
+				firstAction = false;
+			}
+
 			Coordinate nextMoveCoordinate = targetChooser.chooseTarget();
 			EGameMove nextMove = moveMaker.makeMove(nextMoveCoordinate, gameMap.getPlayerPosition());
 			

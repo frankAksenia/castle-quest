@@ -1,5 +1,6 @@
 package clientData;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -24,6 +25,8 @@ public class MoveMaker {
 		//Coordinate nextCoordinate = nextMove;
 		
 		List<Coordinate> around = this.gameMap.getCoordinatesAround(nextMove);
+		
+		Collections.shuffle(around);
 		
 		EGameMove next = this.getDirection(nextMove, playerPosition);
 		

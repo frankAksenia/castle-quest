@@ -1,0 +1,41 @@
+package clientView;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import clientData.GameMap;
+import clientData.MapField;
+
+public class CLI implements PropertyChangeListener {
+	
+	GameMap gameMap;
+	
+	public CLI(GameMap gameMap) {
+		this.gameMap = gameMap;
+	}
+
+	public void printMap() {
+		for(int y = 0; y <= gameMap.getHeight(); y++) {
+			for(int x = 0; x <= gameMap.getWidth(); x++) {
+				MapField currentField = gameMap.getGameMap().get(gameMap.getCoordinate(x, y));
+				if(currentField.isMyFigure())
+					System.out.print(" 1 ");
+				else if(currentField.isEnemyFigure())
+					System.out.print(" 2 ");
+				else {
+					switch(gameMap.getGameMap().get(gameMap.getCoordinate(x, y)).getTerrain()) {
+						case WATER: System.out.print(" ~ "); break;
+						case MOUNTAIN: System.out.print(" ^ "); break;
+						case GRASS: System.out.print(" . "); break;
+					}
+				}
+			}
+			System.out.println(" ");
+		}
+	}
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		this.printMap();
+	}
+	
+}

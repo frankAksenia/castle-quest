@@ -1,5 +1,7 @@
 package clientData;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,7 @@ public class GameMap {
 
 	private Map<Coordinate, MapField> map;
 	
+	private PropertyChangeSupport propertyChangeSupport;
 		
 	private Coordinate myStartCoordinate = new Coordinate();
 	
@@ -29,8 +32,13 @@ public class GameMap {
 	
 	private Coordinate enemyEndCoordinate = new Coordinate();
 	
+	int height = 0;
+	
+	int width = 0;
+	
 	public GameMap() {
 		this.map = new HashMap<Coordinate, MapField>();
+		this.propertyChangeSupport = new PropertyChangeSupport(this);
 	}
 	
 	public Map<Coordinate, MapField> getGameMap() {
@@ -80,6 +88,11 @@ public class GameMap {
 		if(this.isCoordinateInRange(coordinateLeft))
 			fieldsAround.add(coordinateLeft);		
 		return fieldsAround;
+	}
+	
+	public void updateMap(GameMap oldMap) {
+		propertyChangeSupport.firePropertyChange("map", oldMap, this.getGameMap());
+
 	}
 	
 	public void setMyMapCoordinates(int x, int y) {
@@ -136,6 +149,25 @@ public class GameMap {
 		return this.enemyEndCoordinate;
 	}
 	
+	public void setMapSize() {
+		for (Coordinate coordinate : this.getGameMap().keySet()) {
+		    if (coordinate.getY() > this.height) {
+		        this.height = coordinate.getY();
+		    }
+		    if (coordinate.getX() > this.width) {
+		        this.width = coordinate.getX();
+		    }
+		}
+	}
+	
+	public int getHeight() {
+		return height;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
 	public void deleteMap() { 
 		map = new HashMap<Coordinate, MapField>();
 	}
@@ -143,7 +175,15 @@ public class GameMap {
 	private boolean isCoordinateInRange(Coordinate coordinate) {
 		return coordinate != null;
 	}
+	
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
 
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+    
 	@Override
 	public int hashCode() {
 		return Objects.hash(map);

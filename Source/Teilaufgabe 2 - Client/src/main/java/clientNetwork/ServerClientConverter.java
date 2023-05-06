@@ -87,6 +87,7 @@ public class ServerClientConverter {
 	}
 	
 	private void convertGameMap(FullMap map, GameMap oldMap) {
+		GameMap old = oldMap;
 		ArrayList<FullMapNode> mapFields = new ArrayList<>(map.getMapNodes());
 		for(FullMapNode node: mapFields) {
 			MapField newField = oldMap.getGameMap().get(oldMap.getCoordinate(node.getX(), node.getY()));
@@ -128,6 +129,7 @@ public class ServerClientConverter {
 				logger.debug("ENEMY FORT WAS FOUND ON {} {}", node.getX(), node.getY());
 			}
 		}
+		oldMap.updateMap(old);
 	}
 	
 	public void convertSendingMove(@SuppressWarnings("rawtypes") ResponseEnvelope response) {

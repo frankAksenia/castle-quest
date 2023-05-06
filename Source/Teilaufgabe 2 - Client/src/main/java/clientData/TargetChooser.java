@@ -49,9 +49,6 @@ public class TargetChooser {
 		}
 	}
 	
-//	private Coordinate findNextTargetField(Coordinate currentPosition) {
-//		
-//	}
 	
 	private Coordinate findTreasure(Coordinate currentPosition) {
 		logger.debug("Find treasure: {}", treasureFound);
@@ -70,7 +67,8 @@ public class TargetChooser {
 						coordinate.getX() >= gameMap.getMyStartCoordinate().getX() &&
 						coordinate.getX() <= gameMap.getMyEndCoordinate().getX() &&
 						coordinate.getY() >= gameMap.getMyStartCoordinate().getY() &&
-						coordinate.getY() <= gameMap.getMyEndCoordinate().getY()) {
+						coordinate.getY() <= gameMap.getMyEndCoordinate().getY() &&
+						!visitedFields.contains(coordinate)) {
 					queue.add(coordinate);	
 				}
 			}
