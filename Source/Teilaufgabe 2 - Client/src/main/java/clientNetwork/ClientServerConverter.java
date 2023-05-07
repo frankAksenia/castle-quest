@@ -4,13 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Map.Entry;
 
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
-
 import clientData.Coordinate;
 import clientData.EGameMove;
 import clientData.EMapTerrain;
 import clientData.MapField;
+import exceptions.IllegalMoveException;
 import clientData.GameMap;
 import messagesBase.messagesFromClient.EMove;
 import messagesBase.messagesFromClient.ETerrain;
@@ -20,9 +18,7 @@ import messagesBase.messagesFromClient.PlayerMove;
 import messagesBase.messagesFromClient.PlayerRegistration;
 
 public class ClientServerConverter {
-	
-	//private static Logger logger = LoggerFactory.getLogger(ServerClientConverter.class);
-	
+		
 	public ClientServerConverter() {}
 	
 	public PlayerRegistration convertPlayerRegistration(String firstName, String lastName, String uaccount) {
@@ -64,6 +60,7 @@ public class ClientServerConverter {
 		case DOWN: serverMove = EMove.Down; break;
 		case LEFT: serverMove = EMove.Left; break;
 		case RIGHT: serverMove = EMove.Right; break;
+		case DEFAULT: throw new IllegalMoveException("Illegal move", "Default move must not be sent to server!");
 		}
 		return serverMove;
 	}

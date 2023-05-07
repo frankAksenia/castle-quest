@@ -22,7 +22,7 @@ public class CLI implements PropertyChangeListener {
 					if(currentField.isMyFort())
 						System.out.print(" 1# ");
 					else if(currentField.isEnemyFort())
-						System.out.print(" 1# ");
+						System.out.print(" 2# ");
 					else if(currentField.isMyFigure())
 						System.out.print(" 1 ");
 					else if(currentField.isEnemyFigure())
@@ -33,7 +33,7 @@ public class CLI implements PropertyChangeListener {
 						switch(gameMap.getGameMap().get(gameMap.getCoordinate(x, y)).getTerrain()) {
 							case WATER: System.out.print(" ~ "); break;
 							case MOUNTAIN: System.out.print(" ^ "); break;
-							case GRASS: System.out.print(" . "); break;
+							case GRASS: System.out.print(" * "); break;
 						}
 					}
 				}

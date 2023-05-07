@@ -35,12 +35,13 @@ public class TargetChooser {
 	
 	public Coordinate chooseTarget() {
 		if(setGrasFields) {
-			this.grassFields = new PriorityQueue<Coordinate>(new DistanceComparator(this.gameMap.getPlayerPosition()));
+			this.grassFields = new PriorityQueue<Coordinate>(new DistanceComparator());
 			this.setGrassFields();
 			setGrasFields = false;
 		}
 
 		Coordinate target = grassFields.poll();
+		logger.debug("Unvisited grass fields: {}", this.grassFields.toString());
 		return target;
 	}
 	
@@ -61,6 +62,8 @@ public class TargetChooser {
 	private void setGrassFields() {
 		for(Entry<Coordinate, MapField> entry: this.gameMap.getGameMap().entrySet())
 			if(entry.getValue().getTerrain() == EMapTerrain.GRASS &&
+			entry.getKey().getX() >= this.gameMap.getMyStartCoordinate().getX() &&
+			entry.getKey().getY() >= this.gameMap.getMyStartCoordinate().getY() &&
 			entry.getKey().getX() <= this.gameMap.getMyEndCoordinate().getX() &&
 			entry.getKey().getY() <= this.gameMap.getMyEndCoordinate().getY() &&
 			!entry.getKey().equals(this.gameMap.getPlayerPosition()))
