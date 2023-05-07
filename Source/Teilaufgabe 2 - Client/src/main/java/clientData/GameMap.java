@@ -22,7 +22,9 @@ public class GameMap {
 	private Map<Coordinate, MapField> map;
 	
 	private PropertyChangeSupport propertyChangeSupport;
-			
+	
+	private boolean foundTreasure = false;
+
 	private Coordinate myStartCoordinate = new Coordinate();
 	
 	private Coordinate myEndCoordinate = new Coordinate();
@@ -168,6 +170,16 @@ public class GameMap {
 		        this.wholeMapWidth = coordinate.getX();
 		    }
 		}
+	}
+	
+	public boolean isFoundTreasure() {
+		return foundTreasure;
+	}
+
+	public void setFoundTreasure(boolean foundTreasure) {
+		if(foundTreasure)
+			logger.debug("TREASURE IS COLLECTED");
+		this.foundTreasure = foundTreasure;
 	}
 	
 	public int getHeight() {

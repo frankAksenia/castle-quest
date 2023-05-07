@@ -55,7 +55,7 @@ public class ServerClientConverter {
 		return playerID;
 	}
 	
-	public EActionType convertRequestState(ResponseEnvelope<GameState> response, GameMap oldMap) {
+	public EActionType convertRequestState(ResponseEnvelope<GameState> response, GameMap gameMap) {
 		
 		EActionType actionType = EActionType.WAIT; // default state to return
 		if(response.getState() == ERequestState.Error) {
@@ -64,17 +64,14 @@ public class ServerClientConverter {
 			String gameStateID = response.getData().get().getGameStateId();
 			if(this.gameStateID.isEmpty() || !this.gameStateID.equals(gameStateID)) {
 				this.gameStateID = gameStateID;
-				Set<PlayerState> players = response.getData().orElseThrow().getPlayers();
+				actionType = this.updatePlayersState(response.getData().orElseThrow().getPlayers(), gameMap);
 				try {
 				if(response.getData().get().getMap().isPresent()) {
-					this.convertGameMap(response.getData().get().getMap().get(), oldMap);
+					this.convertGameMap(response.getData().get().getMap().get(), gameMap);
 				}
 				}catch(NoSuchElementException ex) {
 					ex.toString();
-				}
-				for(PlayerState player: players) 
-					if(player.getUniquePlayerID().equals(this.playerID)) 
-						actionType = this.convertEPlayerGameState(player.getState());	
+				}		
 			}
 		}
 		return actionType;
@@ -157,6 +154,16 @@ public class ServerClientConverter {
 		case Mountain : serverTerrain = EMapTerrain.MOUNTAIN; break;
 		}
 		return serverTerrain; 
+	}
+	
+	private EActionType updatePlayersState(Set<PlayerState> players, GameMap gameMap) {
+		EActionType result = EActionType.WAIT;
+		for(PlayerState player: players) 
+			if(player.getUniquePlayerID().equals(this.playerID)) {
+				result = this.convertEPlayerGameState(player.getState());	
+				gameMap.setFoundTreasure(player.hasCollectedTreasure());
+			}
+		return result;
 	}
 	
 	public static void registrationException(String exceptionName, String exceptionMessage, String playerID) {

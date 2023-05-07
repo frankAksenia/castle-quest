@@ -47,7 +47,7 @@ public class MoveMaker {
 		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(this.gameMap.getPlayerPosition())))
 			return lastMove;
 
-		if(this.gameMap.getGameMap().get(this.gameMap.getPlayerPosition()).isMyTreasure()) {
+		if(this.gameMap.isFoundTreasure()) {
 			treasureFound = true;
 			this.gameMap.getGameMap().get(this.gameMap.getPlayerPosition()).setMyTreasure(false);
 		}
@@ -124,7 +124,7 @@ public class MoveMaker {
 	    }
 		logger.debug("Setting a way to a new target: {}", wayToTarget.toString());
 		wayToTarget.pollLast();
-		this.targetChooser.removeFromFieldsToVisit(wayToTarget);
+		//this.targetChooser.removeFromFieldsToVisit(wayToTarget);
 	    this.way = wayToTarget;
 	}
 
