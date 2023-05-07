@@ -23,6 +23,8 @@ public class MoveMaker {
 	private GameMap gameMap;
 	
 	private TargetChooser targetChooser; 
+	
+	boolean treasureFound = false;
 			
 	private Queue<Coordinate> way = new ArrayDeque<Coordinate>();	
 	
@@ -33,6 +35,18 @@ public class MoveMaker {
 			
 	public EGameMove makeMove() {
 		EGameMove nextMove = EGameMove.DEFAULT;
+
+		if(this.gameMap.getGameMap().get(this.gameMap.getPlayerPosition()).isMyTreasure()) {
+			treasureFound = true;
+			this.gameMap.getGameMap().get(this.gameMap.getPlayerPosition()).setMyTreasure(false);
+		}
+			
+		if(treasureFound) {
+			Coordinate enemyMapCoordinate = this.targetChooser.getEnemyMapTargetField();
+			this.breadthFirstSearch(this.gameMap.getPlayerPosition(), enemyMapCoordinate);
+			this.targetChooser.setSetGrasFields(true);
+		}
+		
 		logger.debug("My position: {}", this.gameMap.getPlayerPosition().toString());
 		if(!way.isEmpty()) {
 			logger.debug("Last way in process: {}", this.way.toString());
@@ -76,6 +90,7 @@ public class MoveMaker {
 	            			this.findWayToTarget(parentField, possibleTreasure);
 	            			return;
 	            		}
+	            		else this.targetChooser.removeFromFieldsToVisit(this.gameMap.getCoordinatesAround(currentField));
 	            	}
 	                queue.add(neighbourField);
 	                visitedFields.add(neighbourField);
@@ -88,7 +103,8 @@ public class MoveMaker {
 	private void findWayToTarget(Map<Coordinate, Coordinate> parentField, Coordinate targetField) {
 	    Queue<Coordinate> wayToTarget = new ArrayDeque<>();
 	    wayToTarget.add(targetField);
-	    while (parentField.containsKey(targetField)) {
+	    while(parentField.containsKey(targetField)) {
+	    	if(this.gameMap.getGameMap().get(targetField).getTerrain() != EMapTerrain.WATER)
 	        targetField = parentField.get(targetField);
 	        wayToTarget.add(targetField);
 	    }

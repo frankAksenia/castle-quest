@@ -1,5 +1,6 @@
 package clientLogic;
 
+import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -24,17 +25,21 @@ public class TargetChooser {
 		
 	private Queue<Coordinate> grassFields;
 						
-	private boolean firstMove = true;
+	private boolean setGrasFields = true;
 	
+	public void setSetGrasFields(boolean setGrasFields) {
+		this.setGrasFields = setGrasFields;
+	}
+
 	public TargetChooser(GameMap gameMap) {
 		this.gameMap = gameMap;
 	}
 	
 	public Coordinate chooseTarget() {
-		if(firstMove) {
+		if(setGrasFields) {
 			this.grassFields = new PriorityQueue<Coordinate>(new DistanceComparator(this.gameMap.getPlayerPosition()));
 			this.setGrassFields();
-			firstMove = false;
+			setGrasFields = false;
 		}
 		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(this.gameMap.getPlayerPosition()))) 
 			return lastTargetCoordinate;	
@@ -44,7 +49,16 @@ public class TargetChooser {
 		return target;
 	}
 	
-	public void removeFromFieldsToVisit(Queue<Coordinate> visitedCoordinates) {
+	public Coordinate getEnemyMapTargetField() {
+		Coordinate enemyMapStartCoordinate =this.gameMap.getEnemyStartCoordinate();
+		Coordinate result = this.gameMap.getCoordinate(enemyMapStartCoordinate.getX(), enemyMapStartCoordinate.getY());
+		while(this.gameMap.getGameMap().get(result).getTerrain() == EMapTerrain.WATER) {
+			result = this.gameMap.getCoordinate(enemyMapStartCoordinate.getX(), enemyMapStartCoordinate.getY()+1);
+		}
+		return result;
+	}
+	
+	public void removeFromFieldsToVisit(Collection<Coordinate> visitedCoordinates) {
 		this.grassFields.removeAll(visitedCoordinates);
 	}
 	

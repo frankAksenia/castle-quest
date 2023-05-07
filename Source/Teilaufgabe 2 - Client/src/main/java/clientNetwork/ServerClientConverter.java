@@ -35,6 +35,8 @@ public class ServerClientConverter {
 	
 	private String playerID = "";
 	
+	private int counter = 16;
+	
 	private boolean firstMapResponse = true;
 	
 	public ServerClientConverter() {}
@@ -114,20 +116,17 @@ public class ServerClientConverter {
 				break;
 			case EnemyPlayerPosition: 
 				newField.setEnemyFigure(true); 
-				myMap.setEnemyMapCoordinates(node.getX(), node.getY());
+				if(counter-- == 0)
+					myMap.setEnemyMapCoordinates(node.getX(), node.getY());
 				break;
 			}
 			if(node.getTreasureState().equals(ETreasureState.MyTreasureIsPresent)) {
-				//oldMap.getGameMap().get(new Coordinate(node.getX(), node.getY())).setMyTreasure(true);
 				myMap.setFoundTargetCoordinate(myMap.getCoordinate(node.getX(), node.getY()));
 				newField.setMyTreasure(true);
-				
 				logger.debug("MY TREASURE FOUND ON {} {}", node.getX(), node.getY());
 			}
 			if(node.getFortState().equals(EFortState.EnemyFortPresent)) {
 				newField.setEnemyFort(true);
-				//oldMap.getGameMap().get(new Coordinate(node.getX(), node.getY())).setEnemyFort(true);
-				//oldMap.setEnemyFort(oldMap.getCoordinate(node.getX(), node.getY()));
 				logger.debug("ENEMY FORT WAS FOUND ON {} {}", node.getX(), node.getY());
 			}
 		}

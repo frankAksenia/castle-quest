@@ -8,17 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//import exceptions.GetCoordinateBasedOnMoveException;
 import exceptions.PlayerPositionException;
 
 import java.util.Objects;
 
 public class GameMap {
 	
-	// private static Logger logger = LoggerFactory.getLogger(GameMap.class);
+	private static Logger logger = LoggerFactory.getLogger(GameMap.class);
 
 	private Map<Coordinate, MapField> map;
 	
@@ -34,8 +33,10 @@ public class GameMap {
 	
 	private Coordinate foundTargetCoordinate = null;
 	
-	int wholeMapHeight = 0;
+	private int wholeMapHeight = 0;
 	
+	private int wholeMapWidth = 0;
+
 	public Coordinate getFoundTargetCoordinate() {
 		return foundTargetCoordinate;
 	}
@@ -44,7 +45,6 @@ public class GameMap {
 		this.foundTargetCoordinate = foundTargetCoordinate;
 	}
 
-	int wholeMapWidth = 0;
 	
 	public GameMap() {
 		this.map = new HashMap<Coordinate, MapField>();
@@ -136,6 +136,7 @@ public class GameMap {
 			enemyStartCoordinate = new Coordinate(10,0);
 			enemyEndCoordinate = new Coordinate(19,4);
 		}
+		logger.debug("Set enemy map coordinated at {} - {}", enemyStartCoordinate.toString(), enemyEndCoordinate.toString());
 	}
 		
 	public Coordinate getMyStartCoordinate() {
