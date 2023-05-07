@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class Coordinate {
 		
-	private int x = 0;
+	private int x = -1;
 	
-	private int y = 0;
+	private int y = -1;
 	
 	public Coordinate() {};
 
@@ -46,6 +46,6 @@ public class Coordinate {
 
 	@Override
 	public String toString() {
-		return "Coordinate [x=" + x + ", y=" + y + "]";
+		return "[x=" + x + ", y=" + y + "]";
 	}
 }

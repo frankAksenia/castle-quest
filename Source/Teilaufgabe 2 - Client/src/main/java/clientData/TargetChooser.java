@@ -1,9 +1,8 @@
 package clientData;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map.Entry;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,35 +13,41 @@ public class TargetChooser {
 	private static Logger logger = LoggerFactory.getLogger(TargetChooser.class);
 	
 	private GameMap gameMap;
-				
-	private Set<Coordinate> visitedFields = new HashSet<Coordinate>();
-		
-	private Deque<Coordinate> queue = new ArrayDeque<>();
 	
 	private Coordinate lastTargetCoordinate = null;
+		
+	private Queue<Coordinate> grassFields;
+						
+	private boolean firstMove = true;
 	
 	public TargetChooser(GameMap gameMap) {
 		this.gameMap = gameMap;
 	}
 	
 	public Coordinate chooseTarget() {
-		Coordinate currentPosition = this.gameMap.getPlayerPosition();
-		visitedFields.add(currentPosition);
-		queue.add(currentPosition);
-		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(currentPosition))) 
-					return lastTargetCoordinate;
-		return this.findTreasure();		
+		if(firstMove) {
+			this.grassFields = new PriorityQueue<Coordinate>(new DistanceComparator(this.gameMap.getPlayerPosition()));
+			this.setGrassFields();
+			firstMove = false;
+		}
+		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(this.gameMap.getPlayerPosition()))) 
+			return lastTargetCoordinate;	
+		
+		Coordinate target = grassFields.poll();
+		lastTargetCoordinate = target;
+		return target;
 	}
 	
-	private Coordinate findTreasure() {
-		Coordinate targetCoordinate = new Coordinate(); // default coordinate
-		if(!queue.isEmpty()) {
-			targetCoordinate = queue.poll();
-			for(Coordinate coordinateAround: this.gameMap.getCoordinatesAround(targetCoordinate))
-				if(this.gameMap.getGameMap().get(coordinateAround).getTerrain() != EMapTerrain.WATER)
-					queue.add(coordinateAround);
-		}
-		lastTargetCoordinate = targetCoordinate;
-		return targetCoordinate;
+	public void removeFromFieldsToVisit(Queue<Coordinate> visitedCoordinates) {
+		this.grassFields.removeAll(visitedCoordinates);
+	}
+	
+	private void setGrassFields() {
+		for(Entry<Coordinate, MapField> entry: this.gameMap.getGameMap().entrySet())
+			if(entry.getValue().getTerrain() == EMapTerrain.GRASS &&
+			entry.getKey().getX() <= this.gameMap.getMyEndCoordinate().getX() &&
+			entry.getKey().getY() <= this.gameMap.getMyEndCoordinate().getY())
+				this.grassFields.add(entry.getKey());
+		logger.debug("Grass filds: {}", this.grassFields.toString());
 	}
 }

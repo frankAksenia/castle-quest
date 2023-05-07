@@ -102,11 +102,10 @@ public class GameMap {
 	
 	public void updateMap(GameMap oldMap) {
 		propertyChangeSupport.firePropertyChange("map", oldMap, this.getGameMap());
-
 	}
 	
 	public void setMyMapCoordinates(int x, int y) {
-		if(x <= 9) 
+		if(x <= 9) {
 			if(y <= 4) {
 				myStartCoordinate = new Coordinate(0,0);
 				myEndCoordinate= new Coordinate(9,4);
@@ -115,7 +114,7 @@ public class GameMap {
 				myStartCoordinate = new Coordinate(0,5);
 				myEndCoordinate = new Coordinate(9,9);
 			}
-		
+		}
 		else {
 			myStartCoordinate = new Coordinate(10,0);
 			myEndCoordinate = new Coordinate(19,4);
@@ -123,7 +122,7 @@ public class GameMap {
 	}
 	
 	public void setEnemyMapCoordinates(int x, int y) {
-		if(x <= 9) 
+		if(x <= 9) {
 			if(y <= 4) {
 				enemyStartCoordinate = new Coordinate(0,0);
 				enemyEndCoordinate= new Coordinate(9,4);
@@ -132,7 +131,7 @@ public class GameMap {
 				enemyStartCoordinate = new Coordinate(0,5);
 				enemyEndCoordinate = new Coordinate(9,9);
 			}
-		
+		}
 		else {
 			enemyStartCoordinate = new Coordinate(10,0);
 			enemyEndCoordinate = new Coordinate(19,4);
