@@ -46,7 +46,7 @@ public class TargetChooser {
 	}
 	
 	public Coordinate getEnemyMapTargetField() {
-		Coordinate enemyMapStartCoordinate =this.gameMap.getEnemyStartCoordinate();
+		Coordinate enemyMapStartCoordinate = this.gameMap.getEnemyStartCoordinate();
 		Coordinate result = this.gameMap.getCoordinate(enemyMapStartCoordinate.getX(), enemyMapStartCoordinate.getY());
 		while(this.gameMap.getGameMap().get(result).getTerrain() == EMapTerrain.WATER) {
 			result = this.gameMap.getCoordinate(enemyMapStartCoordinate.getX(), enemyMapStartCoordinate.getY()+1);

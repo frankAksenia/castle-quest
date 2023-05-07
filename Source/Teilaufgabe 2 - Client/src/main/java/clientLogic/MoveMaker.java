@@ -26,9 +26,13 @@ public class MoveMaker {
 	
 	private Coordinate lastTargetCoordinate;
 	
+	private boolean treasureFound = false;
+	
+	private boolean onEnemyMap = false;
+
 	private EGameMove lastMove;
 	
-	boolean treasureFound = false;
+	boolean goToEnemyMap = false;
 			
 	private ArrayDeque<Coordinate> way = new ArrayDeque<Coordinate>();	
 	
@@ -47,16 +51,15 @@ public class MoveMaker {
 		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(this.gameMap.getPlayerPosition())))
 			return lastMove;
 
-		if(this.gameMap.isFoundTreasure()) {
-			treasureFound = true;
-			this.gameMap.getGameMap().get(this.gameMap.getPlayerPosition()).setMyTreasure(false);
-		}
+		if(this.gameMap.isFoundTreasure())
+			this.treasureFound = true;
 			
-		if(treasureFound) {
+		if(treasureFound && !onEnemyMap) {
 			logger.debug("TREASURE FOUND");
 			Coordinate enemyMapCoordinate = this.targetChooser.getEnemyMapTargetField();
 			this.breadthFirstSearch(this.gameMap.getPlayerPosition(), enemyMapCoordinate);
 			this.targetChooser.setSetGrasFields(true);
+			onEnemyMap = true;
 		}
 		
 		if(!way.isEmpty()) {
@@ -137,7 +140,6 @@ public class MoveMaker {
 		return result;
 	}
 	
-	// WHEN DEFAULT YOU SEND UP IN A CONVERTER 
 	private EGameMove getDirection(Coordinate nextMove) {
 		
 		Coordinate playerPosition = this.gameMap.getPlayerPosition();
@@ -160,7 +162,6 @@ public class MoveMaker {
 		
 		return EGameMove.DEFAULT;
 	}
-		
 }
 	
 
