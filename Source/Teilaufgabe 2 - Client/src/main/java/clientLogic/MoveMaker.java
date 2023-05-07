@@ -1,4 +1,4 @@
-package clientData;
+package clientLogic;
 
 import java.util.ArrayDeque;
 import java.util.Map;
@@ -10,6 +10,11 @@ import java.util.HashSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import clientData.Coordinate;
+import clientData.EGameMove;
+import clientData.EMapTerrain;
+import clientData.GameMap;
 
 public class MoveMaker {
 		

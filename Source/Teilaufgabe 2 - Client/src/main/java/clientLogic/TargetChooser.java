@@ -1,10 +1,16 @@
-package clientData;
+package clientLogic;
 
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import clientData.Coordinate;
+import clientData.DistanceComparator;
+import clientData.EMapTerrain;
+import clientData.GameMap;
+import clientData.MapField;
 
 // TODO implement Strategy for chooseTarget() ?!
 

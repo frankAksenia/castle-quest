@@ -1,12 +1,12 @@
-package clientLogic;
+package clientControl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import clientData.EGameMove;
 import clientData.GameMap;
-import clientData.MapGenerator;
-import clientData.MoveMaker;
+import clientLogic.MapGenerator;
+import clientLogic.MoveMaker;
 import clientNetwork.EActionType;
 import clientNetwork.Network;
 import clientView.CLI;

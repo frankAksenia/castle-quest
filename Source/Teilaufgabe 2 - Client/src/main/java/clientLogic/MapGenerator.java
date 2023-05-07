@@ -1,9 +1,14 @@
-package clientData;
+package clientLogic;
 
 import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import clientData.Coordinate;
+import clientData.EMapTerrain;
+import clientData.GameMap;
+import clientData.MapField;
 
 
 public class MapGenerator {

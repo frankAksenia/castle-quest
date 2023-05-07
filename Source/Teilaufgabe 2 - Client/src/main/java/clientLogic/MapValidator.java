@@ -1,4 +1,4 @@
-package clientData;
+package clientLogic;
 
 import java.util.List;
 import java.util.Map;
@@ -7,6 +7,11 @@ import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import clientData.Coordinate;
+import clientData.EMapTerrain;
+import clientData.GameMap;
+import clientData.MapField;
 
 // TODO validation of island and map borders does not work always!
 

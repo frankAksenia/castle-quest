@@ -1,4 +1,4 @@
-package clientLogic;
+package clientControl;
 
 import clientData.GameMap;
 import clientView.CLI;
