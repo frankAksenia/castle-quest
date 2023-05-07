@@ -9,6 +9,7 @@ import clientData.Coordinate;
 import clientData.EMapTerrain;
 import clientData.GameMap;
 import clientData.MapField;
+import clientView.CLI;
 
 
 public class MapGenerator {
@@ -30,7 +31,21 @@ public class MapGenerator {
 		} while(mapValidator.validateMap());
 		logger.debug("Map successfully validated on client side.");
 		this.chooseFortPosition();
+		for(int y = 0; y <= 4; y++) {
+			for(int x = 0; x <= 9; x++) {
+				MapField currentField = gameMap.getGameMap().get(gameMap.getCoordinate(x, y));
+					switch(gameMap.getGameMap().get(gameMap.getCoordinate(x, y)).getTerrain()) {
+						case WATER: System.out.print(" ~ "); break;
+						case MOUNTAIN: System.out.print(" ^ "); break;
+						case GRASS: System.out.print(" . "); break;
+					}
+					}
+			System.out.println(" ");
+
+				}
 	}
+		
+	
 	
 	private void generateTerrains() {
 		for(int x = 0; x <= 9; ++x) {

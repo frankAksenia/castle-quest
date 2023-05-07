@@ -20,9 +20,7 @@ public class TargetChooser {
 	private static Logger logger = LoggerFactory.getLogger(TargetChooser.class);
 	
 	private GameMap gameMap;
-	
-	private Coordinate lastTargetCoordinate = null;
-		
+			
 	private Queue<Coordinate> grassFields;
 						
 	private boolean setGrasFields = true;
@@ -41,11 +39,8 @@ public class TargetChooser {
 			this.setGrassFields();
 			setGrasFields = false;
 		}
-		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(this.gameMap.getPlayerPosition()))) 
-			return lastTargetCoordinate;	
-		
+
 		Coordinate target = grassFields.poll();
-		lastTargetCoordinate = target;
 		return target;
 	}
 	
@@ -55,6 +50,7 @@ public class TargetChooser {
 		while(this.gameMap.getGameMap().get(result).getTerrain() == EMapTerrain.WATER) {
 			result = this.gameMap.getCoordinate(enemyMapStartCoordinate.getX(), enemyMapStartCoordinate.getY()+1);
 		}
+		logger.debug("GOING TO ENEMY MAP");
 		return result;
 	}
 	
@@ -66,7 +62,8 @@ public class TargetChooser {
 		for(Entry<Coordinate, MapField> entry: this.gameMap.getGameMap().entrySet())
 			if(entry.getValue().getTerrain() == EMapTerrain.GRASS &&
 			entry.getKey().getX() <= this.gameMap.getMyEndCoordinate().getX() &&
-			entry.getKey().getY() <= this.gameMap.getMyEndCoordinate().getY())
+			entry.getKey().getY() <= this.gameMap.getMyEndCoordinate().getY() &&
+			!entry.getKey().equals(this.gameMap.getPlayerPosition()))
 				this.grassFields.add(entry.getKey());
 		logger.debug("Grass filds: {}", this.grassFields.toString());
 	}

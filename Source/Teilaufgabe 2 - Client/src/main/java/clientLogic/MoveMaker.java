@@ -22,11 +22,15 @@ public class MoveMaker {
 	
 	private GameMap gameMap;
 	
-	private TargetChooser targetChooser; 
+	private TargetChooser targetChooser;
+	
+	private Coordinate lastTargetCoordinate;
+	
+	private EGameMove lastMove;
 	
 	boolean treasureFound = false;
 			
-	private Queue<Coordinate> way = new ArrayDeque<Coordinate>();	
+	private ArrayDeque<Coordinate> way = new ArrayDeque<Coordinate>();	
 	
 	public MoveMaker(GameMap gameMap) {
 		this.gameMap = gameMap;
@@ -34,7 +38,14 @@ public class MoveMaker {
 	}
 			
 	public EGameMove makeMove() {
-		EGameMove nextMove = EGameMove.DEFAULT;
+		
+		logger.debug("My position: {}", this.gameMap.getPlayerPosition().toString());
+
+		if(lastTargetCoordinate != null)
+			logger.debug("Last target coordinate: {}", this.lastTargetCoordinate.toString());
+		
+		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(this.gameMap.getPlayerPosition())))
+			return lastMove;
 
 		if(this.gameMap.getGameMap().get(this.gameMap.getPlayerPosition()).isMyTreasure()) {
 			treasureFound = true;
@@ -42,21 +53,25 @@ public class MoveMaker {
 		}
 			
 		if(treasureFound) {
+			logger.debug("TREASURE FOUND");
 			Coordinate enemyMapCoordinate = this.targetChooser.getEnemyMapTargetField();
 			this.breadthFirstSearch(this.gameMap.getPlayerPosition(), enemyMapCoordinate);
 			this.targetChooser.setSetGrasFields(true);
 		}
 		
-		logger.debug("My position: {}", this.gameMap.getPlayerPosition().toString());
 		if(!way.isEmpty()) {
 			logger.debug("Last way in process: {}", this.way.toString());
-			nextMove = this.getDirection(way.poll());
+			lastTargetCoordinate = way.pollLast();
+			lastMove = this.getDirection(lastTargetCoordinate);
 		}
-		logger.debug("Looking for new target....");
-		this.findNewTarget();
-		nextMove = this.getDirection(way.poll());
-		logger.debug("Netx move is: {}", nextMove.toString());
-		return nextMove;
+		else {
+			logger.debug("Looking for new target....");
+			this.findNewTarget();
+			lastTargetCoordinate = way.pollLast();
+			lastMove = this.getDirection(lastTargetCoordinate);
+		}
+		logger.debug("Target coordinate: {}, Move: {}", lastTargetCoordinate.toString(), lastMove.toString());
+		return lastMove;
 	}
 	
 	private void findNewTarget() {
@@ -79,7 +94,6 @@ public class MoveMaker {
 	        if(currentField.equals(targetField)) 
 	            findWayToTarget(parentField, currentField);
 	        
-
 	        for(Coordinate neighbourField: this.gameMap.getCoordinatesAround(currentField)) {
 	            if(gameMap.getGameMap().containsKey(neighbourField) && 
 	            		this.gameMap.getGameMap().get(neighbourField).getTerrain() != EMapTerrain.WATER && 
@@ -101,7 +115,7 @@ public class MoveMaker {
 	}
 
 	private void findWayToTarget(Map<Coordinate, Coordinate> parentField, Coordinate targetField) {
-	    Queue<Coordinate> wayToTarget = new ArrayDeque<>();
+	    ArrayDeque<Coordinate> wayToTarget = new ArrayDeque<>();
 	    wayToTarget.add(targetField);
 	    while(parentField.containsKey(targetField)) {
 	    	if(this.gameMap.getGameMap().get(targetField).getTerrain() != EMapTerrain.WATER)
@@ -109,6 +123,7 @@ public class MoveMaker {
 	        wayToTarget.add(targetField);
 	    }
 		logger.debug("Setting a way to a new target: {}", wayToTarget.toString());
+		wayToTarget.pollLast();
 		this.targetChooser.removeFromFieldsToVisit(wayToTarget);
 	    this.way = wayToTarget;
 	}
@@ -122,6 +137,7 @@ public class MoveMaker {
 		return result;
 	}
 	
+	// WHEN DEFAULT YOU SEND UP IN A CONVERTER 
 	private EGameMove getDirection(Coordinate nextMove) {
 		
 		Coordinate playerPosition = this.gameMap.getPlayerPosition();

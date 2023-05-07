@@ -58,7 +58,6 @@ public class MapValidator {
 		return gameMap.getGameMap().get(coordinate).getTerrain() != EMapTerrain.GRASS;
 	}
 	
-	// TODO still creating with islands -> change for borders
 	private boolean validateIslandsPresent() {
 		int numberFieldsAround = 0;
 		for(Entry<Coordinate,MapField> field: gameMap.getGameMap().entrySet()) {
@@ -79,7 +78,7 @@ public class MapValidator {
 	}
 	
 	private boolean validateWaterOnBorders() {
-		// TODO: change on Map to map name with value
+		// TODO change on Map to map name with value
 		int[] borders = {0,0,0,0}; // Up, Down, Left, Right
 		
 		for(Map.Entry<Coordinate, MapField> entry : gameMap.getGameMap().entrySet()) {
@@ -97,10 +96,15 @@ public class MapValidator {
 			}
 		}
 		logger.debug("Upper: {}; Lower: {}; Left: {}; Right: {}", borders[0], borders[1], borders[2], borders[3]);
-		return  borders[0] >= Math.ceil(Double.valueOf(MAP_SIZE[1])/2) ||
+		boolean result =  borders[0] >= Math.ceil(Double.valueOf(MAP_SIZE[1])/2) ||
 				borders[1] >= Math.ceil(Double.valueOf(MAP_SIZE[1])/2) ||
 				borders[2] >= Math.ceil(Double.valueOf(MAP_SIZE[0])/2) ||
 				borders[3] >= Math.ceil(Double.valueOf(MAP_SIZE[0])/2);
+		if(result) {
+			gameMap.deleteMap();
+			return true;
+		}
+		return false;
 	}
 	
 	// TODO: maybe check if coordinates X and Y are correct
