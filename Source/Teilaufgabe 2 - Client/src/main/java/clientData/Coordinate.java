@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Coordinate {
 		
-	private int x = -1;
+	private int x = -1; 
 	
 	private int y = -1;
 	
@@ -21,10 +21,6 @@ public class Coordinate {
 
 	public int getY() {
 		return y;
-	}
-	
-	public int getDistanceBetweenCoordinates(Coordinate other) {
-	    return Math.abs(this.getX() - other.getX()) + Math.abs(this.getY() - other.getY());
 	}
 
 	@Override

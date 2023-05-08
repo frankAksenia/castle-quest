@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import clientData.Coordinate;
 import clientData.EMapTerrain;
-import clientData.GameMap;
+import clientData.GameDataModel;
 import clientData.MapField;
 import exceptions.PlayerRegistrationException;
 import exceptions.RequestStateException;
@@ -53,7 +53,7 @@ public class ServerClientConverter {
 		return playerID;
 	}
 	
-	public EActionType convertRequestState(ResponseEnvelope<GameState> response, GameMap gameMap) {
+	public EActionType convertRequestState(ResponseEnvelope<GameState> response, GameDataModel gameMap) {
 		
 		EActionType actionType = EActionType.WAIT; // default state to return
 		if(response.getState() == ERequestState.Error) {
@@ -83,8 +83,8 @@ public class ServerClientConverter {
 		
 	}
 	
-	private void convertGameMap(FullMap map, GameMap myMap) {
-		GameMap old = myMap;
+	private void convertGameMap(FullMap map, GameDataModel myMap) {
+		GameDataModel old = myMap;
 		ArrayList<FullMapNode> mapFields = new ArrayList<>(map.getMapNodes());
 		for(FullMapNode node: mapFields) {
 			MapField newField = myMap.getGameMap().get(myMap.getCoordinate(node.getX(), node.getY()));
@@ -114,7 +114,6 @@ public class ServerClientConverter {
 				break;
 			}
 			if(node.getTreasureState().equals(ETreasureState.MyTreasureIsPresent)) {
-				myMap.setFoundTargetCoordinate(myMap.getCoordinate(node.getX(), node.getY()));
 				newField.setMyTreasure(true);
 				logger.debug("MY TREASURE FOUND ON {} {}", node.getX(), node.getY());
 			}
@@ -152,12 +151,12 @@ public class ServerClientConverter {
 		return serverTerrain; 
 	}
 	
-	private EActionType updatePlayersState(Set<PlayerState> players, GameMap gameMap) {
+	private EActionType updatePlayersState(Set<PlayerState> players, GameDataModel gameMap) {
 		EActionType result = EActionType.WAIT;
 		for(PlayerState player: players) 
 			if(player.getUniquePlayerID().equals(this.playerID)) {
 				result = this.convertEPlayerGameState(player.getState());	
-				gameMap.setFoundTreasure(player.hasCollectedTreasure());
+				gameMap.setTreasureFound(player.hasCollectedTreasure());
 			}
 		return result;
 	}

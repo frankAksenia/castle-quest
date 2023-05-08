@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import clientData.Coordinate;
 import clientData.EMapTerrain;
-import clientData.GameMap;
+import clientData.GameDataModel;
 import clientData.MapField;
 
 // TODO validation of island and map borders does not work always!
@@ -19,13 +19,13 @@ public class MapValidator {
 	
 	private static Logger logger = LoggerFactory.getLogger(MapValidator.class);
 	
-	private GameMap gameMap;
+	private GameDataModel gameMap;
 		
 	private final int MIN_WATER = 7, MIN_GRASS = 24, MIN_MOUNTAIN = 5;
 	
 	private final int[] MAP_SIZE = {5,10};
 	
-	public MapValidator(GameMap gameMap) {
+	public MapValidator(GameDataModel gameMap) {
 		this.gameMap = gameMap;
 	}
 	

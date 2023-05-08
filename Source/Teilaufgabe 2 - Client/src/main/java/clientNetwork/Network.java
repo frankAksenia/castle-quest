@@ -9,7 +9,9 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import clientData.EGameMove;
-import clientData.GameMap;
+import clientData.GameDataModel;
+import clientData.GameId;
+import clientData.PlayerId;
 import messagesBase.ResponseEnvelope;
 import messagesBase.messagesFromClient.PlayerHalfMap;
 import messagesBase.messagesFromClient.PlayerMove;
@@ -28,9 +30,9 @@ public class Network {
 	
 	private final String serverBaseUrl = "http://swe1.wst.univie.ac.at:18235";
 	
-	private final String gameId = "4t5Qi"; 
+	private GameId gameId = new GameId("R33W0"); 
 	
-	private String playerID;
+	private PlayerId playerId;
 	
 	public Network() {
 		baseWebClient = WebClient.builder().baseUrl(serverBaseUrl + "/games")
@@ -39,57 +41,53 @@ public class Network {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void registerClient() {
-		
+	public void registerClient() {		
 		PlayerRegistration playerRegistration = converterCS.convertPlayerRegistration("Ksenia", "Frank", "frankk98");
 		
 		@SuppressWarnings("rawtypes")
-		Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + gameId + "/players")
+		Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + gameId.id() + "/players")
 				.body(BodyInserters.fromValue(playerRegistration))
 				.retrieve().bodyToMono(ResponseEnvelope.class);
 
-		this.playerID = converterSC.convertPlayerRegistration(webAccess.block());
+		this.playerId = new PlayerId(converterSC.convertPlayerRegistration(webAccess.block()));
 	}
 	
 	// throws Exception ?
 	@SuppressWarnings("unchecked")
-	public EActionType getStatus(GameMap gameMap) {
+	public EActionType getStatus(GameDataModel gameDataModel) {
 
 		@SuppressWarnings("rawtypes")
 		Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.GET)
-				.uri("/" + gameId + "/states/" + playerID).retrieve().bodyToMono(ResponseEnvelope.class); 																		// by the																							// server
+				.uri("/" + gameId.id() + "/states/" + playerId.id()).retrieve().bodyToMono(ResponseEnvelope.class); 																		// by the																							// server
 
-		EActionType action = converterSC.convertRequestState(webAccess.block(), gameMap);
+		EActionType action = converterSC.convertRequestState(webAccess.block(), gameDataModel);
 		return action;
 	}
 	
-	public void sendMap(GameMap gameMap) {
+	public void sendMap(GameDataModel gameDataModel) {
 				
-		PlayerHalfMap playerMap = converterCS.convertMap(gameMap, playerID);
+		PlayerHalfMap playerMap = converterCS.convertMap(gameDataModel, playerId.id());
 				
 		@SuppressWarnings("rawtypes")
-		Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + gameId + "/halfmaps")
+		Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + gameId.id() + "/halfmaps")
 				.body(BodyInserters.fromValue(playerMap))
 				.retrieve().bodyToMono(ResponseEnvelope.class);
 		
 		logger.debug("Map sent!");
 		
-		gameMap.deleteMap();
+		gameDataModel.deleteMap();
 		
 		converterSC.convertSendingMap(webAccess.block());
 	}
 	
 	public void makeMove(EGameMove moveToSend) {
-		PlayerMove myMove = converterCS.convertPlayerMove(moveToSend, playerID);
+		PlayerMove myMove = converterCS.convertPlayerMove(moveToSend, playerId.id());
 		
 		@SuppressWarnings("rawtypes")
-		Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + gameId + "/moves")
+		Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + gameId.id() + "/moves")
 				.body(BodyInserters.fromValue(myMove))
 				.retrieve().bodyToMono(ResponseEnvelope.class);
 		
 		converterSC.convertSendingMove(webAccess.block());
 	}
-	
-	
-	
 }

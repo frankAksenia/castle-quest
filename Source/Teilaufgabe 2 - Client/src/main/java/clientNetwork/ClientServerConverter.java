@@ -9,7 +9,7 @@ import clientData.EGameMove;
 import clientData.EMapTerrain;
 import clientData.MapField;
 import exceptions.IllegalMoveException;
-import clientData.GameMap;
+import clientData.GameDataModel;
 import messagesBase.messagesFromClient.EMove;
 import messagesBase.messagesFromClient.ETerrain;
 import messagesBase.messagesFromClient.PlayerHalfMap;
@@ -25,7 +25,7 @@ public class ClientServerConverter {
 		return new PlayerRegistration(firstName, lastName, uaccount);
 	}
 	
-	public PlayerHalfMap convertMap(GameMap map, String playerID) {
+	public PlayerHalfMap convertMap(GameDataModel map, String playerID) {
 		
 		Set<PlayerHalfMapNode> allFields = new HashSet<PlayerHalfMapNode>();
 

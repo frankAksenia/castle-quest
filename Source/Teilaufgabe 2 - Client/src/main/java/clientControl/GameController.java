@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import clientData.EGameMove;
-import clientData.GameMap;
+import clientData.GameDataModel;
 import clientLogic.MapGenerator;
 import clientLogic.MoveMaker;
 import clientNetwork.EActionType;
@@ -16,7 +16,7 @@ public class GameController {
 	
 	private static Logger logger = LoggerFactory.getLogger(GameController.class);
 	
-	private GameMap gameMap;
+	private GameDataModel gameDataModel;
 		
 	boolean firstAction = true;
 	
@@ -24,9 +24,9 @@ public class GameController {
 			
 	private Network gameNetwork = new Network();
 	
-	public GameController(GameMap gameMap, CLI cli) {
-		this.gameMap = gameMap;
-		this.gameMap.addPropertyChangeListener(cli);
+	public GameController(GameDataModel gameMap, CLI cli) {
+		this.gameDataModel = gameMap;
+		this.gameDataModel.addPropertyChangeListener(cli);
 	}
 
 	public void startGame() {
@@ -39,7 +39,7 @@ public class GameController {
 		default:
 			break;
 		}
-		this.moveMaker = new MoveMaker(this.gameMap);
+		this.moveMaker = new MoveMaker(this.gameDataModel);
 		this.playGame();
 	}
 	
@@ -58,12 +58,12 @@ public class GameController {
 		}
 		
 		if(firstAction) {
-			this.gameMap.setMapSize();
+			this.gameDataModel.setMapSize();
 			firstAction = false;
 		}
 
-		if(this.gameMap.isFoundTreasure()) {
-			this.gameMap.setEnemyMap();
+		if(this.gameDataModel.isFoundTreasure()) {
+			this.gameDataModel.setEnemyMap();
 		}
 		
 		EGameMove nextMove = moveMaker.makeMove();
@@ -81,15 +81,15 @@ public class GameController {
 			} catch (InterruptedException exception) {
 				logger.error(exception.toString());
 			}
-			action = gameNetwork.getStatus(gameMap);
+			action = gameNetwork.getStatus(gameDataModel);
 		} while (action.equals(EActionType.WAIT));
 		return action;
 	}
 	
 	private void sendMap() {
-		MapGenerator mapGenerator = new MapGenerator(gameMap);
+		MapGenerator mapGenerator = new MapGenerator(gameDataModel);
 		mapGenerator.generateMap();
-		gameNetwork.sendMap(gameMap);
+		gameNetwork.sendMap(gameDataModel);
 	}
 	
 

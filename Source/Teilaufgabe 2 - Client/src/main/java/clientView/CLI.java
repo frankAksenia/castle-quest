@@ -3,14 +3,14 @@ package clientView;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import clientData.GameMap;
+import clientData.GameDataModel;
 import clientData.MapField;
 
 public class CLI implements PropertyChangeListener {
 	
-	GameMap gameMap;
+	GameDataModel gameMap;
 	
-	public CLI(GameMap gameMap) {
+	public CLI(GameDataModel gameMap) {
 		this.gameMap = gameMap;
 	}
 

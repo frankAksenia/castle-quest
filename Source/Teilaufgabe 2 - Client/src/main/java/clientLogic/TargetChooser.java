@@ -1,6 +1,5 @@
 package clientLogic;
 
-import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import clientData.Coordinate;
 import clientData.DistanceComparator;
 import clientData.EMapTerrain;
-import clientData.GameMap;
+import clientData.GameDataModel;
 import clientData.MapField;
 
 // TODO implement Strategy for chooseTarget() ?!
@@ -20,7 +19,7 @@ public class TargetChooser {
 		
 	private static Logger logger = LoggerFactory.getLogger(TargetChooser.class);
 	
-	private GameMap gameMap;
+	private GameDataModel gameMap;
 			
 	private Queue<Coordinate> grassFields;
 						
@@ -30,7 +29,7 @@ public class TargetChooser {
 		this.setGrasFields = setGrasFields;
 	}
 
-	public TargetChooser(GameMap gameMap) {
+	public TargetChooser(GameDataModel gameMap) {
 		this.gameMap = gameMap;
 	}
 	
@@ -67,12 +66,14 @@ public class TargetChooser {
 	}
 	
 	private void setGrassFields() {
+		final int mapWidth = 9;
+		final int mapHeight = 4;
 		for(Entry<Coordinate, MapField> entry: this.gameMap.getGameMap().entrySet())
 			if(entry.getValue().getTerrain() == EMapTerrain.GRASS &&
 			entry.getKey().getX() >= this.gameMap.getMyStartCoordinate().getX() &&
 			entry.getKey().getY() >= this.gameMap.getMyStartCoordinate().getY() &&
-			entry.getKey().getX() <= this.gameMap.getMyEndCoordinate().getX() &&
-			entry.getKey().getY() <= this.gameMap.getMyEndCoordinate().getY() &&
+			entry.getKey().getX() <= this.gameMap.getMyStartCoordinate().getX()+mapWidth &&
+			entry.getKey().getY() <= this.gameMap.getMyStartCoordinate().getY()+mapHeight &&
 			!entry.getKey().equals(this.gameMap.getPlayerPosition()))
 				this.grassFields.add(entry.getKey());
 		logger.debug("Grass filds: {}", this.grassFields.toString());

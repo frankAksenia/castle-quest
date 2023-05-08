@@ -15,39 +15,25 @@ import exceptions.PlayerPositionException;
 
 import java.util.Objects;
 
-public class GameMap {
+public class GameDataModel {
 	
-	private static Logger logger = LoggerFactory.getLogger(GameMap.class);
+	private static Logger logger = LoggerFactory.getLogger(GameDataModel.class);
 
 	private Map<Coordinate, MapField> wholeMap;
 	
 	private Map<Coordinate, MapField> enemyMap;
-
 	
 	private PropertyChangeSupport propertyChangeSupport;
 	
-	private boolean foundTreasure = false;
+	private boolean treasureFound = false;
 
 	private Coordinate myStartCoordinate = new Coordinate();
-	
-	private Coordinate myEndCoordinate = new Coordinate();
-	
-	private Coordinate foundTargetCoordinate = null;
-	
+			
 	private int wholeMapHeight = 0;
 	
 	private int wholeMapWidth = 0;
 
-	public Coordinate getFoundTargetCoordinate() {
-		return foundTargetCoordinate;
-	}
-
-	public void setFoundTargetCoordinate(Coordinate foundTargetCoordinate) {
-		this.foundTargetCoordinate = foundTargetCoordinate;
-	}
-
-	
-	public GameMap() {
+	public GameDataModel() {
 		this.wholeMap = new HashMap<Coordinate, MapField>();
 		this.enemyMap = new HashMap<Coordinate, MapField>();
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
@@ -64,80 +50,64 @@ public class GameMap {
 	// add try catch to calling methods
 	public Coordinate getPlayerPosition() {
 		
-		Coordinate playerPosition = null;
+		Coordinate playerPosition = new Coordinate();
 		
 		for(Entry<Coordinate, MapField> field: this.wholeMap.entrySet()) 
 			if(field.getValue().isMyFigure()) 
 				playerPosition = field.getKey();
 		
-		if(playerPosition == null)
+		if(!this.getGameMap().containsKey(playerPosition))
 			throw new PlayerPositionException("Null exception", "Player figure was not found on the map");
 		else 
 			return playerPosition;
 	}
 	
-	// change return default instead of null...
+	// add check 
 	public Coordinate getCoordinate(int x, int y) {
 		for(Entry<Coordinate, MapField> entry: this.wholeMap.entrySet()) {
 			if(entry.getKey().getX() == x && entry.getKey().getY() == y)
 				return entry.getKey();
 		}
-		return null;
+		return new Coordinate();
 	}
 	
 	public List<Coordinate> getCoordinatesAround(Coordinate coordinate) {
 		List<Coordinate> fieldsAround = new ArrayList<>();
 		
-		Coordinate coordinateDown = this.getCoordinate(coordinate.getX(), coordinate.getY() + 1);
-		if(this.isCoordinateInRange(coordinateDown))
+		final int x = coordinate.getX();
+		final int y = coordinate.getY();
+		
+		Coordinate coordinateDown = this.getCoordinate(x, y+1);
+		if(this.getGameMap().containsKey(coordinateDown))
 			fieldsAround.add(coordinateDown);
 		
-		Coordinate coordinateUp = this.getCoordinate(coordinate.getX(), coordinate.getY() - 1);
-		if(this.isCoordinateInRange(coordinateUp))
+		Coordinate coordinateUp = this.getCoordinate(x, y-1);
+		if(this.getGameMap().containsKey(coordinateUp))
 			fieldsAround.add(coordinateUp);
 		
-		Coordinate coordinateRight = this.getCoordinate(coordinate.getX() + 1, coordinate.getY());
-		if(this.isCoordinateInRange(coordinateRight))
+		Coordinate coordinateRight = this.getCoordinate(x+1, y);
+		if(this.getGameMap().containsKey(coordinateRight))
 			fieldsAround.add(coordinateRight);	
 		
-		Coordinate coordinateLeft = this.getCoordinate(coordinate.getX() - 1, coordinate.getY());
-		if(this.isCoordinateInRange(coordinateLeft))
-			fieldsAround.add(coordinateLeft);		
+		Coordinate coordinateLeft = this.getCoordinate(x-1, y);
+		if(this.getGameMap().containsKey(coordinateLeft))
+			fieldsAround.add(coordinateLeft);	
+		
 		return fieldsAround;
 	}
 	
-	public void updateMap(GameMap oldMap) {
+	public void updateMap(GameDataModel oldMap) {
 		propertyChangeSupport.firePropertyChange("map", oldMap, this.getGameMap());
 	}
 	
 	public void setMyMapCoordinates(int x, int y) {
-		if(x <= 9) {
-			if(y <= 4) {
-				myStartCoordinate = new Coordinate(0,0);
-				myEndCoordinate= new Coordinate(9,4);
-			}
-			else {
-				myStartCoordinate = new Coordinate(0,5);
-				myEndCoordinate = new Coordinate(9,9);
-			}
-		}
-		else {
-			myStartCoordinate = new Coordinate(10,0);
-			myEndCoordinate = new Coordinate(19,4);
-		}
-		logger.debug("START: {}, END: {}", myStartCoordinate.toString(), myEndCoordinate.toString());
+		int startX = x <= 9 ? 0 : 10;
+	    int startY = y <= 4 ? 0 : 5;
+	    myStartCoordinate = new Coordinate(startX, startY);
 	}
 		
 	public Coordinate getMyStartCoordinate() {
 		return this.myStartCoordinate;
-	}
-	
-	public EMapTerrain getNeigbouringTerrain(int x, int y) {
-		return this.getGameMap().get(this.getCoordinate(x, y)).getTerrain();
-	}
-	
-	public Coordinate getMyEndCoordinate() {
-		return this.myEndCoordinate;
 	}
 	
 	public void setMapSize() {
@@ -152,24 +122,34 @@ public class GameMap {
 	}
 	
 	public void setEnemyMap() {
+		final int mapWidth = 9;
+		final int mapHeight = 4;
 		for(Entry<Coordinate,MapField> mapField: this.wholeMap.entrySet()) {
-			if((mapField.getKey().getX() < this.myStartCoordinate.getX() ||
-				mapField.getKey().getX() > this.myEndCoordinate.getX() ||
+			if(mapField.getKey().getX() < this.myStartCoordinate.getX() ||
+				mapField.getKey().getX() > this.myStartCoordinate.getX()+mapWidth ||
 				mapField.getKey().getY() < this.myStartCoordinate.getY() ||
-				mapField.getKey().getY() > this.myEndCoordinate.getY()))
+				mapField.getKey().getY() > this.myStartCoordinate.getY()+mapHeight)
 					this.enemyMap.put(mapField.getKey(), mapField.getValue());
 		}
 		logger.debug("Enemy map: {}", this.enemyMap.toString());
 	}
 	
-	public boolean isFoundTreasure() {
-		return foundTreasure;
-	}
-
-	public void setFoundTreasure(boolean foundTreasure) {
+	public void setTreasureFound(boolean foundTreasure) {
 		if(foundTreasure)
 			logger.debug("TREASURE IS COLLECTED");
-		this.foundTreasure = foundTreasure;
+		this.treasureFound = foundTreasure;
+	}
+	
+	public void deleteMap() { 
+		wholeMap = new HashMap<Coordinate, MapField>();
+	}
+	
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+	
+	public boolean isFoundTreasure() {
+		return treasureFound;
 	}
 	
 	public int getHeight() {
@@ -179,18 +159,6 @@ public class GameMap {
 	public int getWidth() {
 		return wholeMapWidth;
 	}
-
-	public void deleteMap() { 
-		wholeMap = new HashMap<Coordinate, MapField>();
-	}
-	
-	private boolean isCoordinateInRange(Coordinate coordinate) {
-		return coordinate != null;
-	}
-	
-	public void addPropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(listener);
-    }
     
 	@Override
 	public int hashCode() {
@@ -205,7 +173,7 @@ public class GameMap {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GameMap other = (GameMap) obj;
+		GameDataModel other = (GameDataModel) obj;
 		return Objects.equals(wholeMap, other.wholeMap);
 	}
 }

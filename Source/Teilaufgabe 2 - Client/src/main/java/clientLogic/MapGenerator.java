@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import clientData.Coordinate;
 import clientData.EMapTerrain;
-import clientData.GameMap;
+import clientData.GameDataModel;
 import clientData.MapField;
 import clientView.CLI;
 
@@ -16,11 +16,11 @@ public class MapGenerator {
 	
 	private static Logger logger = LoggerFactory.getLogger(MapGenerator.class);
 	
-	private GameMap gameMap;
+	private GameDataModel gameMap;
 	
 	private MapValidator mapValidator;
 
-	public MapGenerator(GameMap gameMap) {
+	public MapGenerator(GameDataModel gameMap) {
 		this.gameMap = gameMap;
 		this.mapValidator = new MapValidator(gameMap);
 	}

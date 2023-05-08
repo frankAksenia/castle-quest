@@ -1,13 +1,13 @@
 package clientControl;
 
-import clientData.GameMap;
+import clientData.GameDataModel;
 import clientView.CLI;
 
 public class MainClient {
 	
 	public static void main(String[] args) {
 		
-		GameMap gameMap = new GameMap();
+		GameDataModel gameMap = new GameDataModel();
 		
 		CLI cli = new CLI(gameMap);
 				
