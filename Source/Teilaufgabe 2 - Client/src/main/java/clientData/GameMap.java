@@ -19,7 +19,10 @@ public class GameMap {
 	
 	private static Logger logger = LoggerFactory.getLogger(GameMap.class);
 
-	private Map<Coordinate, MapField> map;
+	private Map<Coordinate, MapField> wholeMap;
+	
+	private Map<Coordinate, MapField> enemyMap;
+
 	
 	private PropertyChangeSupport propertyChangeSupport;
 	
@@ -28,10 +31,6 @@ public class GameMap {
 	private Coordinate myStartCoordinate = new Coordinate();
 	
 	private Coordinate myEndCoordinate = new Coordinate();
-	
-	private Coordinate enemyStartCoordinate = new Coordinate();
-	
-	private Coordinate enemyEndCoordinate = new Coordinate();
 	
 	private Coordinate foundTargetCoordinate = null;
 	
@@ -49,12 +48,17 @@ public class GameMap {
 
 	
 	public GameMap() {
-		this.map = new HashMap<Coordinate, MapField>();
+		this.wholeMap = new HashMap<Coordinate, MapField>();
+		this.enemyMap = new HashMap<Coordinate, MapField>();
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 	}
 	
 	public Map<Coordinate, MapField> getGameMap() {
-		return this.map;
+		return this.wholeMap;
+	}
+	
+	public Map<Coordinate, MapField> getEnemyMap() {
+		return this.enemyMap;
 	}
 	
 	// add try catch to calling methods
@@ -62,7 +66,7 @@ public class GameMap {
 		
 		Coordinate playerPosition = null;
 		
-		for(Entry<Coordinate, MapField> field: this.map.entrySet()) 
+		for(Entry<Coordinate, MapField> field: this.wholeMap.entrySet()) 
 			if(field.getValue().isMyFigure()) 
 				playerPosition = field.getKey();
 		
@@ -74,7 +78,7 @@ public class GameMap {
 	
 	// change return default instead of null...
 	public Coordinate getCoordinate(int x, int y) {
-		for(Entry<Coordinate, MapField> entry: this.map.entrySet()) {
+		for(Entry<Coordinate, MapField> entry: this.wholeMap.entrySet()) {
 			if(entry.getKey().getX() == x && entry.getKey().getY() == y)
 				return entry.getKey();
 		}
@@ -121,24 +125,7 @@ public class GameMap {
 			myStartCoordinate = new Coordinate(10,0);
 			myEndCoordinate = new Coordinate(19,4);
 		}
-	}
-	
-	public void setEnemyMapCoordinates(int x, int y) {
-		if(x <= 9) {
-			if(y <= 4) {
-				enemyStartCoordinate = new Coordinate(0,0);
-				enemyEndCoordinate= new Coordinate(9,4);
-			}
-			else {
-				enemyStartCoordinate = new Coordinate(0,5);
-				enemyEndCoordinate = new Coordinate(9,9);
-			}
-		}
-		else {
-			enemyStartCoordinate = new Coordinate(10,0);
-			enemyEndCoordinate = new Coordinate(19,4);
-		}
-		logger.debug("Set enemy map coordinated at {} - {}", enemyStartCoordinate.toString(), enemyEndCoordinate.toString());
+		logger.debug("START: {}, END: {}", myStartCoordinate.toString(), myEndCoordinate.toString());
 	}
 		
 	public Coordinate getMyStartCoordinate() {
@@ -153,14 +140,6 @@ public class GameMap {
 		return this.myEndCoordinate;
 	}
 	
-	public Coordinate getEnemyStartCoordinate() {
-		return this.enemyStartCoordinate;
-	}
-	
-	public Coordinate getEnemyEndCoordinate() {
-		return this.enemyEndCoordinate;
-	}
-	
 	public void setMapSize() {
 		for (Coordinate coordinate : this.getGameMap().keySet()) {
 		    if (coordinate.getY() > this.wholeMapHeight) {
@@ -170,6 +149,17 @@ public class GameMap {
 		        this.wholeMapWidth = coordinate.getX();
 		    }
 		}
+	}
+	
+	public void setEnemyMap() {
+		for(Entry<Coordinate,MapField> mapField: this.wholeMap.entrySet()) {
+			if((mapField.getKey().getX() < this.myStartCoordinate.getX() ||
+				mapField.getKey().getX() > this.myEndCoordinate.getX() ||
+				mapField.getKey().getY() < this.myStartCoordinate.getY() ||
+				mapField.getKey().getY() > this.myEndCoordinate.getY()))
+					this.enemyMap.put(mapField.getKey(), mapField.getValue());
+		}
+		logger.debug("Enemy map: {}", this.enemyMap.toString());
 	}
 	
 	public boolean isFoundTreasure() {
@@ -191,7 +181,7 @@ public class GameMap {
 	}
 
 	public void deleteMap() { 
-		map = new HashMap<Coordinate, MapField>();
+		wholeMap = new HashMap<Coordinate, MapField>();
 	}
 	
 	private boolean isCoordinateInRange(Coordinate coordinate) {
@@ -204,7 +194,7 @@ public class GameMap {
     
 	@Override
 	public int hashCode() {
-		return Objects.hash(map);
+		return Objects.hash(wholeMap);
 	}
 
 	@Override
@@ -216,6 +206,6 @@ public class GameMap {
 		if (getClass() != obj.getClass())
 			return false;
 		GameMap other = (GameMap) obj;
-		return Objects.equals(map, other.map);
+		return Objects.equals(wholeMap, other.wholeMap);
 	}
 }

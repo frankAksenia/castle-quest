@@ -34,9 +34,7 @@ public class ServerClientConverter {
 	private String gameStateID = "";
 	
 	private String playerID = "";
-	
-	private int counter = 16;
-	
+		
 	private boolean firstMapResponse = true;
 	
 	public ServerClientConverter() {}
@@ -113,8 +111,6 @@ public class ServerClientConverter {
 				break;
 			case EnemyPlayerPosition: 
 				newField.setEnemyFigure(true); 
-				if(counter-- == 0)
-					myMap.setEnemyMapCoordinates(node.getX(), node.getY());
 				break;
 			}
 			if(node.getTreasureState().equals(ETreasureState.MyTreasureIsPresent)) {

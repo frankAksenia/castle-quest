@@ -25,9 +25,7 @@ public class MoveMaker {
 	private TargetChooser targetChooser;
 	
 	private Coordinate lastTargetCoordinate;
-	
-	private boolean treasureFound = false;
-	
+		
 	private boolean onEnemyMap = false;
 
 	private EGameMove lastMove;
@@ -50,17 +48,6 @@ public class MoveMaker {
 		
 		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(this.gameMap.getPlayerPosition())))
 			return lastMove;
-
-		if(this.gameMap.isFoundTreasure())
-			this.treasureFound = true;
-			
-		if(treasureFound && !onEnemyMap) {
-			logger.debug("TREASURE FOUND");
-			Coordinate enemyMapCoordinate = this.targetChooser.getEnemyMapTargetField();
-			this.breadthFirstSearch(this.gameMap.getPlayerPosition(), enemyMapCoordinate);
-			this.targetChooser.setSetGrasFields(true);
-			onEnemyMap = true;
-		}
 		
 		if(!way.isEmpty()) {
 			logger.debug("Last way in process: {}", this.way.toString());
@@ -78,7 +65,15 @@ public class MoveMaker {
 	}
 	
 	private void findNewTarget() {
-		Coordinate targetCoordinate = this.targetChooser.chooseTarget();
+		Coordinate targetCoordinate = new Coordinate();
+		if(this.gameMap.isFoundTreasure() && !onEnemyMap) {
+			targetCoordinate = this.targetChooser.pickEnemyMapField();
+			this.gameMap.setMyMapCoordinates(targetCoordinate.getX(), targetCoordinate.getY());
+			this.targetChooser.setSetGrasFields(true);
+			onEnemyMap = true;
+		}
+		else
+			targetCoordinate = this.targetChooser.chooseTarget();
 		logger.debug("My new target is: {}", targetCoordinate.toString());
 		breadthFirstSearch(this.gameMap.getPlayerPosition(), targetCoordinate);
 	}
@@ -102,8 +97,10 @@ public class MoveMaker {
 	            		this.gameMap.getGameMap().get(neighbourField).getTerrain() != EMapTerrain.WATER && 
 	            		!visitedFields.contains(neighbourField)) {
 	            	if(this.gameMap.getGameMap().get(currentField).getTerrain() == EMapTerrain.MOUNTAIN) {
+	            		logger.debug("I AM ON A MOUNTAIN!");
 	            		Coordinate possibleTreasure = this.checkTreasureVisibleFromMountain(currentField);
 	            		if(this.gameMap.getGameMap().containsKey(possibleTreasure)) {
+	            			logger.debug("TREASURE IS HERE!");
 	            			this.findWayToTarget(parentField, possibleTreasure);
 	            			return;
 	            		}

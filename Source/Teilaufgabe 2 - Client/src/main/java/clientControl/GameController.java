@@ -21,7 +21,7 @@ public class GameController {
 	boolean firstAction = true;
 	
 	private MoveMaker moveMaker;
-		
+			
 	private Network gameNetwork = new Network();
 	
 	public GameController(GameMap gameMap, CLI cli) {
@@ -43,7 +43,7 @@ public class GameController {
 		this.playGame();
 	}
 	
-	private void playGame() {		
+	private void playGame() {
 		while(true) {
 		EActionType actionType = this.requestStatus();
 		if(actionType.equals(EActionType.WON)) {
@@ -52,20 +52,24 @@ public class GameController {
 		}
 		if(actionType.equals(EActionType.LOST)) {
 			logger.debug("YOU LOST!");
-
 			return;
 		}
-			if(firstAction) {
-				this.gameMap.setMapSize();
-				firstAction = false;
-			}
+		
+		if(firstAction) {
+			this.gameMap.setMapSize();
+			firstAction = false;
+		}
 
-			EGameMove nextMove = moveMaker.makeMove();
+		if(this.gameMap.isFoundTreasure()) {
+			this.gameMap.setEnemyMap();
+		}
+		
+		EGameMove nextMove = moveMaker.makeMove();
 			
-			gameNetwork.makeMove(nextMove);	
+		gameNetwork.makeMove(nextMove);	
 		}
 	}
-	 
+		 
 	// TODO override exception
 	private synchronized EActionType requestStatus() {
 		EActionType action = EActionType.WAIT;

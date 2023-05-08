@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Queue;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,14 +46,20 @@ public class TargetChooser {
 		return target;
 	}
 	
-	public Coordinate getEnemyMapTargetField() {
-		Coordinate enemyMapStartCoordinate = this.gameMap.getEnemyStartCoordinate();
-		Coordinate result = this.gameMap.getCoordinate(enemyMapStartCoordinate.getX(), enemyMapStartCoordinate.getY());
-		while(this.gameMap.getGameMap().get(result).getTerrain() == EMapTerrain.WATER) {
-			result = this.gameMap.getCoordinate(enemyMapStartCoordinate.getX(), enemyMapStartCoordinate.getY()+1);
-		}
-		logger.debug("GOING TO ENEMY MAP");
-		return result;
+	public Coordinate pickEnemyMapField() {
+		Coordinate currentPosition = this.gameMap.getPlayerPosition();
+	    Coordinate closestField = new Coordinate();
+	    int closestFieldDistance = Integer.MAX_VALUE;
+
+	    for (Coordinate coordinate: this.gameMap.getEnemyMap().keySet()) {
+	        int distance = Math.abs(coordinate.getX() - currentPosition.getX()) + Math.abs(coordinate.getY() - currentPosition.getY());
+	        if (distance < closestFieldDistance) {
+	            closestField = coordinate;
+	            closestFieldDistance = distance;
+	        }
+	    }
+
+	    return this.gameMap.getCoordinate(closestField.getX(), closestField.getY());
 	}
 	
 	public void removeFromFieldsToVisit(Collection<Coordinate> visitedCoordinates) {
