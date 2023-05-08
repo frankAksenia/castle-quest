@@ -41,22 +41,25 @@ public class MoveMaker {
 			
 	public EGameMove makeMove() {
 		
-		logger.debug("My position: {}", this.gameMap.getPlayerPosition().toString());
+		Coordinate myPosition = this.gameMap.getPlayerPosition();
+		
+		logger.debug("My position: {}", myPosition.toString());
 
 		if(lastTargetCoordinate != null)
 			logger.debug("Last target coordinate: {}", this.lastTargetCoordinate.toString());
 		
-		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(this.gameMap.getPlayerPosition())))
+		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(myPosition)))
 			return lastMove;
 		
 		if(!way.isEmpty()) {
 			logger.debug("Last way in process: {}", this.way.toString());
 			lastTargetCoordinate = way.pollLast();
 			lastMove = this.getDirection(lastTargetCoordinate);
+			this.targetChooser.removeFromFieldsToVisit(lastTargetCoordinate);
 		}
 		else {
 			logger.debug("Looking for new target....");
-			this.findNewTarget();
+			this.findNewTarget(myPosition);
 			lastTargetCoordinate = way.pollLast();
 			lastMove = this.getDirection(lastTargetCoordinate);
 		}
@@ -64,9 +67,17 @@ public class MoveMaker {
 		return lastMove;
 	}
 	
-	private void findNewTarget() {
+	private void findNewTarget(Coordinate myPosition) {
 		Coordinate targetCoordinate = new Coordinate();
-		if(this.gameMap.isFoundTreasure() && !onEnemyMap) {
+    	if(this.gameMap.getGameMap().get(gameMap.getPlayerPosition()).getTerrain() == EMapTerrain.MOUNTAIN) {
+    		logger.debug("I AM ON A MOUNTAIN!");
+    		Coordinate possibleTreasure = this.checkTreasureVisibleFromMountain(myPosition);
+    		if(this.gameMap.getGameMap().containsKey(possibleTreasure)) {
+    			logger.debug("TREASURE IS HERE!");
+    			targetCoordinate = possibleTreasure;
+    		}
+    	}
+    	else if(this.gameMap.isFoundTreasure() && !onEnemyMap) {
 			targetCoordinate = this.targetChooser.pickEnemyMapField();
 			this.gameMap.setMyMapCoordinates(targetCoordinate.getX(), targetCoordinate.getY());
 			this.targetChooser.setSetGrasFields(true);
@@ -75,7 +86,7 @@ public class MoveMaker {
 		else
 			targetCoordinate = this.targetChooser.chooseTarget();
 		logger.debug("My new target is: {}", targetCoordinate.toString());
-		breadthFirstSearch(this.gameMap.getPlayerPosition(), targetCoordinate);
+		breadthFirstSearch(myPosition, targetCoordinate);
 	}
 	
 	private void breadthFirstSearch(Coordinate startingField, Coordinate targetField) {
@@ -96,16 +107,6 @@ public class MoveMaker {
 	            if(gameMap.getGameMap().containsKey(neighbourField) && 
 	            		this.gameMap.getGameMap().get(neighbourField).getTerrain() != EMapTerrain.WATER && 
 	            		!visitedFields.contains(neighbourField)) {
-	            	if(this.gameMap.getGameMap().get(currentField).getTerrain() == EMapTerrain.MOUNTAIN) {
-	            		logger.debug("I AM ON A MOUNTAIN!");
-	            		Coordinate possibleTreasure = this.checkTreasureVisibleFromMountain(currentField);
-	            		if(this.gameMap.getGameMap().containsKey(possibleTreasure)) {
-	            			logger.debug("TREASURE IS HERE!");
-	            			this.findWayToTarget(parentField, possibleTreasure);
-	            			return;
-	            		}
-	            		else this.targetChooser.removeFromFieldsToVisit(this.gameMap.getCoordinatesAround(currentField));
-	            	}
 	                queue.add(neighbourField);
 	                visitedFields.add(neighbourField);
 	                parentField.put(neighbourField, currentField);
@@ -130,10 +131,12 @@ public class MoveMaker {
 
 	private Coordinate checkTreasureVisibleFromMountain(Coordinate coordinate) {
 		Coordinate result = new Coordinate();
-		for(Coordinate coordinateAround: this.gameMap.getCoordinatesAround(coordinate))
+		for(Coordinate coordinateAround: this.gameMap.getCoordinatesAround(coordinate)) {
 			if(this.gameMap.getGameMap().get(coordinateAround).isMyTreasure()) {
 				result = coordinateAround;
 			}
+			this.targetChooser.removeFromFieldsToVisit(coordinateAround);
+		}
 		return result;
 	}
 	

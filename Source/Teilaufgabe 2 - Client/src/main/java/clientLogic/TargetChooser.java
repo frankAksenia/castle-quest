@@ -62,8 +62,8 @@ public class TargetChooser {
 	    return this.gameMap.getCoordinate(closestField.getX(), closestField.getY());
 	}
 	
-	public void removeFromFieldsToVisit(Collection<Coordinate> visitedCoordinates) {
-		this.grassFields.removeAll(visitedCoordinates);
+	public void removeFromFieldsToVisit(Coordinate visitedCoordinate) {
+		this.grassFields.remove(visitedCoordinate);
 	}
 	
 	private void setGrassFields() {

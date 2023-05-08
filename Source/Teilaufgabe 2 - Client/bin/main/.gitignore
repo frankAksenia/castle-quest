@@ -2,3 +2,6 @@
 /clientControl/
 /clientData/
 /clientLogic/
+/.metadata/
+/clientView/
+/exceptions/

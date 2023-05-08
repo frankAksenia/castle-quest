@@ -48,10 +48,12 @@ public class GameController {
 		EActionType actionType = this.requestStatus();
 		if(actionType.equals(EActionType.WON)) {
 			logger.debug("YOU WON!");
+			System.exit(0);
 			return;
 		}
 		if(actionType.equals(EActionType.LOST)) {
 			logger.debug("YOU LOST!");
+			System.exit(0);
 			return;
 		}
 		
