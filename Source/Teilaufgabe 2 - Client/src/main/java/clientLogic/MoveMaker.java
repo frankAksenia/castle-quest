@@ -22,7 +22,7 @@ public class MoveMaker {
 	
 	private GameDataModel gameMap;
 	
-	private TargetChooser targetChooser;
+	private IChooseTarget targetChooser;
 	
 	private Coordinate lastTargetCoordinate;
 	
@@ -34,17 +34,17 @@ public class MoveMaker {
 	
 	public MoveMaker(GameDataModel gameDataModel) {
 		this.gameMap = gameDataModel;
-		this.targetChooser = new TargetChooser(gameDataModel);
+		this.targetChooser = new ChooseArtefactTarget(gameDataModel);
 	}
 			
 	public EGameMove makeMove() {
 		
 		Coordinate myPosition = this.gameMap.getPlayerPosition();
 		
-		logger.debug("My position: {}", myPosition.toString());
-
-		if(lastTargetCoordinate != null)
-			logger.debug("Last target coordinate: {}", this.lastTargetCoordinate.toString());
+//		logger.debug("My position: {}", myPosition.toString());
+//
+//		if(lastTargetCoordinate != null)
+//			logger.debug("Last target coordinate: {}", this.lastTargetCoordinate.toString());
 		
 		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(myPosition)))
 			return lastMove;
@@ -73,12 +73,15 @@ public class MoveMaker {
     		if(this.gameMap.getGameMap().containsKey(possibleTreasure)) {
     			logger.debug("TREASURE IS HERE!");
     			targetCoordinate = possibleTreasure;
+    			return;
     		}
     	}
-    	else if(this.gameMap.isFoundTreasure() && !onEnemyMap) {
-			targetCoordinate = this.targetChooser.pickEnemyMapField();
+    	
+    	if(this.gameMap.isFoundTreasure() && !onEnemyMap) {
+    		this.targetChooser = new ChooseEnemyFieldTarget(this.gameMap);
+			targetCoordinate = this.targetChooser.chooseTarget();
 			this.gameMap.setMyMapCoordinates(targetCoordinate.getX(), targetCoordinate.getY());
-			this.targetChooser.setSetGrasFields(true);
+			this.targetChooser = new ChooseArtefactTarget(this.gameMap);
 			onEnemyMap = true;
 		}
 		else
@@ -123,7 +126,6 @@ public class MoveMaker {
 	    }
 		logger.debug("Setting a way to a new target: {}", wayToTarget.toString());
 		wayToTarget.pollLast();
-		//this.targetChooser.removeFromFieldsToVisit(wayToTarget);
 	    this.wayToTarget = wayToTarget;
 	}
 

@@ -39,13 +39,16 @@ public class GameController {
 		default:
 			break;
 		}
-		this.moveMaker = new MoveMaker(this.gameDataModel);
-		this.playGame();
+		if(this.requestStatus().equals(EActionType.ACT)) {
+			this.moveMaker = new MoveMaker(this.gameDataModel);
+			this.gameDataModel.setMapSize();
+			this.playGame();
+		}
 	}
 	
 	private void playGame() {
 		while(true) {
-		EActionType actionType = this.requestStatus();
+		EActionType actionType = EActionType.ACT;
 		if(actionType.equals(EActionType.WON)) {
 			logger.debug("YOU WON!");
 			System.exit(0);
@@ -57,11 +60,6 @@ public class GameController {
 			return;
 		}
 		
-		if(firstAction) {
-			this.gameDataModel.setMapSize();
-			firstAction = false;
-		}
-
 		if(this.gameDataModel.isFoundTreasure()) {
 			this.gameDataModel.setEnemyMap();
 		}
@@ -69,6 +67,7 @@ public class GameController {
 		EGameMove nextMove = moveMaker.makeMove();
 			
 		gameNetwork.makeMove(nextMove);	
+		actionType = this.requestStatus();
 		}
 	}
 		 
