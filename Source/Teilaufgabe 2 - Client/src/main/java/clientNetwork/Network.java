@@ -30,7 +30,7 @@ public class Network {
 	
 	private final String serverBaseUrl = "http://swe1.wst.univie.ac.at:18235";
 	
-	private GameId gameId = new GameId("WJwNd"); 
+	private GameId gameId = new GameId("KAwE7"); 
 	
 	private PlayerId playerId;
 	
@@ -49,7 +49,7 @@ public class Network {
 				.body(BodyInserters.fromValue(playerRegistration))
 				.retrieve().bodyToMono(ResponseEnvelope.class);
 
-		this.playerId = new PlayerId(converterSC.convertPlayerRegistration(webAccess.block()));
+		this.playerId = converterSC.convertPlayerRegistration(webAccess.block());
 	}
 	
 	// throws Exception ?
@@ -66,7 +66,7 @@ public class Network {
 	
 	public void sendMap(GameDataModel gameDataModel) {
 				
-		PlayerHalfMap playerMap = converterCS.convertMap(gameDataModel, playerId.id());
+		PlayerHalfMap playerMap = converterCS.convertMap(gameDataModel, playerId);
 				
 		@SuppressWarnings("rawtypes")
 		Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + gameId.id() + "/halfmaps")
@@ -81,7 +81,7 @@ public class Network {
 	}
 	
 	public void makeMove(EGameMove moveToSend) {
-		PlayerMove myMove = converterCS.convertPlayerMove(moveToSend, playerId.id());
+		PlayerMove myMove = converterCS.convertPlayerMove(moveToSend, playerId);
 		
 		@SuppressWarnings("rawtypes")
 		Mono<ResponseEnvelope> webAccess = baseWebClient.method(HttpMethod.POST).uri("/" + gameId.id() + "/moves")

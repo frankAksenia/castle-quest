@@ -18,7 +18,8 @@ public class ChooseEnemyFieldTarget implements IChooseTarget {
 	    Coordinate closestField = new Coordinate();
 	    int closestFieldDistance = Integer.MAX_VALUE;
 
-	    for (Coordinate coordinate: this.gameDataModel.getEnemyMap().keySet()) {
+	    // Choose by Manhattan distance
+	    for(Coordinate coordinate: this.gameDataModel.getEnemyMap().keySet()) {
 	        int distance = Math.abs(coordinate.getX() - currentPosition.getX()) + Math.abs(coordinate.getY() - currentPosition.getY());
 	        if (distance < closestFieldDistance) {
 	            closestField = coordinate;

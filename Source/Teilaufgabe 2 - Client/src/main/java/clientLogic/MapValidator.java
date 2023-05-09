@@ -82,18 +82,18 @@ public class MapValidator {
 		int[] borders = {0,0,0,0}; // Up, Down, Left, Right
 		
 		for(Map.Entry<Coordinate, MapField> entry : gameMap.getGameMap().entrySet()) {
-			if(entry.getKey().getY() == 0 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) {
+			if(entry.getKey().getY() == 0 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
 				++borders[0];
-			}
-			if(entry.getKey().getY() == 4 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) {
+			
+			if(entry.getKey().getY() == 4 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
 				++borders[1];
-			}
-			if(entry.getKey().getX() == 0 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) {
+			
+			if(entry.getKey().getX() == 0 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
 				++borders[2];
-			}
-			if(entry.getKey().getX() == 9 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) {
+			
+			if(entry.getKey().getX() == 9 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
 				++borders[3];
-			}
+			
 		}
 		logger.debug("Upper: {}; Lower: {}; Left: {}; Right: {}", borders[0], borders[1], borders[2], borders[3]);
 		boolean result =  borders[0] >= Math.ceil(Double.valueOf(MAP_SIZE[1])/2) ||
@@ -107,7 +107,6 @@ public class MapValidator {
 		return false;
 	}
 	
-	// TODO: maybe check if coordinates X and Y are correct
 	private boolean validateMapSize() {
 		if(MAP_SIZE[0]*MAP_SIZE[1] != gameMap.getGameMap().size()) {
 			gameMap.deleteMap();

@@ -12,9 +12,7 @@ public enum EMapTerrain {
 	MOUNTAIN (5);
 	
 	private int weight;
-	
-	//EMapTerrain() {};
-     
+	     
 	private EMapTerrain(int weight) {
 		this.weight = weight;
 	}

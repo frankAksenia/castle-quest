@@ -3,6 +3,7 @@ package clientData;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class GameDataModel {
 	}
 	
 	public Map<Coordinate, MapField> getEnemyMap() {
-		return this.enemyMap;
+		return Collections.unmodifiableMap(this.enemyMap);
 	}
 	
 	// add try catch to calling methods
@@ -96,7 +97,7 @@ public class GameDataModel {
 		return fieldsAround;
 	}
 	
-	public void updateMap(GameDataModel oldMap) {
+	public void updateGameDataModel(GameDataModel oldMap) {
 		propertyChangeSupport.firePropertyChange("map", oldMap, this.getGameMap());
 	}
 	

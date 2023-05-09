@@ -11,6 +11,7 @@ import clientData.Coordinate;
 import clientData.EMapTerrain;
 import clientData.GameDataModel;
 import clientData.MapField;
+import clientData.PlayerId;
 import exceptions.PlayerRegistrationException;
 import exceptions.RequestStateException;
 import exceptions.SendingMapException;
@@ -33,29 +34,27 @@ public class ServerClientConverter {
 	
 	private String gameStateID = "";
 	
-	private String playerID = "";
+	private PlayerId playerID;
 		
 	private boolean firstMapResponse = true;
 	
 	public ServerClientConverter() {}
 	
 	
-	public String convertPlayerRegistration(ResponseEnvelope<UniquePlayerIdentifier> response) {
-		
-		// throws NoSuchElementException 
-		this.playerID = response.getData().get().getUniquePlayerID();
+	public PlayerId convertPlayerRegistration(ResponseEnvelope<UniquePlayerIdentifier> response) {
+		playerID = new PlayerId(response.getData().get().getUniquePlayerID());
 		
 		if (response.getState() == ERequestState.Error) 
 			registrationException(response.getExceptionName(), response.getExceptionMessage(), playerID);
 		else 
-			logger.debug("Player with ID {} registered successfully.", playerID);
+			logger.info("Player with ID {} registered successfully.", playerID);
 		
 		return playerID;
 	}
 	
 	public EActionType convertRequestState(ResponseEnvelope<GameState> response, GameDataModel gameMap) {
 		
-		EActionType actionType = EActionType.WAIT; // default state to return
+		EActionType actionType = EActionType.WAIT; 
 		if(response.getState() == ERequestState.Error) {
 			requestStateException(response.getExceptionName(), response.getExceptionMessage());
 		} else {
@@ -64,11 +63,10 @@ public class ServerClientConverter {
 				this.gameStateID = gameStateID;
 				actionType = this.updatePlayersState(response.getData().orElseThrow().getPlayers(), gameMap);
 				try {
-				if(response.getData().get().getMap().isPresent()) {
-					this.convertGameMap(response.getData().get().getMap().get(), gameMap);
-				}
-				}catch(NoSuchElementException ex) {
-					ex.toString();
+					if(response.getData().get().getMap().isPresent()) 
+						this.convertGameMap(response.getData().get().getMap().get(), gameMap);
+				}catch(NoSuchElementException exception) {
+					exception.printStackTrace();
 				}		
 			}
 		}
@@ -122,7 +120,7 @@ public class ServerClientConverter {
 				logger.debug("ENEMY FORT WAS FOUND ON {} {}", node.getX(), node.getY());
 			}
 		}
-		myMap.updateMap(old);
+		myMap.updateGameDataModel(old);
 	}
 	
 	public void convertSendingMove(@SuppressWarnings("rawtypes") ResponseEnvelope response) {
@@ -154,14 +152,14 @@ public class ServerClientConverter {
 	private EActionType updatePlayersState(Set<PlayerState> players, GameDataModel gameMap) {
 		EActionType result = EActionType.WAIT;
 		for(PlayerState player: players) 
-			if(player.getUniquePlayerID().equals(this.playerID)) {
+			if(player.getUniquePlayerID().equals(this.playerID.id())) {
 				result = this.convertEPlayerGameState(player.getState());	
 				gameMap.setTreasureFound(player.hasCollectedTreasure());
 			}
 		return result;
 	}
 	
-	public static void registrationException(String exceptionName, String exceptionMessage, String playerID) {
+	public static void registrationException(String exceptionName, String exceptionMessage, PlayerId playerID) {
 		throw new PlayerRegistrationException(exceptionName, exceptionMessage, playerID);
 	}
 	
@@ -169,7 +167,7 @@ public class ServerClientConverter {
 		throw new RequestStateException(exceptionName, exceptionMessage);
 	}
 	
-	public static void sendingMapException(String exceptionName, String exceptionMessage, String playerID) {
+	public static void sendingMapException(String exceptionName, String exceptionMessage, PlayerId playerID) {
 		throw new SendingMapException(exceptionName, exceptionMessage, playerID);
 	}
 

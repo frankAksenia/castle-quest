@@ -47,19 +47,16 @@ public class GameController {
 		EActionType actionType = EActionType.ACT;
 		while(true) {
 			if(actionType.equals(EActionType.WON)) {
-				logger.debug("YOU WON!");
+				logger.info("YOU WON!");
 				System.exit(0);
-				return;
 			}
 			if(actionType.equals(EActionType.LOST)) {
-				logger.debug("YOU LOST!");
+				logger.info("YOU LOST!");
 				System.exit(0);
-				return;
 			}
-			
-			if(this.gameDataModel.isFoundTreasure()) {
+			// TODO need to call this only once
+			if(this.gameDataModel.isFoundTreasure()) 
 				this.gameDataModel.setEnemyMap();
-			}
 			
 			EGameMove nextMove = moveMaker.makeMove();
 				
@@ -68,14 +65,13 @@ public class GameController {
 		}
 	}
 		 
-	// TODO override exception
 	private synchronized EActionType requestGameStatus() {
 		EActionType action = EActionType.WAIT;
 		do {
 			try {
 				wait(4000);
 			} catch (InterruptedException exception) {
-				logger.error(exception.toString());
+				exception.printStackTrace();
 			}
 			action = gameNetwork.getStatus(gameDataModel);
 		} while (action.equals(EActionType.WAIT));

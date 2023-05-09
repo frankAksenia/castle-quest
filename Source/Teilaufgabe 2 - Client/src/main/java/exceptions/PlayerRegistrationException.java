@@ -1,17 +1,19 @@
 package exceptions;
 
+import clientData.PlayerId;
+
 public class PlayerRegistrationException extends NetworkException {
 
 	private static final long serialVersionUID = 1L;
 	
-	private final String playerID;
+	private final PlayerId playerID;
 	
-	public PlayerRegistrationException(String exceptionName, String exceptionMessage, String playerID) {
+	public PlayerRegistrationException(String exceptionName, String exceptionMessage, PlayerId playerID) {
 		super(exceptionName, exceptionMessage);
 		this.playerID = playerID;
 	}
 	
-	public String getPlayerID() {
+	public PlayerId getPlayerID() {
 		return this.playerID;
 	}
 
