@@ -25,18 +25,16 @@ public class MoveMaker {
 	private TargetChooser targetChooser;
 	
 	private Coordinate lastTargetCoordinate;
+	
+	private EGameMove lastMove;
 		
 	private boolean onEnemyMap = false;
-
-	private EGameMove lastMove;
+				
+	private ArrayDeque<Coordinate> wayToTarget = new ArrayDeque<Coordinate>();	
 	
-	boolean goToEnemyMap = false;
-			
-	private ArrayDeque<Coordinate> way = new ArrayDeque<Coordinate>();	
-	
-	public MoveMaker(GameDataModel gameMap) {
-		this.gameMap = gameMap;
-		this.targetChooser = new TargetChooser(gameMap);
+	public MoveMaker(GameDataModel gameDataModel) {
+		this.gameMap = gameDataModel;
+		this.targetChooser = new TargetChooser(gameDataModel);
 	}
 			
 	public EGameMove makeMove() {
@@ -51,16 +49,16 @@ public class MoveMaker {
 		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(myPosition)))
 			return lastMove;
 		
-		if(!way.isEmpty()) {
-			logger.debug("Last way in process: {}", this.way.toString());
-			lastTargetCoordinate = way.pollLast();
+		if(!wayToTarget.isEmpty()) {
+			logger.debug("Last way in process: {}", this.wayToTarget.toString());
+			lastTargetCoordinate = wayToTarget.pollLast();
 			lastMove = this.getDirection(lastTargetCoordinate);
 			this.targetChooser.removeFromFieldsToVisit(lastTargetCoordinate);
 		}
 		else {
 			logger.debug("Looking for new target....");
 			this.findNewTarget(myPosition);
-			lastTargetCoordinate = way.pollLast();
+			lastTargetCoordinate = wayToTarget.pollLast();
 			lastMove = this.getDirection(lastTargetCoordinate);
 		}
 		logger.debug("Target coordinate: {}, Move: {}", lastTargetCoordinate.toString(), lastMove.toString());
@@ -126,7 +124,7 @@ public class MoveMaker {
 		logger.debug("Setting a way to a new target: {}", wayToTarget.toString());
 		wayToTarget.pollLast();
 		//this.targetChooser.removeFromFieldsToVisit(wayToTarget);
-	    this.way = wayToTarget;
+	    this.wayToTarget = wayToTarget;
 	}
 
 	private Coordinate checkTreasureVisibleFromMountain(Coordinate coordinate) {
