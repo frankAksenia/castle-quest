@@ -3,7 +3,7 @@ package clientLogic;
 import clientData.Coordinate;
 import clientData.GameDataModel;
 
-//Strategy Pattern: SecondConcreteStrateg
+//Strategy Pattern: SecondConcreteStrategy
 public class ChooseEnemyFieldTarget implements IChooseTarget {
 		
 	private GameDataModel gameDataModel;
