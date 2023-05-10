@@ -4,5 +4,6 @@ public enum EActionType {
 	WAIT,
 	ACT,
 	WON,
-	LOST
+	LOST,
+	DEFAULT;
 }

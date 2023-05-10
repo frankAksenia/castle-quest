@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import clientNetwork.EActionType;
 import exceptions.PlayerPositionException;
 
 import java.util.Objects;
@@ -27,12 +28,14 @@ public class GameDataModel {
 	private PropertyChangeSupport propertyChangeSupport;
 	
 	private boolean treasureFound = false;
+	
+	private boolean enemyTreasureFound = false;
 
 	private Coordinate myStartCoordinate = new Coordinate();
 			
-	private int wholeMapHeight = 0;
+	private int wholeMapHeight = -1;
 	
-	private int wholeMapWidth = 0;
+	private int wholeMapWidth = -1;
 
 	public GameDataModel() {
 		this.wholeMap = new HashMap<Coordinate, MapField>();
@@ -97,8 +100,12 @@ public class GameDataModel {
 		return fieldsAround;
 	}
 	
-	public void updateGameDataModel(GameDataModel oldMap) {
-		propertyChangeSupport.firePropertyChange("map", oldMap, this.getGameMap());
+	public void updateGameMap(GameDataModel oldMap) {
+		propertyChangeSupport.firePropertyChange("Map update", oldMap, this.getGameMap());
+	}
+	
+	public void updateGameState(EActionType actionType) {
+		propertyChangeSupport.firePropertyChange("State update", EActionType.DEFAULT, actionType);
 	}
 	
 	public void setMyMapCoordinates(int x, int y) {
@@ -153,6 +160,14 @@ public class GameDataModel {
 		return treasureFound;
 	}
 	
+	public boolean isEnemyTreasureFound() {
+		return enemyTreasureFound;
+	}
+
+	public void setEnemyTreasureFound(boolean enemyTreasureFound) {
+		this.enemyTreasureFound = enemyTreasureFound;
+	}
+
 	public int getHeight() {
 		return wholeMapHeight;
 	}

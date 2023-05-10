@@ -45,10 +45,10 @@ public class MoveMaker {
 		}
 		
     	if(this.gamDataModel.getGameMap().get(gamDataModel.getPlayerPosition()).getTerrain() == EMapTerrain.MOUNTAIN) {
-    		logger.debug("I AM ON A MOUNTAIN!");
+    		logger.error("I AM ON A MOUNTAIN!");
     		Coordinate possibleArtefact = this.checkArtefaktVisibleFromMountain(currentPosition);
     		if(this.gamDataModel.getGameMap().containsKey(possibleArtefact)) {
-    			logger.debug("TREASURE OR FORT HERE");
+    			logger.error("TREASURE OR FORT HERE");
     			lastTargetCoordinate = possibleArtefact;
     			this.wayToTarget.clear();
     			this.breadthFirstSearch(currentPosition, possibleArtefact);
@@ -125,6 +125,7 @@ public class MoveMaker {
 		for(Coordinate coordinateAround: this.gamDataModel.getCoordinatesAround(coordinate)) {
 			if(this.gamDataModel.getGameMap().get(coordinateAround).isMyTreasure() ||
 					this.gamDataModel.getGameMap().get(coordinateAround).isEnemyFort()) {
+				logger.error("mustttt be herererere");
 				result = coordinateAround;
 			}
 			this.targetChooser.removeFromFieldsToVisit(coordinateAround);

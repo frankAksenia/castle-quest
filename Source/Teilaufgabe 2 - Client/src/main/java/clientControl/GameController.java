@@ -18,12 +18,15 @@ public class GameController {
 	private GameDataModel gameDataModel;
 			
 	private MoveMaker moveMaker;
+	
+	private CLI cli;
 			
 	private Network gameNetwork = new Network();
 	
 	public GameController(GameDataModel gameDataModel, CLI cli) {
 		this.gameDataModel = gameDataModel;
-		this.gameDataModel.addPropertyChangeListener(cli);
+		this.cli = cli;
+		this.cli.printGameWelcoming();
 	}
 
 	public void startGame() {
@@ -39,6 +42,7 @@ public class GameController {
 		if(this.requestGameStatus().equals(EActionType.ACT)) {
 			this.moveMaker = new MoveMaker(this.gameDataModel);
 			this.gameDataModel.setMapSize();
+			this.gameDataModel.addPropertyChangeListener(cli);
 		}
 		this.playGame();
 	}

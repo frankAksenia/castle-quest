@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 
 import clientData.GameDataModel;
 import clientData.MapField;
+import clientNetwork.EActionType;
 
 public class CLI implements PropertyChangeListener {
 	
@@ -13,18 +14,27 @@ public class CLI implements PropertyChangeListener {
 	public CLI(GameDataModel gameDataModel) {
 		this.gameDataModel = gameDataModel;
 	}
+	
+	public void printGameWelcoming() {
+		System.out.println("\n Welcome to the game! \n Your player: 1 \n Enemy player: 2 \n "
+				+ "Grass: * \n Water: ~ \n Mountain: ^ \n Your fort: & \n Enemy fort: # \n Treasure: $ \n"
+				+ " Enjoy the game and good luck!");
+	}
 
-	public void printMap() {
+	private void printGameMap() {
 		
 		System.out.println("-------------------------------------------------------------------");
 		
-		System.out.println("Treasure found: " + 
-		this.gameDataModel.isFoundTreasure());
+		if(this.gameDataModel.getGameMap().containsKey(this.gameDataModel.getPlayerPosition())) 
+			System.out.println(" Current terrain: " + 
+			this.gameDataModel.getGameMap().get(this.gameDataModel.getPlayerPosition()).getTerrain().toString());
 		
-//		if(this.gameDataModel.getGameMap().containsKey(this.gameDataModel.getPlayerPosition())) 
-//			System.out.println("Current terrain: " + 
-//			this.gameDataModel.getGameMap().get(this.gameDataModel.getPlayerPosition()).getTerrain().toString());
-			
+		System.out.println("\n My treasure found: " + this.gameDataModel.isFoundTreasure());
+		System.out.println("\n Enemy treasure found: " + this.gameDataModel.isEnemyTreasureFound());
+
+		
+		System.out.println("");
+		
 		for(int y = 0; y <= gameDataModel.getHeight(); y++) {
 			for(int x = 0; x <= gameDataModel.getWidth(); x++) {
 				MapField currentField = gameDataModel.getGameMap().get(gameDataModel.getCoordinate(x, y));
@@ -46,14 +56,30 @@ public class CLI implements PropertyChangeListener {
 							case GRASS: System.out.print(" * "); break;
 						}
 					}
+					if(currentField.isMyFort())
+						System.out.print(" & ");
 				}
 			}
 			System.out.println(" ");
 		}
 	}
+	
+	private void printState(EActionType actionType) {
+		System.out.println(" Current game state: " + actionType.toString());
+	}
+	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		this.printMap();
+		if(evt.getPropertyName().equals("State update")) {
+			EActionType actionType = (EActionType) evt.getNewValue();
+			this.printState(actionType);
+			if(actionType.equals(EActionType.LOST)) {
+				System.out.println(" GAME OVER! ");
+					return;
+			}
+		}
+		if(evt.getPropertyName().equals("Map update"))
+			this.printGameMap();
 	}
 	
 }

@@ -52,7 +52,7 @@ public class ServerClientConverter {
 		return playerID;
 	}
 	
-	public EActionType convertRequestState(ResponseEnvelope<GameState> response, GameDataModel gameMap) {
+	public EActionType convertRequestState(ResponseEnvelope<GameState> response, GameDataModel gameDataModel) {
 		
 		EActionType actionType = EActionType.WAIT; 
 		if(response.getState() == ERequestState.Error) {
@@ -61,10 +61,11 @@ public class ServerClientConverter {
 			String gameStateID = response.getData().get().getGameStateId();
 			if(this.gameStateID.isEmpty() || !this.gameStateID.equals(gameStateID)) {
 				this.gameStateID = gameStateID;
-				actionType = this.updatePlayersState(response.getData().orElseThrow().getPlayers(), gameMap);
+				actionType = this.updatePlayersState(response.getData().orElseThrow().getPlayers(), gameDataModel);
+				gameDataModel.updateGameState(actionType);
 				try {
 					if(response.getData().get().getMap().isPresent()) 
-						this.convertGameMap(response.getData().get().getMap().get(), gameMap);
+						this.convertGameMap(response.getData().get().getMap().get(), gameDataModel);
 				}catch(NoSuchElementException exception) {
 					exception.printStackTrace();
 				}		
@@ -115,12 +116,14 @@ public class ServerClientConverter {
 				newField.setMyTreasure(true);
 				logger.debug("MY TREASURE FOUND ON {} {}", node.getX(), node.getY());
 			}
+			else
+				newField.setMyTreasure(false);
 			if(node.getFortState().equals(EFortState.EnemyFortPresent)) {
 				newField.setEnemyFort(true);
 				logger.debug("ENEMY FORT WAS FOUND ON {} {}", node.getX(), node.getY());
 			}
 		}
-		myMap.updateGameDataModel(old);
+		myMap.updateGameMap(old);
 	}
 	
 	public void convertSendingMove(@SuppressWarnings("rawtypes") ResponseEnvelope response) {
@@ -128,13 +131,15 @@ public class ServerClientConverter {
 			sendingMoveExcpetion(response.getExceptionName(), response.getExceptionMessage());
 	}
 	
-	private EActionType updatePlayersState(Set<PlayerState> players, GameDataModel gameMap) {
+	private EActionType updatePlayersState(Set<PlayerState> players, GameDataModel gameDataModel) {
 		EActionType result = EActionType.WAIT;
 		for(PlayerState player: players) 
 			if(player.getUniquePlayerID().equals(this.playerID.id())) {
-				result = this.convertEPlayerGameState(player.getState());	
-				gameMap.setTreasureFound(player.hasCollectedTreasure());
+				result = this.convertEPlayerGameState(player.getState());
+				gameDataModel.setTreasureFound(player.hasCollectedTreasure());
 			}
+			else
+				gameDataModel.setEnemyTreasureFound(player.hasCollectedTreasure());
 		return result;
 	}
 
