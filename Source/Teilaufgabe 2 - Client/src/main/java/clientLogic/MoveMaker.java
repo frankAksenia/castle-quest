@@ -20,68 +20,62 @@ public class MoveMaker {
 		
 	private static Logger logger = LoggerFactory.getLogger(MoveMaker.class);
 	
-	private GameDataModel gameMap;
+	private GameDataModel gamDataModel;
 	
 	private IChooseTarget targetChooser;
 	
 	private Coordinate lastTargetCoordinate;
-	
-	private EGameMove lastMove;
-		
+			
 	private boolean onEnemyMap = false;
 				
 	private ArrayDeque<Coordinate> wayToTarget = new ArrayDeque<Coordinate>();	
 	
 	public MoveMaker(GameDataModel gameDataModel) {
-		this.gameMap = gameDataModel;
+		this.gamDataModel = gameDataModel;
 		this.targetChooser = new ChooseArtefactTarget(gameDataModel);
 	}
 			
-	public EGameMove makeMove() {
+	public EGameMove makeNextMove() {
 		
-		Coordinate myPosition = this.gameMap.getPlayerPosition();
+		Coordinate currentPosition = this.gamDataModel.getPlayerPosition();
 		
-//		logger.debug("My position: {}", myPosition.toString());
-//
-//		if(lastTargetCoordinate != null)
-//			logger.debug("Last target coordinate: {}", this.lastTargetCoordinate.toString());
+		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(currentPosition))) {
+			logger.debug("RETURNED LAST MOVE");
+			return this.getMoveDirection(lastTargetCoordinate);
+		}
 		
-		if(!(lastTargetCoordinate == null) && !(lastTargetCoordinate.equals(myPosition)))
-			return lastMove;
+    	if(this.gamDataModel.getGameMap().get(gamDataModel.getPlayerPosition()).getTerrain() == EMapTerrain.MOUNTAIN) {
+    		logger.debug("I AM ON A MOUNTAIN!");
+    		Coordinate possibleArtefact = this.checkArtefaktVisibleFromMountain(currentPosition);
+    		if(this.gamDataModel.getGameMap().containsKey(possibleArtefact)) {
+    			logger.debug("TREASURE OR FORT HERE");
+    			lastTargetCoordinate = possibleArtefact;
+    			this.wayToTarget.clear();
+    			this.breadthFirstSearch(currentPosition, possibleArtefact);
+    		}
+    	}
 		
 		if(!wayToTarget.isEmpty()) {
 			logger.debug("Last way in process: {}", this.wayToTarget.toString());
 			lastTargetCoordinate = wayToTarget.pollLast();
-			lastMove = this.getDirection(lastTargetCoordinate);
 			this.targetChooser.removeFromFieldsToVisit(lastTargetCoordinate);
 		}
 		else {
-			logger.debug("Looking for new target....");
-			this.findNewTarget(myPosition);
+			this.findNewTarget(currentPosition);
 			lastTargetCoordinate = wayToTarget.pollLast();
-			lastMove = this.getDirection(lastTargetCoordinate);
 		}
-		logger.debug("Target coordinate: {}, Move: {}", lastTargetCoordinate.toString(), lastMove.toString());
-		return lastMove;
+		logger.debug("Target coordinate: {}", lastTargetCoordinate.toString());
+		return this.getMoveDirection(lastTargetCoordinate);
 	}
 	
 	private void findNewTarget(Coordinate myPosition) {
 		Coordinate targetCoordinate = new Coordinate();
-    	if(this.gameMap.getGameMap().get(gameMap.getPlayerPosition()).getTerrain() == EMapTerrain.MOUNTAIN) {
-    		logger.debug("I AM ON A MOUNTAIN!");
-    		Coordinate possibleTreasure = this.checkTreasureVisibleFromMountain(myPosition);
-    		if(this.gameMap.getGameMap().containsKey(possibleTreasure)) {
-    			logger.debug("TREASURE IS HERE!");
-    			targetCoordinate = possibleTreasure;
-    			return;
-    		}
-    	}
     	
-    	if(this.gameMap.isFoundTreasure() && !onEnemyMap) {
-    		this.targetChooser = new ChooseEnemyFieldTarget(this.gameMap);
+    	if(this.gamDataModel.isFoundTreasure() && !onEnemyMap) {
+    		this.targetChooser = new ChooseEnemyFieldTarget(this.gamDataModel);
 			targetCoordinate = this.targetChooser.chooseTarget();
-			this.gameMap.setMyMapCoordinates(targetCoordinate.getX(), targetCoordinate.getY());
-			this.targetChooser = new ChooseArtefactTarget(this.gameMap);
+			this.gamDataModel.setMyMapCoordinates(targetCoordinate.getX(), targetCoordinate.getY());
+			this.targetChooser = new ChooseArtefactTarget(this.gamDataModel);
 			onEnemyMap = true;
 		}
 		else
@@ -100,13 +94,12 @@ public class MoveMaker {
 
 	    while(!queue.isEmpty()) {
 	        Coordinate currentField = queue.poll();
-
 	        if(currentField.equals(targetField)) 
 	            findWayToTarget(parentField, currentField);
 	        
-	        for(Coordinate neighbourField: this.gameMap.getCoordinatesAround(currentField)) {
-	            if(gameMap.getGameMap().containsKey(neighbourField) && 
-	            		this.gameMap.getGameMap().get(neighbourField).getTerrain() != EMapTerrain.WATER && 
+	        for(Coordinate neighbourField: this.gamDataModel.getCoordinatesAround(currentField)) {
+	            if(gamDataModel.getGameMap().containsKey(neighbourField) && 
+	            		this.gamDataModel.getGameMap().get(neighbourField).getTerrain() != EMapTerrain.WATER && 
 	            		!visitedFields.contains(neighbourField)) {
 	                queue.add(neighbourField);
 	                visitedFields.add(neighbourField);
@@ -117,22 +110,21 @@ public class MoveMaker {
 	}
 
 	private void findWayToTarget(Map<Coordinate, Coordinate> parentField, Coordinate targetField) {
-	    ArrayDeque<Coordinate> wayToTarget = new ArrayDeque<>();
 	    wayToTarget.add(targetField);
 	    while(parentField.containsKey(targetField)) {
-	    	if(this.gameMap.getGameMap().get(targetField).getTerrain() != EMapTerrain.WATER)
+	    	if(this.gamDataModel.getGameMap().get(targetField).getTerrain() != EMapTerrain.WATER)
 	        targetField = parentField.get(targetField);
-	        wayToTarget.add(targetField);
+	        this.wayToTarget.add(targetField);
 	    }
 		logger.debug("Setting a way to a new target: {}", wayToTarget.toString());
-		wayToTarget.pollLast();
-	    this.wayToTarget = wayToTarget;
+		this.wayToTarget.pollLast();
 	}
 
-	private Coordinate checkTreasureVisibleFromMountain(Coordinate coordinate) {
+	private Coordinate checkArtefaktVisibleFromMountain(Coordinate coordinate) {
 		Coordinate result = new Coordinate();
-		for(Coordinate coordinateAround: this.gameMap.getCoordinatesAround(coordinate)) {
-			if(this.gameMap.getGameMap().get(coordinateAround).isMyTreasure()) {
+		for(Coordinate coordinateAround: this.gamDataModel.getCoordinatesAround(coordinate)) {
+			if(this.gamDataModel.getGameMap().get(coordinateAround).isMyTreasure() ||
+					this.gamDataModel.getGameMap().get(coordinateAround).isEnemyFort()) {
 				result = coordinateAround;
 			}
 			this.targetChooser.removeFromFieldsToVisit(coordinateAround);
@@ -140,25 +132,20 @@ public class MoveMaker {
 		return result;
 	}
 	
-	private EGameMove getDirection(Coordinate nextMove) {
-		
-		Coordinate playerPosition = this.gameMap.getPlayerPosition();
+	private EGameMove getMoveDirection(Coordinate nextMove) {
+		Coordinate playerPosition = this.gamDataModel.getPlayerPosition();
 		
 		if(nextMove.getX() < playerPosition.getX()) 
-			if(this.gameMap.getGameMap().get(this.gameMap.getCoordinate(playerPosition.getX()-1, playerPosition.getY())).getTerrain() != EMapTerrain.WATER)
-				return EGameMove.LEFT;
+			return EGameMove.LEFT;
 		
 		if(nextMove.getX() > playerPosition.getX()) 
-			if(this.gameMap.getGameMap().get(this.gameMap.getCoordinate(playerPosition.getX()+1, playerPosition.getY())).getTerrain() != EMapTerrain.WATER)
-				return EGameMove.RIGHT;
+			return EGameMove.RIGHT;
 		
 		if(nextMove.getY() < playerPosition.getY()) 
-			if(this.gameMap.getGameMap().get(this.gameMap.getCoordinate(playerPosition.getX(), playerPosition.getY()-1)).getTerrain() != EMapTerrain.WATER)
-				return EGameMove.UP;
+			return EGameMove.UP;
 	
 		if(nextMove.getY() > playerPosition.getY()) 
-			if(this.gameMap.getGameMap().get(this.gameMap.getCoordinate(playerPosition.getX(), playerPosition.getY()+1)).getTerrain() != EMapTerrain.WATER)
-				return EGameMove.DOWN;
+			return EGameMove.DOWN;
 		
 		return EGameMove.DEFAULT;
 	}

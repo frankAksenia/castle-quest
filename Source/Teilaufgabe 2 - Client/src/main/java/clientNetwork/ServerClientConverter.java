@@ -127,6 +127,16 @@ public class ServerClientConverter {
 		if(response.getState() == ERequestState.Error)
 			sendingMoveExcpetion(response.getExceptionName(), response.getExceptionMessage());
 	}
+	
+	private EActionType updatePlayersState(Set<PlayerState> players, GameDataModel gameMap) {
+		EActionType result = EActionType.WAIT;
+		for(PlayerState player: players) 
+			if(player.getUniquePlayerID().equals(this.playerID.id())) {
+				result = this.convertEPlayerGameState(player.getState());	
+				gameMap.setTreasureFound(player.hasCollectedTreasure());
+			}
+		return result;
+	}
 
 	private EActionType convertEPlayerGameState(EPlayerGameState playerState) {
 		EActionType actionType = EActionType.WAIT;
@@ -147,16 +157,6 @@ public class ServerClientConverter {
 		case Mountain : serverTerrain = EMapTerrain.MOUNTAIN; break;
 		}
 		return serverTerrain; 
-	}
-	
-	private EActionType updatePlayersState(Set<PlayerState> players, GameDataModel gameMap) {
-		EActionType result = EActionType.WAIT;
-		for(PlayerState player: players) 
-			if(player.getUniquePlayerID().equals(this.playerID.id())) {
-				result = this.convertEPlayerGameState(player.getState());	
-				gameMap.setTreasureFound(player.hasCollectedTreasure());
-			}
-		return result;
 	}
 	
 	public static void registrationException(String exceptionName, String exceptionMessage, PlayerId playerID) {

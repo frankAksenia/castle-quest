@@ -15,14 +15,15 @@ public class CLI implements PropertyChangeListener {
 	}
 
 	public void printMap() {
+		
 		for(int y = 0; y <= gameMap.getHeight(); y++) {
 			for(int x = 0; x <= gameMap.getWidth(); x++) {
 				MapField currentField = gameMap.getGameMap().get(gameMap.getCoordinate(x, y));
 				if(currentField != null) {
-					if(currentField.isMyFort())
-						System.out.print(" 1# ");
-					else if(currentField.isEnemyFort())
-						System.out.print(" 2# ");
+					if(currentField.isEnemyFort())
+						System.out.print(" # ");
+					else if(currentField.isMyFigure() && currentField.isEnemyFigure())
+						System.out.print(" 12 ");
 					else if(currentField.isMyFigure())
 						System.out.print(" 1 ");
 					else if(currentField.isEnemyFigure())

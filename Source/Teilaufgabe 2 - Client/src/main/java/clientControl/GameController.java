@@ -58,7 +58,7 @@ public class GameController {
 			if(this.gameDataModel.isFoundTreasure()) 
 				this.gameDataModel.setEnemyMap();
 			
-			EGameMove nextMove = moveMaker.makeMove();
+			EGameMove nextMove = moveMaker.makeNextMove();
 				
 			gameNetwork.makeMove(nextMove);	
 			actionType = this.requestGameStatus();
