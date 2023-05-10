@@ -21,9 +21,10 @@ public class GameController {
 	
 	private CLI cli;
 			
-	private Network gameNetwork = new Network();
+	private Network gameNetwork;
 	
-	public GameController(GameDataModel gameDataModel, CLI cli) {
+	public GameController(GameDataModel gameDataModel, CLI cli, Network gameNetwork) {
+		this.gameNetwork = gameNetwork;
 		this.gameDataModel = gameDataModel;
 		this.cli = cli;
 		this.cli.printGameWelcoming();

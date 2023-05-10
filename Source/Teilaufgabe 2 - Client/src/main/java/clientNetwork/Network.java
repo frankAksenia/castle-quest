@@ -12,6 +12,7 @@ import clientData.EGameMove;
 import clientData.GameDataModel;
 import clientData.GameId;
 import clientData.PlayerId;
+import clientData.URL;
 import messagesBase.ResponseEnvelope;
 import messagesBase.messagesFromClient.PlayerHalfMap;
 import messagesBase.messagesFromClient.PlayerMove;
@@ -28,14 +29,22 @@ public class Network {
 	
 	private ServerClientConverter converterSC = new ServerClientConverter();
 	
-	private final String serverBaseUrl = "http://swe1.wst.univie.ac.at:18235";
+	private URL serverBaseUrl = new URL("http://swe1.wst.univie.ac.at:18235");
 	
-	private GameId gameId = new GameId("wsAAz"); 
+	private GameId gameId = new GameId("00kxH"); 
 	
 	private PlayerId playerId;
 	
 	public Network() {
-		baseWebClient = WebClient.builder().baseUrl(serverBaseUrl + "/games")
+		baseWebClient = WebClient.builder().baseUrl(serverBaseUrl.url() + "/games")
+				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE) 
+				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE).build();
+	}
+	
+	public Network(URL url, GameId gameId) {
+		this.serverBaseUrl = url;
+		this.gameId = gameId;
+		baseWebClient = WebClient.builder().baseUrl(serverBaseUrl.url() + "/games")
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE) 
 				.defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML_VALUE).build();
 	}
