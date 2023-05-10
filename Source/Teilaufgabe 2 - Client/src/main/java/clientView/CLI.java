@@ -8,17 +8,26 @@ import clientData.MapField;
 
 public class CLI implements PropertyChangeListener {
 	
-	GameDataModel gameMap;
+	GameDataModel gameDataModel;
 	
-	public CLI(GameDataModel gameMap) {
-		this.gameMap = gameMap;
+	public CLI(GameDataModel gameDataModel) {
+		this.gameDataModel = gameDataModel;
 	}
 
 	public void printMap() {
 		
-		for(int y = 0; y <= gameMap.getHeight(); y++) {
-			for(int x = 0; x <= gameMap.getWidth(); x++) {
-				MapField currentField = gameMap.getGameMap().get(gameMap.getCoordinate(x, y));
+		System.out.println("-------------------------------------------------------------------");
+		
+		System.out.println("Treasure found: " + 
+		this.gameDataModel.isFoundTreasure());
+		
+//		if(this.gameDataModel.getGameMap().containsKey(this.gameDataModel.getPlayerPosition())) 
+//			System.out.println("Current terrain: " + 
+//			this.gameDataModel.getGameMap().get(this.gameDataModel.getPlayerPosition()).getTerrain().toString());
+			
+		for(int y = 0; y <= gameDataModel.getHeight(); y++) {
+			for(int x = 0; x <= gameDataModel.getWidth(); x++) {
+				MapField currentField = gameDataModel.getGameMap().get(gameDataModel.getCoordinate(x, y));
 				if(currentField != null) {
 					if(currentField.isEnemyFort())
 						System.out.print(" # ");
@@ -31,7 +40,7 @@ public class CLI implements PropertyChangeListener {
 					else if(currentField.isMyTreasure())
 						System.out.print(" $ ");
 					else {
-						switch(gameMap.getGameMap().get(gameMap.getCoordinate(x, y)).getTerrain()) {
+						switch(gameDataModel.getGameMap().get(gameDataModel.getCoordinate(x, y)).getTerrain()) {
 							case WATER: System.out.print(" ~ "); break;
 							case MOUNTAIN: System.out.print(" ^ "); break;
 							case GRASS: System.out.print(" * "); break;

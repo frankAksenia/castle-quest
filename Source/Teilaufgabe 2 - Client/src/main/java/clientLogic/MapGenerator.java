@@ -29,16 +29,6 @@ public class MapGenerator {
 		} while(mapValidator.validateMap());
 		logger.info("Map successfully validated on client side.");
 		this.chooseFortPosition();
-		for(int y = 0; y <= 4; y++) {
-			for(int x = 0; x <= 9; x++) {
-					switch(gamDataModel.getGameMap().get(gamDataModel.getCoordinate(x, y)).getTerrain()) {
-						case WATER: System.out.print(" ~ "); break;
-						case MOUNTAIN: System.out.print(" ^ "); break;
-						case GRASS: System.out.print(" . "); break;
-					}
-			}
-
-		}
 	}
 		
 	private void generateTerrains() {

@@ -30,7 +30,7 @@ public class Network {
 	
 	private final String serverBaseUrl = "http://swe1.wst.univie.ac.at:18235";
 	
-	private GameId gameId = new GameId("9stXJ"); 
+	private GameId gameId = new GameId("0tyjr"); 
 	
 	private PlayerId playerId;
 	
