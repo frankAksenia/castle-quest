@@ -36,6 +36,8 @@ public class MapGenerator {
 			for(int y = 0; y <= 4; ++y) {
 				Coordinate coordinate = new Coordinate(x, y);
 				EMapTerrain terrain = EMapTerrain.getRandomTerrain();
+				if(x == 0 && y == 0)
+					terrain = EMapTerrain.GRASS;
 				this.gamDataModel.getGameMap().put(coordinate, new MapField(terrain));
 			}
 		}

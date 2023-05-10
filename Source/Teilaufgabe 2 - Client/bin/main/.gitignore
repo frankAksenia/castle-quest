@@ -1,5 +1,4 @@
 /clientNetwork/
-/clientLogic/
-/clientControl/
 /clientView/
-/clientData/
+/exceptions/
+/clientLogic/
