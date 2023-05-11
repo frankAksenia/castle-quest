@@ -2,7 +2,7 @@ package clientData;
 
 import java.util.Comparator;
 
-public class DistanceComparator implements Comparator<Coordinate> {
+public class CoordinateComparator implements Comparator<Coordinate> {
 
     @Override
     public int compare(Coordinate first, Coordinate second) {

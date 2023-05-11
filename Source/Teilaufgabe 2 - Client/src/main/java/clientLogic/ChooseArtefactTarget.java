@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import clientData.Coordinate;
-import clientData.DistanceComparator;
+import clientData.CoordinateComparator;
 import clientData.EMapTerrain;
 import clientData.GameDataModel;
 import clientData.MapField;
@@ -24,7 +24,7 @@ private static Logger logger = LoggerFactory.getLogger(ChooseArtefactTarget.clas
 						
 	public ChooseArtefactTarget(GameDataModel gameDataModel) {
 		this.gameDataModel = gameDataModel;
-		this.grassFields = new PriorityQueue<Coordinate>(new DistanceComparator());
+		this.grassFields = new PriorityQueue<Coordinate>(new CoordinateComparator());
 		this.setGrassFields();
 	}
 	

@@ -45,10 +45,10 @@ public class MoveMaker {
 		}
 		
     	if(this.gamDataModel.getGameMap().get(gamDataModel.getPlayerPosition()).getTerrain() == EMapTerrain.MOUNTAIN) {
-    		logger.error("I AM ON A MOUNTAIN!");
+    		logger.debug("I AM ON A MOUNTAIN!");
     		Coordinate possibleArtefact = this.checkArtefaktVisibleFromMountain(currentPosition);
     		if(this.gamDataModel.getGameMap().containsKey(possibleArtefact)) {
-    			logger.error("TREASURE OR FORT HERE");
+    			logger.debug("TREASURE OR FORT HERE");
     			lastTargetCoordinate = possibleArtefact;
     			this.wayToTarget.clear();
     			this.breadthFirstSearch(currentPosition, possibleArtefact);

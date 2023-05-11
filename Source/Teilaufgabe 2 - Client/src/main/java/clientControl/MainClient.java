@@ -18,18 +18,13 @@ public class MainClient {
 		rootLogger.setLevel(ch.qos.logback.classic.Level.OFF);
 		
 		GameDataModel gameMap = new GameDataModel();
-		
-		//System.out.println(args[2] + " " + args[3]);
-		
+				
 		CLI cli = new CLI(gameMap);
 		
 		Network gameNetwork;
 		
-		if(args.length != 0)
-			gameNetwork = new Network(new URL(args[4]), new GameId(args[5]));
-		else
-			gameNetwork = new Network();
-				
+		gameNetwork = new Network(new URL(args[1]), new GameId(args[2]));
+						
 		GameController gameController = new GameController(gameMap, cli, gameNetwork);
 
 		gameController.startGame();
