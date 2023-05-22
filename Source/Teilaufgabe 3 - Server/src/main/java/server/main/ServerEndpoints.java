@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import messagesbase.ResponseEnvelope;
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
+import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromclient.PlayerRegistration;
+import messagesbase.messagesfromserver.GameState;
 import server.exceptions.GenericExampleException;
 import server.exceptions.PlayerRegistrationException;
 import server.model.GameId;
@@ -34,11 +36,6 @@ public class ServerEndpoints {
 	public @ResponseBody UniqueGameIdentifier newGame(
 			@RequestParam(required = false, defaultValue = "false", value = "enableDebugMode") boolean enableDebugMode,
 			@RequestParam(required = false, defaultValue = "false", value = "enableDummyCompetition") boolean enableDummyCompetition) {
-
-		boolean showExceptionHandling = false;
-		if (showExceptionHandling) {
-			throw new GenericExampleException("Name: Something", "Message: went totally wrong");
-		}
 		
 		GameIdGeneratorService gameIdGenerator = new GameIdGeneratorService();
 		GameId id = gameIdGenerator.generateRandomID();
@@ -53,21 +50,36 @@ public class ServerEndpoints {
 			@Validated @RequestBody PlayerRegistration playerRegistration) {
 		UniquePlayerIdentifier newPlayerID = new UniquePlayerIdentifier(UUID.randomUUID().toString());
 		
-		if(playerRegistration.getStudentFirstName().isBlank()) {
-			System.out.println("here");
+		if(playerRegistration.getStudentFirstName().isBlank()) 
 			throw new PlayerRegistrationException("First name missing","Required first name of a player is not provided");
-		}
-		if(playerRegistration.getStudentLastName().isBlank()) {
-			System.out.println("here");
+		
+		if(playerRegistration.getStudentLastName().isBlank()) 
 			throw new PlayerRegistrationException("Last name missing","Required last name of a player is not provided");
-		}
-		if(playerRegistration.getStudentUAccount().isBlank()) {
-			System.out.println("here");
+		
+		if(playerRegistration.getStudentUAccount().isBlank()) 
 			throw new PlayerRegistrationException("UAccount missing","Required uaccount of a player is not provided");
-		}
+		
 
 		ResponseEnvelope<UniquePlayerIdentifier> playerIDMessage = new ResponseEnvelope<>(newPlayerID);
 		return playerIDMessage;
+	}
+	
+	// POST /games/{gameID}/halfmaps
+	@RequestMapping(value = "/{gameID}/halfmaps", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
+	public @ResponseBody ResponseEnvelope<UniquePlayerIdentifier> receivePlayerHalfMap(
+			@Validated @PathVariable UniqueGameIdentifier gameID,
+			@Validated @RequestBody PlayerHalfMap playerHalfMap) {
+
+		
+		return new ResponseEnvelope<>();
+	}
+	
+	// GET /games/{gameID}/states/{playerID}
+	@RequestMapping(value = "/{gameID}/states/{playerID}", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
+	public @ResponseBody GameState receiveStatusRequest() {
+
+		GameState gameState = new GameState();
+		return gameState;
 	}
 	
 
