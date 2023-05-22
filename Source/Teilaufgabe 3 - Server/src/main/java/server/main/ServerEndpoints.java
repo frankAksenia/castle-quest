@@ -20,6 +20,7 @@ import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import server.exceptions.GenericExampleException;
+import server.exceptions.PlayerRegistrationException;
 import server.model.GameId;
 import server.services.GameIdGeneratorService;
 
@@ -51,15 +52,28 @@ public class ServerEndpoints {
 			@Validated @PathVariable UniqueGameIdentifier gameID,
 			@Validated @RequestBody PlayerRegistration playerRegistration) {
 		UniquePlayerIdentifier newPlayerID = new UniquePlayerIdentifier(UUID.randomUUID().toString());
+		
+		if(playerRegistration.getStudentFirstName().isBlank()) {
+			System.out.println("here");
+			throw new PlayerRegistrationException("First name missing","Required first name of a player is not provided");
+		}
+		if(playerRegistration.getStudentLastName().isBlank()) {
+			System.out.println("here");
+			throw new PlayerRegistrationException("Last name missing","Required last name of a player is not provided");
+		}
+		if(playerRegistration.getStudentUAccount().isBlank()) {
+			System.out.println("here");
+			throw new PlayerRegistrationException("UAccount missing","Required uaccount of a player is not provided");
+		}
 
 		ResponseEnvelope<UniquePlayerIdentifier> playerIDMessage = new ResponseEnvelope<>(newPlayerID);
 		return playerIDMessage;
 	}
 	
 
-	@ExceptionHandler({ GenericExampleException.class })
-	public @ResponseBody ResponseEnvelope<?> handleException(GenericExampleException ex, HttpServletResponse response) {
-		ResponseEnvelope<?> result = new ResponseEnvelope<>(ex.getErrorName(), ex.getMessage());
+	@ExceptionHandler({ PlayerRegistrationException.class })
+	public @ResponseBody ResponseEnvelope<?> handleException(PlayerRegistrationException ex, HttpServletResponse response) {
+		ResponseEnvelope<?> result = new ResponseEnvelope<>(ex);
 		// reply with 200 OK as defined in the network documentation
 		response.setStatus(HttpServletResponse.SC_OK);
 		return result;
