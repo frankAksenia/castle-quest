@@ -6,13 +6,13 @@ import java.util.Random;
 
 import server.model.GameId;
 
-public class GameIdGenerator {
+public class GameIdGeneratorService {
 	
 	final int MAX_LENGTH = 5;
 	
 	private List<Character> alphabet = new ArrayList<>();
 	
-	public GameIdGenerator() {
+	public GameIdGeneratorService() {
 		this.generateAlphabet();
 	}
 	
