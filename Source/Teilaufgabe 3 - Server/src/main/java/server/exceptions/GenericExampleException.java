@@ -1,6 +1,5 @@
 package server.exceptions;
 
-import org.apache.logging.log4j.util.Strings;
 
 /* Note, this is just a quick minimal example to show the generic exception handling
  * functionality in spring. Typically I would recommend that you create individual exception types
@@ -12,6 +11,7 @@ import org.apache.logging.log4j.util.Strings;
  */
 public class GenericExampleException extends RuntimeException {
 
+	private static final long serialVersionUID = 1L;
 	private final String errorName;
 
 	public GenericExampleException(String errorName, String errorMessage) {

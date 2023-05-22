@@ -19,12 +19,13 @@ import messagesbase.ResponseEnvelope;
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.PlayerRegistration;
+import server.data.GameId;
 import server.exceptions.GenericExampleException;
+import server.logic.GameIdGenerator;
 
 @RestController
 @RequestMapping(value = "/games")
 public class ServerEndpoints {
-
 	// ADDITIONAL TIPS ON THIS MATTER ARE GIVEN THROUGHOUT THE TUTORIAL SESSION!
 	// Note, the same network messages which you have used for the Client (along
 	// with its documentation) apply to the Server too.
@@ -45,6 +46,7 @@ public class ServerEndpoints {
 	// example for a GET endpoint based on /games
 	// similar to the client, the HTTP method and the expected data types are
 	// specified at the server-side too
+	
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
 	public @ResponseBody UniqueGameIdentifier newGame(
 			@RequestParam(required = false, defaultValue = "false", value = "enableDebugMode") boolean enableDebugMode,
@@ -69,15 +71,10 @@ public class ServerEndpoints {
 			throw new GenericExampleException("Name: Something", "Message: went totally wrong");
 		}
 		
-		// TIP: you will need to adapt this part to generate a game id with the valid
-		// length. A simple solution for this
-		// would be creating an alphabet and choosing random characters from it till the
-		// new game id becomes long enough
-		UniqueGameIdentifier gameIdentifier = new UniqueGameIdentifier("game1");
+		GameIdGenerator gameIdGenerator = new GameIdGenerator();
+		GameId id = gameIdGenerator.generateRandomID();
+		UniqueGameIdentifier gameIdentifier = new UniqueGameIdentifier(id.id());
 		return gameIdentifier;
-
-		// you will need to include additional logic, e.g., additional classes
-		// which create, store, validate, etc. exchanged data	
 	}
 
 	// example for a POST endpoint based on /games/{gameID}/players
@@ -105,7 +102,7 @@ public class ServerEndpoints {
 	 * https://www.baeldung.com/exception-handling-for-rest-with-spring
 	 * 
 	 * Ask yourself: Why is handling the exceptions in a different method than the
-	 * endpoint methods a good solution? This applies a principle from Block 4, which one?
+	 * endpoint methods a good solution? This applies a principle from Block 4, which one? KISS?
 	 */
 	@ExceptionHandler({ GenericExampleException.class })
 	public @ResponseBody ResponseEnvelope<?> handleException(GenericExampleException ex, HttpServletResponse response) {
