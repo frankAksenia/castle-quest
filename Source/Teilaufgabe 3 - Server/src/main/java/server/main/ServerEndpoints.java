@@ -19,10 +19,11 @@ import messagesbase.ResponseEnvelope;
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.PlayerRegistration;
-import server.data.GameId;
 import server.exceptions.GenericExampleException;
-import server.logic.GameIdGenerator;
+import server.model.GameId;
+import server.services.GameIdGenerator;
 
+// API layer
 @RestController
 @RequestMapping(value = "/games")
 public class ServerEndpoints {
@@ -57,7 +58,7 @@ public class ServerEndpoints {
 		// this is just some testing code that you can see how exceptions can be used to
 		// signal errors to the client, you can REMOVE
 		// these lines in your actual server implementation
-		boolean showExceptionHandling = false;
+		boolean showExceptionHandling = true;
 		if (showExceptionHandling) {
 			// if any error occurs, simply throw an exception with inherits from
 			// GenericExampleException
@@ -73,6 +74,7 @@ public class ServerEndpoints {
 		
 		GameIdGenerator gameIdGenerator = new GameIdGenerator();
 		GameId id = gameIdGenerator.generateRandomID();
+		System.out.println("GAME ID:" + id.id());
 		UniqueGameIdentifier gameIdentifier = new UniqueGameIdentifier(id.id());
 		return gameIdentifier;
 	}
