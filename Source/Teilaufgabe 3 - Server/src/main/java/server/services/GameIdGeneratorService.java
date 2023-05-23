@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.springframework.stereotype.Service;
+
 import server.model.GameId;
 
+@Service
 public class GameIdGeneratorService {
 	
 	final int MAX_LENGTH = 5;

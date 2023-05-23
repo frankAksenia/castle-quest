@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import server.services.GamesManagingService;
+import server.services.GameManagerService;
 
 @Component
 public class GamesManagingScheduler {
@@ -12,7 +12,7 @@ public class GamesManagingScheduler {
 	private final int MAX_GAMES = 99;
 	
 	@Autowired
-	private GamesManagingService gameManagingService;
+	private GameManagerService gameManagingService;
 	
 	@Scheduled(fixedRate = 300000)
 	public void controlAmountOfGames() {

@@ -1,9 +1,8 @@
 package server.main;
 
-import java.util.UUID;
-
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,15 +22,18 @@ import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
 import server.controller.GameManager;
 import server.exceptions.PlayerRegistrationException;
-import server.model.GameId;
-import server.services.GameIdGeneratorService;
 
 // API layer
 @RestController
 @RequestMapping(value = "/games")
 public class ServerEndpoints {
 	
-	private GameManager gameManager = new GameManager();
+	private final GameManager gameManager;
+	
+	@Autowired
+	public ServerEndpoints(GameManager gameManager) {
+		this.gameManager = gameManager;
+	}
 
 	// GET 
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
@@ -39,6 +41,7 @@ public class ServerEndpoints {
 			@RequestParam(required = false, defaultValue = "false", value = "enableDebugMode") boolean enableDebugMode,
 			@RequestParam(required = false, defaultValue = "false", value = "enableDummyCompetition") boolean enableDummyCompetition) {
 		
+		System.out.println("hello");
 		return gameManager.processGameCreation();
 	}
 
