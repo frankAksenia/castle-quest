@@ -21,7 +21,7 @@ import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
-import server.exceptions.GenericExampleException;
+import server.controller.GameManager;
 import server.exceptions.PlayerRegistrationException;
 import server.model.GameId;
 import server.services.GameIdGeneratorService;
@@ -30,6 +30,8 @@ import server.services.GameIdGeneratorService;
 @RestController
 @RequestMapping(value = "/games")
 public class ServerEndpoints {
+	
+	private GameManager gameManager = new GameManager();
 
 	// GET 
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
@@ -37,10 +39,7 @@ public class ServerEndpoints {
 			@RequestParam(required = false, defaultValue = "false", value = "enableDebugMode") boolean enableDebugMode,
 			@RequestParam(required = false, defaultValue = "false", value = "enableDummyCompetition") boolean enableDummyCompetition) {
 		
-		GameIdGeneratorService gameIdGenerator = new GameIdGeneratorService();
-		GameId id = gameIdGenerator.generateRandomID();
-		UniqueGameIdentifier gameIdentifier = new UniqueGameIdentifier(id.id());
-		return gameIdentifier;
+		return gameManager.processGameCreation();
 	}
 
 	// POST /games/{gameID}/players
@@ -48,44 +47,31 @@ public class ServerEndpoints {
 	public @ResponseBody ResponseEnvelope<UniquePlayerIdentifier> registerPlayer(
 			@Validated @PathVariable UniqueGameIdentifier gameID,
 			@Validated @RequestBody PlayerRegistration playerRegistration) {
-		UniquePlayerIdentifier newPlayerID = new UniquePlayerIdentifier(UUID.randomUUID().toString());
-		
-		if(playerRegistration.getStudentFirstName().isBlank()) 
-			throw new PlayerRegistrationException("First name missing","Required first name of a player is not provided");
-		
-		if(playerRegistration.getStudentLastName().isBlank()) 
-			throw new PlayerRegistrationException("Last name missing","Required last name of a player is not provided");
-		
-		if(playerRegistration.getStudentUAccount().isBlank()) 
-			throw new PlayerRegistrationException("UAccount missing","Required uaccount of a player is not provided");
-		
 
-		ResponseEnvelope<UniquePlayerIdentifier> playerIDMessage = new ResponseEnvelope<>(newPlayerID);
-		return playerIDMessage;
+		return gameManager.processPlayerRegistration(playerRegistration);
 	}
 	
 	// POST /games/{gameID}/halfmaps
 	@RequestMapping(value = "/{gameID}/halfmaps", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
-	public @ResponseBody ResponseEnvelope<UniquePlayerIdentifier> receivePlayerHalfMap(
+	public @ResponseBody ResponseEnvelope<?> receivePlayerHalfMap(
 			@Validated @PathVariable UniqueGameIdentifier gameID,
 			@Validated @RequestBody PlayerHalfMap playerHalfMap) {
 
-		
-		return new ResponseEnvelope<>();
+	
+		return gameManager.processPlayerHalfmap(gameID, playerHalfMap);
 	}
 	
 	// GET /games/{gameID}/states/{playerID}
 	@RequestMapping(value = "/{gameID}/states/{playerID}", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
-	public @ResponseBody GameState receiveStatusRequest() {
-
-		GameState gameState = new GameState();
-		return gameState;
+	public @ResponseBody ResponseEnvelope<GameState> receiveStatusRequest(@Validated @PathVariable UniqueGameIdentifier gameID,
+			@Validated @PathVariable UniquePlayerIdentifier playerID) {
+		
+		return gameManager.processGameStateRequest(gameID, playerID);
 	}
-	
 
 	@ExceptionHandler({ PlayerRegistrationException.class })
 	public @ResponseBody ResponseEnvelope<?> handleException(PlayerRegistrationException ex, HttpServletResponse response) {
-		ResponseEnvelope<?> result = new ResponseEnvelope<>(ex);
+		ResponseEnvelope<?> result = new ResponseEnvelope<>(ex.getErrorName(), ex.getMessage());
 		// reply with 200 OK as defined in the network documentation
 		response.setStatus(HttpServletResponse.SC_OK);
 		return result;
