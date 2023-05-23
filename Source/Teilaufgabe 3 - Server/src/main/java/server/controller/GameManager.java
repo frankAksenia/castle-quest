@@ -51,33 +51,4 @@ public class GameManager {
 		GameId id = gameIdGenerator.generateRandomID();
 		return new UniqueGameIdentifier(id.id());
 	}
-	
-	public ResponseEnvelope<UniquePlayerIdentifier> processPlayerRegistration(PlayerRegistration playerRegistration) {
-		UniquePlayerIdentifier newPlayerID = new UniquePlayerIdentifier(UUID.randomUUID().toString());
-		
-		if(playerRegistration.getStudentFirstName().isBlank()) 
-			throw new PlayerRegistrationException("First name missing", "Required first name of a player is not provided");
-		
-		if(playerRegistration.getStudentLastName().isBlank()) 
-			throw new PlayerRegistrationException("Last name missing", "Required last name of a player is not provided");
-		
-		if(playerRegistration.getStudentUAccount().isBlank()) 
-			throw new PlayerRegistrationException("UAccount missing", "Required uaccount of a player is not provided");
-		
-
-		ResponseEnvelope<UniquePlayerIdentifier> playerIDMessage = new ResponseEnvelope<>(newPlayerID);
-		return playerIDMessage;
-	}
-	
-	public ResponseEnvelope<?> processPlayerHalfmap(UniqueGameIdentifier gameID, PlayerHalfMap playerHalfMap) {
-		return new ResponseEnvelope<>();
-	}
-	
-	public ResponseEnvelope<GameState> processGameStateRequest(UniqueGameIdentifier gameID, UniquePlayerIdentifier playerID) {
-		ResponseEnvelope<GameState> gameState = new ResponseEnvelope<>(new GameState());
-		return gameState;
-	}
-	
-	
-
 }

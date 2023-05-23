@@ -21,6 +21,9 @@ import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
 import server.controller.GameManager;
+import server.controller.MapReceivingController;
+import server.controller.PlayerRegistrationController;
+import server.controller.StatusRequestController;
 import server.exceptions.PlayerRegistrationException;
 
 // API layer
@@ -30,9 +33,18 @@ public class ServerEndpoints {
 	
 	private final GameManager gameManager;
 	
+	private final PlayerRegistrationController playerRegistrationController;
+	
+	private final MapReceivingController mapReceivingController;
+	
+	private final StatusRequestController statusRequestController;
+	
 	@Autowired
-	public ServerEndpoints(GameManager gameManager) {
+	public ServerEndpoints(GameManager gameManager, PlayerRegistrationController playerRegistrationController, MapReceivingController mapReceivingController, StatusRequestController statusRequestController) {
 		this.gameManager = gameManager;
+		this.playerRegistrationController = playerRegistrationController;
+		this.mapReceivingController = mapReceivingController;
+		this.statusRequestController = statusRequestController;
 	}
 
 	// GET 
@@ -42,7 +54,7 @@ public class ServerEndpoints {
 			@RequestParam(required = false, defaultValue = "false", value = "enableDummyCompetition") boolean enableDummyCompetition) {
 		
 		System.out.println("hello");
-		return gameManager.processGameCreation();
+		return this.gameManager.processGameCreation();
 	}
 
 	// POST /games/{gameID}/players
@@ -51,7 +63,7 @@ public class ServerEndpoints {
 			@Validated @PathVariable UniqueGameIdentifier gameID,
 			@Validated @RequestBody PlayerRegistration playerRegistration) {
 
-		return gameManager.processPlayerRegistration(playerRegistration);
+		return this.playerRegistrationController.processPlayerRegistration(playerRegistration);
 	}
 	
 	// POST /games/{gameID}/halfmaps
@@ -59,17 +71,14 @@ public class ServerEndpoints {
 	public @ResponseBody ResponseEnvelope<?> receivePlayerHalfMap(
 			@Validated @PathVariable UniqueGameIdentifier gameID,
 			@Validated @RequestBody PlayerHalfMap playerHalfMap) {
-
-	
-		return gameManager.processPlayerHalfmap(gameID, playerHalfMap);
+		return this.mapReceivingController.processPlayerHalfmap(gameID, playerHalfMap);
 	}
 	
 	// GET /games/{gameID}/states/{playerID}
 	@RequestMapping(value = "/{gameID}/states/{playerID}", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
 	public @ResponseBody ResponseEnvelope<GameState> receiveStatusRequest(@Validated @PathVariable UniqueGameIdentifier gameID,
 			@Validated @PathVariable UniquePlayerIdentifier playerID) {
-		
-		return gameManager.processGameStateRequest(gameID, playerID);
+		return this.statusRequestController.processGameStateRequest(gameID, playerID);
 	}
 
 	@ExceptionHandler({ PlayerRegistrationException.class })
