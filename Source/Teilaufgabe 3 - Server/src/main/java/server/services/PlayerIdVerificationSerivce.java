@@ -9,7 +9,7 @@ import server.model.PlayerId;
  * Throws exceptions if rules are violated.
  */
 @Service
-public class PlayerIdVerificationService {
+public class PlayerIdVerificationSerivce {
 	
 	public boolean verifyPlayerId(PlayerId playerId) {
 		return true;
