@@ -29,8 +29,7 @@ public class GameManagerService {
 		return 0;
 	}
 	
-	public void addNewGame(GameId gameId, GameData gameData) {
-		
+	public void addNewGame(GameId gameId, GameData gameData) {	
 	}
 	
 	public void removeOldestGames(int amountToRemove) {

@@ -53,7 +53,6 @@ public class ServerEndpoints {
 			@RequestParam(required = false, defaultValue = "false", value = "enableDebugMode") boolean enableDebugMode,
 			@RequestParam(required = false, defaultValue = "false", value = "enableDummyCompetition") boolean enableDummyCompetition) {
 		
-		System.out.println("hello");
 		return this.gameManager.processGameCreation();
 	}
 

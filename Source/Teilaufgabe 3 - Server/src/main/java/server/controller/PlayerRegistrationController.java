@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 import messagesbase.ResponseEnvelope;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.PlayerRegistration;
-import server.exceptions.PlayerRegistrationException;
 
 /*
  * Controller for processing player registration requests.
@@ -19,6 +18,13 @@ public class PlayerRegistrationController {
 	public ResponseEnvelope<UniquePlayerIdentifier> processPlayerRegistration(PlayerRegistration playerRegistration) {
 		
 		UniquePlayerIdentifier newPlayerID = new UniquePlayerIdentifier(UUID.randomUUID().toString());
+
+		ResponseEnvelope<UniquePlayerIdentifier> playerIDMessage = new ResponseEnvelope<>(newPlayerID);
+		
+		return playerIDMessage;
+	}
+	
+	private boolean checkPlayerDataIsPresent(PlayerRegistration playerRegistration) {
 		
 //		if(playerRegistration.getStudentFirstName().isBlank()) 
 //			throw new PlayerRegistrationException("First name missing", "Required first name of a player is not provided");
@@ -29,10 +35,8 @@ public class PlayerRegistrationController {
 //		if(playerRegistration.getStudentUAccount().isBlank()) 
 //			throw new PlayerRegistrationException("UAccount missing", "Required uaccount of a player is not provided");
 		
-
-		ResponseEnvelope<UniquePlayerIdentifier> playerIDMessage = new ResponseEnvelope<>(newPlayerID);
 		
-		return playerIDMessage;
+		return true;
 	}
 
 }
