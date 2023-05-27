@@ -11,6 +11,9 @@ public class GameRepository {
 	/* Using LinkedHashMap to preserve order of added elements
 	 * to know which games are the oldest and can be removed if Server is overloaded
 	 * */
+	
+	private final int MAX_GAMES = 99;
+	
 	private Map<GameId, GameData> runningGames;
 	
 	public GameRepository() {
@@ -35,4 +38,9 @@ public class GameRepository {
 	
 	public void removeOldestGames(int amountToRemove) {
 	}
+
+	public int getMAX_GAMES() {
+		return MAX_GAMES;
+	}
+	
 }

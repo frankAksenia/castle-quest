@@ -22,7 +22,7 @@ import server.services.GameManagerService;
 @RestController 
 public class GameManager {
 	
-	private GameManagerService gameManagerService;
+	private final GameManagerService gameManagerService;
 
 	@Autowired
 	public GameManager(GameManagerService gameManagerService) {

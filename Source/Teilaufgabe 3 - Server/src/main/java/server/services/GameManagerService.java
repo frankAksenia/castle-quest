@@ -34,4 +34,16 @@ public class GameManagerService {
 	
 	public void removeOldestGames(int amountToRemove) {
 	}
+	
+	private boolean verifyMaxAmountOfGames() {
+		return true;
+	}
+	
+	public boolean verifyActionSentInTurn() {
+		return true;
+	}
+	
+	public boolean verifyBothPlayersRegistered() {
+		return true;
+	}
 }
