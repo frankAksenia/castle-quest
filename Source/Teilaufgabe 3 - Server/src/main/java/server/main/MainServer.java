@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"server.controller", "server.services", "server.main"})
+@ComponentScan(basePackages = {"server.controller", "server.services", "server.main", "server.converters", "server.model"})
 @Configuration
 public class MainServer {
 

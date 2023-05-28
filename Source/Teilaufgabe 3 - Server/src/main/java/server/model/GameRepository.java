@@ -1,8 +1,10 @@
 package server.model;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -16,8 +18,10 @@ public class GameRepository {
 	
 	private Map<GameId, GameData> runningGames;
 	
+	private static Logger logger = LoggerFactory.getLogger(GameRepository.class);
+	
 	public GameRepository() {
-		this.runningGames = new LinkedHashMap<GameId, GameData>();
+		this.runningGames = new HashMap<GameId, GameData>();
 	}
 	
 	public Map<GameId,GameData> getAllRunningGames() {
@@ -25,7 +29,7 @@ public class GameRepository {
 	}
 	
 	public GameData getRunningGameById(GameId gameId) {
-		return new GameData();
+		return this.getAllRunningGames().get(gameId);
 	}
 	
 	public int getAmountOfActiveGames() {
@@ -33,7 +37,8 @@ public class GameRepository {
 	}
 	
 	public void addNewGame(GameId gameId, GameData gameData) {
-		
+		this.runningGames.put(gameId, gameData);
+		logger.info("New game with id {} was added", gameId);
 	}
 	
 	public void removeOldestGames(int amountToRemove) {

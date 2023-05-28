@@ -9,16 +9,16 @@ import server.exceptions.ActionNotInTurnException;
 import server.model.GameData;
 import server.model.GameId;
 import server.model.GamePlayer;
+import server.model.GameRepository;
 import server.model.PlayerId;
 
 public class GameManagerServiceTest {
-	
-	private GameManagerService gameManagerService = new GameManagerService();
 
 	@Test
 	public void canHaveMoreGames_addNewGame_gameIsAdded() {
 		
 		// Arrange 
+		GameManagerService gameManagerService = new GameManagerService(new GameRepository());
 		GameId gameId = new GameId("xxxxx"); 
 		GameData gameData = new GameData();
 		
@@ -37,6 +37,7 @@ public class GameManagerServiceTest {
     public void haveThreeGames_removeTwoGames_twoGamesAreRemoved() {
 		
 		// Arrange
+		GameManagerService gameManagerService = new GameManagerService(new GameRepository());
         GameId gameId1 = new GameId("xxxxx");
         GameData gameData1 = new GameData();
 
@@ -66,6 +67,7 @@ public class GameManagerServiceTest {
 	public void turnOfCorrectClient_clientSendsAction_actionIsAccepted() {
 		
 		// Arrange 
+		GameManagerService gameManagerService = new GameManagerService(new GameRepository());
 		GamePlayer correctPlayer = new GamePlayer(new PlayerId("xxxxx"), "Max", "Mustermann", "maxMust", false);
 		GamePlayer wrongPlayer = new GamePlayer(new PlayerId("yyyyy"), "Maxin", "Musterfrau", "maxinMust", false);
 		GameData gameData = new GameData();
@@ -84,6 +86,7 @@ public class GameManagerServiceTest {
 	public void turnOfWrongClient_clientSendsAction_errorIsThrown() {
 		
 		// Arrange 
+		GameManagerService gameManagerService = new GameManagerService(new GameRepository());
 		GamePlayer correctPlayer = new GamePlayer(new PlayerId("xxxxx"), "Max", "Mustermann", "maxMust", false);
 		GamePlayer wrongPlayer = new GamePlayer(new PlayerId("yyyyy"), "Maxin", "Musterfrau", "maxinMust", false);
 		GameData gameData = new GameData();

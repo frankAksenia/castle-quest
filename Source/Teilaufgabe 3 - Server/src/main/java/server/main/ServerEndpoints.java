@@ -1,7 +1,10 @@
 package server.main;
 
+
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -24,12 +27,14 @@ import server.controller.GameManager;
 import server.controller.MapReceivingController;
 import server.controller.PlayerRegistrationController;
 import server.controller.StatusRequestController;
-import server.exceptions.PlayerRegistrationException;
+import server.exceptions.WrongGameIdException;
 
 // API layer
 @RestController
 @RequestMapping(value = "/games")
 public class ServerEndpoints {
+	
+	private static Logger logger = LoggerFactory.getLogger(ServerEndpoints.class);
 	
 	private final GameManager gameManager;
 	
@@ -62,7 +67,7 @@ public class ServerEndpoints {
 			@Validated @PathVariable UniqueGameIdentifier gameID,
 			@Validated @RequestBody PlayerRegistration playerRegistration) {
 
-		return this.playerRegistrationController.processPlayerRegistration(playerRegistration);
+		return this.playerRegistrationController.processPlayerRegistration(gameID, playerRegistration);
 	}
 	
 	// POST /games/{gameID}/halfmaps
@@ -79,10 +84,11 @@ public class ServerEndpoints {
 			@Validated @PathVariable UniquePlayerIdentifier playerID) {
 		return this.statusRequestController.processGameStateRequest(gameID, playerID);
 	}
-
-	@ExceptionHandler({ PlayerRegistrationException.class })
-	public @ResponseBody ResponseEnvelope<?> handleException(PlayerRegistrationException ex, HttpServletResponse response) {
+	
+	@ExceptionHandler({ WrongGameIdException.class })
+	public @ResponseBody ResponseEnvelope<?> handleException(WrongGameIdException ex, HttpServletResponse response) {
 		ResponseEnvelope<?> result = new ResponseEnvelope<>(ex.getErrorName(), ex.getMessage());
+		logger.info("MUST HANDLE HERE");
 		// reply with 200 OK as defined in the network documentation
 		response.setStatus(HttpServletResponse.SC_OK);
 		return result;

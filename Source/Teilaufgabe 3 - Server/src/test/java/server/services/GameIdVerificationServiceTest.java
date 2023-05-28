@@ -1,45 +1,50 @@
 package server.services;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import server.exceptions.WrongGameIdException;
 import server.model.GameData;
 import server.model.GameId;
 import server.model.GameRepository;
 
 public class GameIdVerificationServiceTest {
+	
+	private static GameRepository gameRepository;
+	private static GameIdVerificationService gameIdVerificationService;
+	private static GameId existingId;
+	
+	@BeforeAll
+	public static void initialize() {
+		gameRepository = new GameRepository();
+		gameIdVerificationService = new GameIdVerificationService(gameRepository);
+		existingId = new GameId("xxxxx");
+	}
 
 	@Test
 	public void receivedGameId_gameIdIsCorrect_returnsTrue() {
-		
 		// Arrange
-		GameIdVerificationService gameIdVerificationService = new GameIdVerificationService();
-		GameRepository gameRepository = new GameRepository();
-		GameId existingId = new GameId("xxxxx");
 		gameRepository.addNewGame(existingId, new GameData());
-		boolean expected = true;
 		
 		// Act
-		boolean result = gameIdVerificationService.verifyGameId(existingId);
+		gameIdVerificationService.verifyGameId(existingId);
 		
 		// Assert 
-		Assertions.assertEquals(expected, result);
+		Assertions.assertDoesNotThrow(() -> {
+            gameIdVerificationService.verifyGameId(existingId);
+        });
 	}
 	
 	@Test
-	public void receivedGameId_gameIdIsWrong_returnFalse() {
+	public void receivedGameId_gameIdIsWrong_throwsException() {
 		// Arrange
-		GameIdVerificationService gameIdVerificationService = new GameIdVerificationService();
-		GameRepository gameRepository = new GameRepository();
-		GameId existingId = new GameId("xxxxx");
 		GameId notExistingId = new GameId("yyyyy");
 		gameRepository.addNewGame(existingId, new GameData());
-		boolean expected = false;
 				
-		// Act
-		boolean result = gameIdVerificationService.verifyGameId(notExistingId);
-				
-		// Assert 
-		Assertions.assertEquals(expected, result);
+		// Act and Assert
+		Assertions.assertThrows(WrongGameIdException.class, () -> {
+            gameIdVerificationService.verifyGameId(notExistingId);
+        });
 	}
 }

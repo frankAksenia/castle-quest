@@ -2,6 +2,7 @@ package server.services;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import server.model.GameData;
@@ -14,8 +15,9 @@ public class GameManagerService {
 	
 	private GameRepository gameRepository;
 	
-	public GameManagerService() {
-		this.gameRepository = new GameRepository();
+	@Autowired
+	public GameManagerService(GameRepository gameRepository) {
+		this.gameRepository = gameRepository;
 	}
 	
 	public Map<GameId,GameData> getAllRunningGames() {
@@ -31,6 +33,7 @@ public class GameManagerService {
 	}
 	
 	public void addNewGame(GameId gameId, GameData gameData) {	
+		this.gameRepository.addNewGame(gameId, gameData);
 	}
 	
 	public void removeOldestGames(int amountToRemove) {
