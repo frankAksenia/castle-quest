@@ -10,7 +10,6 @@ public class GameIdGeneratorServiceTest {
 
 	@Test
 	public void noGameIdGenerated_generateRandomGameId_lengthIsCorrect() {
-		
 		// Arrange
 		GameIdGeneratorService gameIdGeneratorService = new GameIdGeneratorService();
 		int expectedLength = 5;

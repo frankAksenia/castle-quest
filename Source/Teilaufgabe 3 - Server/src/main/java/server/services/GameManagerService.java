@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import server.model.GameData;
 import server.model.GameId;
 import server.model.GameRepository;
+import server.model.PlayerId;
 
 @Service
 public class GameManagerService {
@@ -39,7 +40,7 @@ public class GameManagerService {
 		return true;
 	}
 	
-	public boolean verifyActionSentInTurn() {
+	public boolean verifyActionSentInTurn(PlayerId playerId) {
 		return true;
 	}
 	
