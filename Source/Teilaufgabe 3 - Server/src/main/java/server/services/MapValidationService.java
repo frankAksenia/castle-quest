@@ -19,7 +19,8 @@ public class MapValidationService {
 
 	public boolean verifyGameMap(Map<Coordinate, MapField> playerMap) {
 		this.playerMap = playerMap;
-		return true;
+		boolean result = this.verifyTerrainsCount() && this.verifyMapSize() && this.verifyIslandPresent();
+		return result;
 	}
 	
 	private boolean verifyTerrainsCount() {
