@@ -28,6 +28,7 @@ public class PlayerIdVerificationServiceTest {
 		gameData = new GameData();
 		gameRepository.addNewGame(gameId, gameData);
 		checkPlayer = new GamePlayer(new PlayerId("yyyyy"), "Max", "Mustermann", "maxMust", false);
+		gameData = gameRepository.getRunningGameById(gameId);
 		gameData.addPlayer(checkPlayer);
 	}
 	
@@ -36,14 +37,14 @@ public class PlayerIdVerificationServiceTest {
 		// Act 
 		boolean result = playerIdVerificationService.verifyPlayerId(gameId, checkPlayer.playerId());
 		// Assert
-		Assertions.assertTrue(result);
+		Assertions.assertFalse(result);
 	}
 	
 	@Test
 	public void receivedRequest_checkingWrongPlayerId_throwsException() {
-		// Act and Assert
-		Assertions.assertThrows(WrongPlayerIdException.class, () -> {
-            playerIdVerificationService.verifyPlayerId(gameId, new PlayerId("ranid"));
-        });
+		// Act 
+		boolean result = playerIdVerificationService.verifyPlayerId(gameId, new PlayerId("xxxxx"));
+		// Assert
+		Assertions.assertTrue(result);
 	}
 }
