@@ -3,8 +3,6 @@ package server.main;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -28,14 +26,13 @@ import server.controller.MapReceivingController;
 import server.controller.PlayerRegistrationController;
 import server.controller.StatusRequestController;
 import server.exceptions.WrongGameIdException;
+import server.exceptions.WrongPlayerIdException;
 
 // API layer
 @RestController
 @RequestMapping(value = "/games")
 public class ServerEndpoints {
-	
-	private static Logger logger = LoggerFactory.getLogger(ServerEndpoints.class);
-	
+		
 	private final GameManager gameManager;
 	
 	private final PlayerRegistrationController playerRegistrationController;
@@ -66,7 +63,6 @@ public class ServerEndpoints {
 	public @ResponseBody ResponseEnvelope<UniquePlayerIdentifier> registerPlayer(
 			@Validated @PathVariable UniqueGameIdentifier gameID,
 			@Validated @RequestBody PlayerRegistration playerRegistration) {
-
 		return this.playerRegistrationController.processPlayerRegistration(gameID, playerRegistration);
 	}
 	
@@ -88,7 +84,14 @@ public class ServerEndpoints {
 	@ExceptionHandler({ WrongGameIdException.class })
 	public @ResponseBody ResponseEnvelope<?> handleException(WrongGameIdException ex, HttpServletResponse response) {
 		ResponseEnvelope<?> result = new ResponseEnvelope<>(ex.getErrorName(), ex.getMessage());
-		logger.info("MUST HANDLE HERE");
+		// reply with 200 OK as defined in the network documentation
+		response.setStatus(HttpServletResponse.SC_OK);
+		return result;
+	}
+	
+	@ExceptionHandler({ WrongPlayerIdException.class })
+	public @ResponseBody ResponseEnvelope<?> handleException(WrongPlayerIdException ex, HttpServletResponse response) {
+		ResponseEnvelope<?> result = new ResponseEnvelope<>(ex.getErrorName(), ex.getMessage());
 		// reply with 200 OK as defined in the network documentation
 		response.setStatus(HttpServletResponse.SC_OK);
 		return result;

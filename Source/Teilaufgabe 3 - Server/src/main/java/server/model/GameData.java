@@ -1,42 +1,38 @@
 package server.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GameData {
+	
+	private static Logger logger = LoggerFactory.getLogger(GameData.class);
 
 	private Map<Coordinate, MapField> fullGameMap = new HashMap<>();
 	
-	private GamePlayer firstPlayer = null;
-	
-	private GamePlayer secondPlayer = null;
+	private Set<GamePlayer> gamePlayers = new HashSet<>();
 	
 	private PlayerId currentPlayer;
 
 	public Map<Coordinate, MapField> getFullGameMap() {
 		return fullGameMap;
 	}
+	
+	public Set<GamePlayer> getGamePlayers() {
+		return this.gamePlayers;
+	}
+	
+	public void addPlayer(GamePlayer newPlayer) {
+		this.getGamePlayers().add(newPlayer);
+		logger.info("Added player {}", newPlayer.playerId());
+	}
 
 	public void setFullGameMap(Map<Coordinate, MapField> fullGameMap) {
 		this.fullGameMap = fullGameMap;
-	}
-
-	public GamePlayer getFirstPlayer() {
-		assert(this.firstPlayer != null);
-		return firstPlayer;
-	}
-
-	public void setFirstPlayer(GamePlayer firstPlayer) {
-		this.firstPlayer = firstPlayer;
-	}
-
-	public GamePlayer getSecondPlayer() {
-		assert(secondPlayer != null);
-		return secondPlayer;
-	}
-
-	public void setSecondPlayer(GamePlayer secondPlayer) {
-		this.secondPlayer = secondPlayer;
 	}
 
 	public PlayerId getCurrentPlayer() {

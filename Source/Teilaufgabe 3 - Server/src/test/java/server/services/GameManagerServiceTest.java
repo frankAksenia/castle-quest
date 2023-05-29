@@ -71,8 +71,8 @@ public class GameManagerServiceTest {
 		GamePlayer correctPlayer = new GamePlayer(new PlayerId("xxxxx"), "Max", "Mustermann", "maxMust", false);
 		GamePlayer wrongPlayer = new GamePlayer(new PlayerId("yyyyy"), "Maxin", "Musterfrau", "maxinMust", false);
 		GameData gameData = new GameData();
-		gameData.setFirstPlayer(correctPlayer);
-		gameData.setSecondPlayer(wrongPlayer);
+		gameData.addPlayer(correctPlayer);
+		gameData.addPlayer(wrongPlayer);
 		gameData.setCurrentPlayer(correctPlayer.playerId());
 		
 		// Act
@@ -90,8 +90,8 @@ public class GameManagerServiceTest {
 		GamePlayer correctPlayer = new GamePlayer(new PlayerId("xxxxx"), "Max", "Mustermann", "maxMust", false);
 		GamePlayer wrongPlayer = new GamePlayer(new PlayerId("yyyyy"), "Maxin", "Musterfrau", "maxinMust", false);
 		GameData gameData = new GameData();
-		gameData.setFirstPlayer(correctPlayer);
-		gameData.setSecondPlayer(wrongPlayer);
+		gameData.addPlayer(correctPlayer);
+		gameData.addPlayer(wrongPlayer);
 		gameData.setCurrentPlayer(correctPlayer.playerId());
 	
 		// Act and Assert

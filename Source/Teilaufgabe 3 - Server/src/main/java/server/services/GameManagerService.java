@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import server.model.GameData;
 import server.model.GameId;
+import server.model.GamePlayer;
 import server.model.GameRepository;
 import server.model.PlayerId;
 
@@ -34,6 +35,12 @@ public class GameManagerService {
 	
 	public void addNewGame(GameId gameId, GameData gameData) {	
 		this.gameRepository.addNewGame(gameId, gameData);
+	}
+	
+	public void addNewPlayer(GameId gameId, GamePlayer gamePlayer) {
+		GameData gameToAddPlayer = this.getRunningGameById(gameId);
+		
+		gameToAddPlayer.addPlayer(gamePlayer);
 	}
 	
 	public void removeOldestGames(int amountToRemove) {

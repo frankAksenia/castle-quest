@@ -1,7 +1,16 @@
 package server.services;
 
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import server.model.GameData;
+import server.model.GameId;
+import server.model.GamePlayer;
+import server.model.GameRepository;
 import server.model.PlayerId;
 
 /*
@@ -11,8 +20,25 @@ import server.model.PlayerId;
 @Service
 public class PlayerIdVerificationSerivce {
 	
-	public boolean verifyPlayerId(PlayerId playerId) {
-		return true;
+	private static Logger logger = LoggerFactory.getLogger(PlayerIdVerificationSerivce.class);
+	
+	private GameRepository gameRepository;
+	
+	@Autowired
+	public PlayerIdVerificationSerivce(GameRepository gameRepository) {
+		this.gameRepository = gameRepository;
 	}
-
+	
+	public boolean verifyPlayerId(GameId gameId, PlayerId playerId) {
+		GameData gameData = this.gameRepository.getAllRunningGames().get(gameId);	
+		Set<GamePlayer> gamePlayers =  gameData.getGamePlayers();
+		
+		boolean playerExists = false;
+		
+		for(GamePlayer gamePlayer : gamePlayers) {
+			if(gamePlayer.playerId().equals(playerId))
+				playerExists = true;
+		}
+		return !playerExists;
+	}
 }
