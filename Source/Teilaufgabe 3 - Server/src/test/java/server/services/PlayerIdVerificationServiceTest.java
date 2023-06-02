@@ -27,7 +27,7 @@ public class PlayerIdVerificationServiceTest {
 		gameId = new GameId("xxxxx");
 		gameData = new GameData();
 		gameRepository.addNewGame(gameId, gameData);
-		checkPlayer = new GamePlayer(new PlayerId("yyyyy"), "Max", "Mustermann", "maxMust", false);
+		checkPlayer = new GamePlayer(new PlayerId("yyyyy"), "Max", "Mustermann", "maxMust", false, false);
 		gameData = gameRepository.getRunningGameById(gameId);
 		gameData.addPlayer(checkPlayer);
 	}

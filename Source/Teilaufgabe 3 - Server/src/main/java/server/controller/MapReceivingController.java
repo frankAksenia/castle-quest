@@ -1,5 +1,9 @@
 package server.controller;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +27,7 @@ import server.services.PlayerIdVerificationSerivce;
 @RestController
 public class MapReceivingController {
 	
+	private static Logger logger = LoggerFactory.getLogger(MapReceivingController.class);
 	private final GameManagerService gameManagerService;
 	private final MapValidationService mapValidationService;
 	private final GameIdVerificationService gameIdVerificationService;
@@ -44,8 +49,10 @@ public class MapReceivingController {
 		
 		this.verifyGameId(gameId);
 		
-		this.verifyPlayerId(gameId, new PlayerId(playerHalfMap.getUniquePlayerID()));
+		PlayerId playerId = new PlayerId(playerHalfMap.getUniquePlayerID());
 		
+		this.verifyPlayerId(gameId, playerId);
+				
 		return new ResponseEnvelope<>();
 	}
 	
@@ -55,10 +62,10 @@ public class MapReceivingController {
 	}
 	
 	private void verifyPlayerId(GameId gameId, PlayerId playerId) {
+		logger.info("Verifying player id: {}", playerId);
 		if(this.playerIdVerificationService.verifyPlayerId(gameId, playerId))
 			throw new WrongPlayerIdException("Wrong player id", "Client provided player id not existing in the given game!");
 	}
-	
 	
 	private boolean verifyActionSentInTurn(PlayerId playerId) {
 		return true;

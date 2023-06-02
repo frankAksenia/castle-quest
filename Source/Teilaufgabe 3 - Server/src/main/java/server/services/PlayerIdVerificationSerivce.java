@@ -22,7 +22,7 @@ public class PlayerIdVerificationSerivce {
 	
 	private static Logger logger = LoggerFactory.getLogger(PlayerIdVerificationSerivce.class);
 	
-	private GameRepository gameRepository;
+	private final GameRepository gameRepository;
 	
 	@Autowired
 	public PlayerIdVerificationSerivce(GameRepository gameRepository) {
@@ -30,9 +30,10 @@ public class PlayerIdVerificationSerivce {
 	}
 	
 	public boolean verifyPlayerId(GameId gameId, PlayerId playerId) {
-		GameData gameData = this.gameRepository.getAllRunningGames().get(gameId);	
-		Set<GamePlayer> gamePlayers =  gameData.getGamePlayers();
-		
+		GameData gameData = this.gameRepository.getRunningGameById(gameId);
+				
+		Set<GamePlayer> gamePlayers = gameData.getGamePlayers();
+				
 		boolean playerExists = false;
 		
 		for(GamePlayer gamePlayer : gamePlayers) {

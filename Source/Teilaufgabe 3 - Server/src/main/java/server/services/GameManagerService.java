@@ -2,6 +2,8 @@ package server.services;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +16,9 @@ import server.model.PlayerId;
 @Service
 public class GameManagerService {
 	
-	private GameRepository gameRepository;
+	private static Logger logger = LoggerFactory.getLogger(GameManagerService.class);
+	
+	private final GameRepository gameRepository;
 	
 	@Autowired
 	public GameManagerService(GameRepository gameRepository) {
@@ -26,7 +30,7 @@ public class GameManagerService {
 	}
 	
 	public GameData getRunningGameById(GameId gameId) {
-		return new GameData();
+		return this.getAllRunningGames().get(gameId);
 	}
 	
 	public int getAmountOfActiveGames() {
@@ -39,8 +43,11 @@ public class GameManagerService {
 	
 	public void addNewPlayer(GameId gameId, GamePlayer gamePlayer) {
 		GameData gameToAddPlayer = this.getRunningGameById(gameId);
-		
 		gameToAddPlayer.addPlayer(gamePlayer);
+	}
+	
+	public void setCurrentPlayer(GameId gameId, PlayerId playerId) {
+		this.gameRepository.getRunningGameById(gameId).setCurrentPlayer(playerId);
 	}
 	
 	public void removeOldestGames(int amountToRemove) {

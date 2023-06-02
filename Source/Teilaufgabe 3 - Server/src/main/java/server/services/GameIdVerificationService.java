@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import server.model.GameId;
 import server.model.GameRepository;
 
@@ -19,7 +18,7 @@ public class GameIdVerificationService {
 	
 	private static Logger logger = LoggerFactory.getLogger(GameIdVerificationService.class);
 	
-	private GameRepository gameRepository;
+	private final GameRepository gameRepository;
 	
 	@Autowired
 	public GameIdVerificationService(GameRepository gameRepository) {

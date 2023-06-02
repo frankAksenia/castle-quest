@@ -54,6 +54,8 @@ public class PlayerRegistrationController {
 		
 		UniquePlayerIdentifier newPlayerId = this.serverClientConverter.convertPlayerId(playerId);
 		
+		this.setCurrentPlayer(gameId, playerId);
+		
 		ResponseEnvelope<UniquePlayerIdentifier> playerIDMessage = new ResponseEnvelope<>(newPlayerId);
 				
 		return playerIDMessage;
@@ -75,5 +77,11 @@ public class PlayerRegistrationController {
 		GamePlayer newPlayer = this.clientServerConverter.convertPlayerRegistration(registration, playerId);
 		this.gameManagerService.addNewPlayer(gameId, newPlayer);
 	}
+	
+	private void setCurrentPlayer(GameId gameId, PlayerId playerId) {
+		this.gameManagerService.setCurrentPlayer(gameId, playerId);
+	}
+	
+	
 
 }

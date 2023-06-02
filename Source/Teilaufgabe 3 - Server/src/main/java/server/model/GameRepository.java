@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -21,6 +22,7 @@ public class GameRepository {
 	private static Logger logger = LoggerFactory.getLogger(GameRepository.class);
 	
 	public GameRepository() {
+		logger.info("NEW REPOSITORY");
 		this.runningGames = new HashMap<GameId, GameData>();
 	}
 	
@@ -38,7 +40,7 @@ public class GameRepository {
 	
 	public void addNewGame(GameId gameId, GameData gameData) {
 		this.runningGames.put(gameId, gameData);
-		logger.info("New game with id {} was added", gameId);
+		logger.info("New game with id {} was added. Number of active games: {}", gameId, runningGames.size());
 	}
 	
 	public void removeOldestGames(int amountToRemove) {
