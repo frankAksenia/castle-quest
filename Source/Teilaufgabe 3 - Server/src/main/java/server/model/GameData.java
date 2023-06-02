@@ -17,9 +17,11 @@ public class GameData {
 	
 	private static Logger logger = LoggerFactory.getLogger(GameData.class);
 
-	private Map<Coordinate, MapField> gameMap;
+	private Map<Coordinate, MapField> gameMap = null;
 	
-	private Set<GamePlayer> gamePlayers;
+	GamePlayer firstPlayer = null;
+	
+	GamePlayer secondPlayer = null;
 	
 	private PlayerId currentPlayer;
 	
@@ -28,7 +30,6 @@ public class GameData {
 	public GameData() {
 		logger.info("NEW GAME DATA");
 		this.gameMap = new HashMap<>();
-		this.gamePlayers = new HashSet<>();
 	}
 
 	public Map<Coordinate, MapField> getGameMap() {
@@ -36,14 +37,18 @@ public class GameData {
 	}
 	
 	public Set<GamePlayer> getGamePlayers() {
-		logger.info("Size players second: {}", gamePlayers.size());
-		return this.gamePlayers;
+		Set<GamePlayer> gamePlayers = new HashSet<>();
+		gamePlayers.add(firstPlayer);
+		gamePlayers.add(secondPlayer);
+		return gamePlayers;
 	}
 	
 	public void addPlayer(GamePlayer newPlayer) {
-		this.gamePlayers.add(newPlayer);
+		if(firstPlayer == null)
+			firstPlayer = newPlayer;
+		else
+			secondPlayer = newPlayer;
 		logger.info("Added player {}", newPlayer.playerId());
-		logger.info("Size players first: {}", gamePlayers.size());
 	}
 	
 	public Coordinate getCoordinate(int x, int y) {
@@ -82,9 +87,9 @@ public class GameData {
 	public void setGameMap(Map<Coordinate, MapField> fullGameMap) {
 		this.gameMap = fullGameMap;
 	}
-
+	
 	public PlayerId getCurrentPlayer() {
-		return currentPlayer;
+		return this.currentPlayer;
 	}
 
 	public void setCurrentPlayer(PlayerId currentPlayer) {
@@ -93,6 +98,14 @@ public class GameData {
 	
 	public boolean areBothPlayersRegistered() {
 		return true;
+	}
+
+	public GamePlayer getFirstPlayer() {
+		return firstPlayer;
+	}
+
+	public GamePlayer getSecondPlayer() {
+		return secondPlayer;
 	}
 
 	public GameStateId getGameStateId() {

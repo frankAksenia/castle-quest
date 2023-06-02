@@ -50,6 +50,14 @@ public class GameManagerService {
 		this.gameRepository.getRunningGameById(gameId).setCurrentPlayer(playerId);
 	}
 	
+	public void switchPlayer(GameId gameId, PlayerId playerId) {
+		GameData gameData = this.gameRepository.getRunningGameById(gameId);
+		if(gameData.getFirstPlayer().playerId().equals(playerId))
+			gameData.setCurrentPlayer(gameData.getSecondPlayer().playerId());
+		else
+			gameData.setCurrentPlayer(gameData.getFirstPlayer().playerId());
+	}
+	
 	public void removeOldestGames(int amountToRemove) {
 	}
 	

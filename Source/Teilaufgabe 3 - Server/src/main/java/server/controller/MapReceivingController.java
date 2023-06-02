@@ -61,6 +61,8 @@ public class MapReceivingController {
 		Map<Coordinate, MapField> playerHalfMap = this.clientServerConverter.convertGameMap(receivedMap);
 		
 		this.setGameMap(gameId, playerHalfMap);
+		
+		this.switchPlayer(gameId, playerId);
 						
 		return new ResponseEnvelope<>();
 	}
@@ -87,6 +89,10 @@ public class MapReceivingController {
 	
 	private void setGameMap(GameId gameId, Map<Coordinate, MapField> playerHalfMap) {
 		this.gameManagerService.getRunningGameById(gameId).setGameMap(playerHalfMap);
+	}
+	
+	private void switchPlayer(GameId gameId, PlayerId playerId) {
+		this.gameManagerService.switchPlayer(gameId, playerId);
 	}
 	
 }
