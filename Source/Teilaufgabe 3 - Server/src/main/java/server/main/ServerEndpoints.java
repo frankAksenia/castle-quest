@@ -25,8 +25,7 @@ import server.controller.GameManager;
 import server.controller.MapReceivingController;
 import server.controller.PlayerRegistrationController;
 import server.controller.StatusRequestController;
-import server.exceptions.WrongGameIdException;
-import server.exceptions.WrongPlayerIdException;
+import server.exceptions.GenericExampleException;
 
 // API layer
 @RestController
@@ -81,16 +80,8 @@ public class ServerEndpoints {
 		return this.statusRequestController.processGameStateRequest(gameID, playerID);
 	}
 	
-	@ExceptionHandler({ WrongGameIdException.class })
-	public @ResponseBody ResponseEnvelope<?> handleException(WrongGameIdException ex, HttpServletResponse response) {
-		ResponseEnvelope<?> result = new ResponseEnvelope<>(ex.getErrorName(), ex.getMessage());
-		// reply with 200 OK as defined in the network documentation
-		response.setStatus(HttpServletResponse.SC_OK);
-		return result;
-	}
-	
-	@ExceptionHandler({ WrongPlayerIdException.class })
-	public @ResponseBody ResponseEnvelope<?> handleException(WrongPlayerIdException ex, HttpServletResponse response) {
+	@ExceptionHandler({ GenericExampleException.class })
+	public @ResponseBody ResponseEnvelope<?> handleException(GenericExampleException ex, HttpServletResponse response) {
 		ResponseEnvelope<?> result = new ResponseEnvelope<>(ex.getErrorName(), ex.getMessage());
 		// reply with 200 OK as defined in the network documentation
 		response.setStatus(HttpServletResponse.SC_OK);

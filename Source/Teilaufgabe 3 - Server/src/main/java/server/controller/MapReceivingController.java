@@ -1,5 +1,7 @@
 package server.controller;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -13,7 +15,10 @@ import messagesbase.messagesfromclient.PlayerHalfMap;
 import server.converters.ClientServerConverter;
 import server.exceptions.WrongGameIdException;
 import server.exceptions.WrongPlayerIdException;
+import server.model.Coordinate;
+import server.model.GameData;
 import server.model.GameId;
+import server.model.MapField;
 import server.model.PlayerId;
 import server.services.GameIdVerificationService;
 import server.services.GameManagerService;
@@ -43,16 +48,20 @@ public class MapReceivingController {
 		this.clientServerConverter = clientServerConverter;
 	}
 	
-	public ResponseEnvelope<?> processPlayerHalfmap(UniqueGameIdentifier receivedGameID, PlayerHalfMap playerHalfMap) {
+	public ResponseEnvelope<?> processPlayerHalfmap(UniqueGameIdentifier receivedGameID, PlayerHalfMap receivedMap) {
 		
 		GameId gameId = this.clientServerConverter.convertGameId(receivedGameID);
 		
 		this.verifyGameId(gameId);
 		
-		PlayerId playerId = new PlayerId(playerHalfMap.getUniquePlayerID());
+		PlayerId playerId = new PlayerId(receivedMap.getUniquePlayerID());
 		
 		this.verifyPlayerId(gameId, playerId);
-				
+		
+		Map<Coordinate, MapField> playerHalfMap = this.clientServerConverter.convertGameMap(receivedMap);
+		
+		this.setGameMap(gameId, playerHalfMap);
+						
 		return new ResponseEnvelope<>();
 	}
 	
@@ -69,6 +78,15 @@ public class MapReceivingController {
 	
 	private boolean verifyActionSentInTurn(PlayerId playerId) {
 		return true;
+	}
+	
+	private void verifyGameMap(GameId gameId) {
+		GameData gameData = this.gameManagerService.getRunningGameById(gameId);
+		this.mapValidationService.verifyGameMap(gameData);
+	}
+	
+	private void setGameMap(GameId gameId, Map<Coordinate, MapField> playerHalfMap) {
+		this.gameManagerService.getRunningGameById(gameId).setGameMap(playerHalfMap);
 	}
 	
 }
