@@ -59,8 +59,10 @@ public class MapReceivingController {
 		this.verifyPlayerId(gameId, playerId);
 		
 		Map<Coordinate, MapField> playerHalfMap = this.clientServerConverter.convertGameMap(receivedMap);
-		
+				
 		this.setGameMap(gameId, playerHalfMap);
+		
+		boolean approved = this.verifyGameMap(gameId);
 		
 		this.switchPlayer(gameId, playerId);
 						
@@ -82,9 +84,9 @@ public class MapReceivingController {
 		return true;
 	}
 	
-	private void verifyGameMap(GameId gameId) {
+	private boolean verifyGameMap(GameId gameId) {
 		GameData gameData = this.gameManagerService.getRunningGameById(gameId);
-		this.mapValidationService.verifyGameMap(gameData);
+		return this.mapValidationService.verifyGameMap(gameData);
 	}
 	
 	private void setGameMap(GameId gameId, Map<Coordinate, MapField> playerHalfMap) {

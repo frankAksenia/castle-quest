@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import server.exceptions.IslandOnMapException;
@@ -24,6 +26,8 @@ import server.model.MapField;
 @Service
 public class MapValidationService {
 	
+	private static Logger logger = LoggerFactory.getLogger(MapValidationService.class);
+	
 	private final int MIN_WATER = 7;
 	private final int MIN_MOUNTAIN = 5;
 	private final int MIN_GRASS = 24;
@@ -36,27 +40,33 @@ public class MapValidationService {
 	private GameData gameData;
 	
 	private Set<Coordinate> visitedFields = new HashSet<Coordinate>();
+	
+	private boolean approved = true;
 
-	public void verifyGameMap(GameData gameData) {
+	public boolean verifyGameMap(GameData gameData) {
 		this.gameData = gameData;
+		this.actualWaterCount = 0;
+		this.visitedFields.clear();
 		this.verifyTerrainsCount(); 
 		this.verifyMapSize();
 		this.verifyIslandPresent();
 		this.verifyWaterOnBoarders();
 		this.verifyFort();
+		return approved;
 	}
 	
 	private void verifyTerrainsCount() {
-		int grassCount = 0, mountainCount = 0, waterCount = 0;
+		int grassCount = 0, mountainCount = 0;
 		for(MapField eachField: this.gameData.getGameMap().values()) {
 			EMapTerrain currentTerrain = eachField.getTerrain();
 			switch(currentTerrain) {
-			case WATER: ++waterCount; break;
+			case WATER: ++this.actualWaterCount; break;
 			case GRASS: ++grassCount; break;
 			case MOUNTAIN: ++mountainCount; break;
 			}
 		}
-		if(waterCount < MIN_WATER || grassCount < MIN_GRASS || mountainCount < MIN_MOUNTAIN) {
+		if(this.actualWaterCount < MIN_WATER || grassCount < MIN_GRASS || mountainCount < MIN_MOUNTAIN) {
+			this.approved = false;
 			throw new WrongTerrainCountException("Wrong terrain count!", "Not enought fields for required terrains!");
 		}
 	}
@@ -75,25 +85,33 @@ public class MapValidationService {
 	        if (currentY > maxY) 
 	            maxY = currentY;
 	    }
-		if(maxX != this.MAX_WIDTH || maxY != this.MAX_HEIGHT)
+		if(maxX != this.MAX_WIDTH || maxY != this.MAX_HEIGHT) {
+			this.approved = false;
 			throw new WrongMapSizeException("Wrong map size!", "Wrong amount of fields on the map!");
+		}
 	}
 	
 	private void verifyIslandPresent() {
+		logger.info("GameMap {}", this.gameData.getGameMap());
 		Coordinate startCoordinate = new Coordinate();
 		do {
 			Random random = new Random();
-	        int randomX = random.nextInt(MAX_WIDTH + 3);
-	        int randomY = random.nextInt(MAX_HEIGHT + 3);
+	        int randomX = random.nextInt(MAX_WIDTH + 1);
+	        int randomY = random.nextInt(MAX_HEIGHT + 1);
+	        logger.info("X {}, Y {}", randomX, randomY);
 	        startCoordinate = this.gameData.getCoordinate(randomX, randomY);
 		} while(this.gameData.getGameMap().get(startCoordinate).getTerrain() == EMapTerrain.WATER);
         
 		this.floodFill(startCoordinate);
 		
+		logger.info("Water {}, visited {}", actualWaterCount, visitedFields.size());
+		
 		boolean result = this.MAP_SIZE - this.actualWaterCount != this.visitedFields.size();
 				
-		if(result)
+		if(result) {
+			this.approved = false;
 			throw new IslandOnMapException("Island exception", "Map contains one or more islands!");
+		}
 	}
 	
 	private void verifyWaterOnBoarders() {
@@ -118,8 +136,10 @@ public class MapValidationService {
 				left >= Math.ceil(Double.valueOf(MAX_HEIGHT)/2) ||
 				right >= Math.ceil(Double.valueOf(MAX_HEIGHT)/2);
 				
-		if(result) 
+		if(result) {
+			this.approved = false;
 			throw new WaterOnBoardersException("Borders exception","Too many water fields on map borders were detected!");
+		}
 	}
 	
 	private void verifyFort() {
@@ -131,10 +151,14 @@ public class MapValidationService {
 				if(!eachField.getTerrain().equals(EMapTerrain.GRASS))
 					isNotGrass = true;
 			}
-		if(count != 1)
+		if(count != 1) {
+			this.approved = false;
 			throw new WrongArtefactPlacementException("Wrong fort placement","Amount of forts exceeded!");
-		if(isNotGrass)
+		}
+		if(isNotGrass) {
+			this.approved = false;
 			throw new WrongArtefactPlacementException("Wrong fort placement","Fort was placed not on the grass field!");
+		}
 	}
 	
 	private boolean floodFill(Coordinate currentCoordinate) {

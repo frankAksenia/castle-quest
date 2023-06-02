@@ -17,7 +17,7 @@ public class GameData {
 	
 	private static Logger logger = LoggerFactory.getLogger(GameData.class);
 
-	private Map<Coordinate, MapField> gameMap = null;
+	private Map<Coordinate, MapField> gameMap;
 	
 	GamePlayer firstPlayer = null;
 	
@@ -38,8 +38,10 @@ public class GameData {
 	
 	public Set<GamePlayer> getGamePlayers() {
 		Set<GamePlayer> gamePlayers = new HashSet<>();
-		gamePlayers.add(firstPlayer);
-		gamePlayers.add(secondPlayer);
+		if(this.firstPlayer != null)
+			gamePlayers.add(firstPlayer);
+		if(this.secondPlayer != null)
+			gamePlayers.add(secondPlayer);
 		return gamePlayers;
 	}
 	
@@ -84,8 +86,9 @@ public class GameData {
 		return fieldsAround;
 	}
 
-	public void setGameMap(Map<Coordinate, MapField> fullGameMap) {
-		this.gameMap = fullGameMap;
+	public void setGameMap(Map<Coordinate, MapField> gameMap) {
+		logger.info("MAP WAS SET");
+		this.gameMap = gameMap;
 	}
 	
 	public PlayerId getCurrentPlayer() {
