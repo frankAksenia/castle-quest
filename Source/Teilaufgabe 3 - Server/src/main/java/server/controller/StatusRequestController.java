@@ -47,19 +47,28 @@ public class StatusRequestController {
 		this.clientServiceConverter = clientServerConverter;
 	}
 	
-	public ResponseEnvelope<GameState> processGameStateRequest(UniqueGameIdentifier gameID, UniquePlayerIdentifier playerID) {
+	public ResponseEnvelope<GameState> processGameStateRequest(UniqueGameIdentifier receivedGameId, UniquePlayerIdentifier receivedPlayerId) {
 		
-		this.verifyGameId(this.clientServiceConverter.convertGameId(gameID));
+		GameId gameId = this.clientServiceConverter.convertGameId(receivedGameId);
+		
+		PlayerId playerId = this.clientServiceConverter.convertPlayerId(receivedPlayerId);
+		
+		this.verifyGameId(gameId);
 		
 		PlayerId randomPlayerId = this.statusRequestService.getRandomPlayerId();
 		
-		GameStateId gameStateId = this.statusRequestService.getGameStateId(this.clientServiceConverter.convertGameId(gameID), this.clientServiceConverter.convertPlayerId(playerID));
+		GameStateId gameStateId = this.statusRequestService.getGameStateId(gameId, this.clientServiceConverter.convertPlayerId(receivedPlayerId));
 		
-		Set<GamePlayer> gamePlayers = this.statusRequestService.getGamePlayers(this.clientServiceConverter.convertGameId(gameID));
+		Set<GamePlayer> gamePlayers = this.statusRequestService.getGamePlayers(gameId);
 				
-		this.verifyPlayerId(this.clientServiceConverter.convertGameId(gameID), this.clientServiceConverter.convertPlayerId(playerID));
+		this.verifyPlayerId(gameId, this.clientServiceConverter.convertPlayerId(receivedPlayerId));
 		
-		Collection<PlayerState> responsePlayers = this.serverClientConverter.convertGamePlayers(gamePlayers, EPlayerState.WAIT, this.clientServiceConverter.convertPlayerId(playerID), randomPlayerId);
+		EPlayerState playerState = EPlayerState.WAIT;
+		
+		if(this.statusRequestService.isCurrentPlayer(gameId, playerId))
+			playerState = EPlayerState.ACT;
+		
+		Collection<PlayerState> responsePlayers = this.serverClientConverter.convertGamePlayers(gamePlayers, playerState, playerId, randomPlayerId);
 		
 		FullMap fullMap = new FullMap();
 		

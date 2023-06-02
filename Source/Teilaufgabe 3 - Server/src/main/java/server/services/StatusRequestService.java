@@ -52,4 +52,8 @@ public class StatusRequestService {
 		Set<GamePlayer> players = gameData.getGamePlayers();
 		return players;
 	}
+	
+	public boolean isCurrentPlayer(GameId gameId, PlayerId playerId) {
+		return this.gameRepository.getRunningGameById(gameId).getCurrentPlayer().equals(playerId);
+	}
 }
