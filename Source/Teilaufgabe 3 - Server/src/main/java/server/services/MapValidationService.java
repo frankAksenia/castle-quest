@@ -16,7 +16,7 @@ import server.exceptions.WrongMapSizeException;
 import server.exceptions.WrongTerrainCountException;
 import server.model.Coordinate;
 import server.model.EMapTerrain;
-import server.model.GameData;
+import server.model.GameMap;
 import server.model.MapField;
 
 /*
@@ -37,14 +37,15 @@ public class MapValidationService {
 	
 	private int actualWaterCount = 0;
 	
-	private GameData gameData;
+	private GameMap gameMap;
 	
 	private Set<Coordinate> visitedFields = new HashSet<Coordinate>();
 	
 	private boolean approved = true;
 
-	public boolean verifyGameMap(GameData gameData) {
-		this.gameData = gameData;
+	public boolean verifyGameMap(Map<Coordinate, MapField> gameMap) {
+		this.gameMap = new GameMap();
+		this.gameMap.setGameMap(gameMap);
 		this.actualWaterCount = 0;
 		this.visitedFields.clear();
 		this.verifyTerrainsCount(); 
@@ -52,12 +53,12 @@ public class MapValidationService {
 		this.verifyIslandPresent();
 		this.verifyWaterOnBoarders();
 		this.verifyFort();
-		return approved;
+		return this.approved;
 	}
 	
 	private void verifyTerrainsCount() {
 		int grassCount = 0, mountainCount = 0;
-		for(MapField eachField: this.gameData.getGameMap().values()) {
+		for(MapField eachField: this.gameMap.getGameMap().values()) {
 			EMapTerrain currentTerrain = eachField.getTerrain();
 			switch(currentTerrain) {
 			case WATER: ++this.actualWaterCount; break;
@@ -72,35 +73,24 @@ public class MapValidationService {
 	}
 	
 	private void verifyMapSize() {
-		int maxX = Integer.MIN_VALUE;
-	    int maxY = Integer.MIN_VALUE;
-
-	    for (Coordinate coordinate: this.gameData.getGameMap().keySet()) {
-	    	int currentX = coordinate.getX();
-	        int currentY = coordinate.getY();
-
-	        if (currentX > maxX) 
-	        	maxX = currentX;
-	            
-	        if (currentY > maxY) 
-	            maxY = currentY;
-	    }
-		if(maxX != this.MAX_WIDTH || maxY != this.MAX_HEIGHT) {
+		int size = this.gameMap.getGameMap().size();
+		logger.warn("Size of the map: {}", size);
+		if(size != this.MAP_SIZE) {
 			this.approved = false;
 			throw new WrongMapSizeException("Wrong map size!", "Wrong amount of fields on the map!");
 		}
 	}
 	
 	private void verifyIslandPresent() {
-		logger.info("GameMap {}", this.gameData.getGameMap());
+		logger.info("GameMap {}", this.gameMap.getGameMap());
 		Coordinate startCoordinate = new Coordinate();
 		do {
 			Random random = new Random();
 	        int randomX = random.nextInt(MAX_WIDTH + 1);
 	        int randomY = random.nextInt(MAX_HEIGHT + 1);
 	        logger.info("X {}, Y {}", randomX, randomY);
-	        startCoordinate = this.gameData.getCoordinate(randomX, randomY);
-		} while(this.gameData.getGameMap().get(startCoordinate).getTerrain() == EMapTerrain.WATER);
+	        startCoordinate = this.gameMap.getCoordinate(randomX, randomY);
+		} while(this.gameMap.getGameMap().get(startCoordinate).getTerrain() == EMapTerrain.WATER);
         
 		this.floodFill(startCoordinate);
 		
@@ -117,7 +107,7 @@ public class MapValidationService {
 	private void verifyWaterOnBoarders() {
 		int upper = 0, lower = 0, left  = 0, right = 0;
 		
-		for(Map.Entry<Coordinate, MapField> entry : gameData.getGameMap().entrySet()) {
+		for(Map.Entry<Coordinate, MapField> entry : gameMap.getGameMap().entrySet()) {
 			if(entry.getKey().getY() == 0 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
 				++upper;
 			
@@ -145,7 +135,7 @@ public class MapValidationService {
 	private void verifyFort() {
 		int count = 0;
 		boolean isNotGrass = false;
-		for(MapField eachField: this.gameData.getGameMap().values())
+		for(MapField eachField: this.gameMap.getGameMap().values())
 			if(eachField.isFirstFort()) {
 				++count;
 				if(!eachField.getTerrain().equals(EMapTerrain.GRASS))
@@ -162,13 +152,13 @@ public class MapValidationService {
 	}
 	
 	private boolean floodFill(Coordinate currentCoordinate) {
-		if(this.gameData.getGameMap().get(currentCoordinate).getTerrain() == EMapTerrain.WATER)
+		if(this.gameMap.getGameMap().get(currentCoordinate).getTerrain() == EMapTerrain.WATER)
 			return false;
 		
 		this.visitedFields.add(currentCoordinate);
 		
-		for(Coordinate neighbourCoordinate: this.gameData.getCoordinatesAround(currentCoordinate)) 
-			if(this.gameData.getGameMap().containsKey(neighbourCoordinate)
+		for(Coordinate neighbourCoordinate: this.gameMap.getCoordinatesAround(currentCoordinate)) 
+			if(this.gameMap.getGameMap().containsKey(neighbourCoordinate)
 					&& !visitedFields.contains(neighbourCoordinate)
 					&& floodFill(neighbourCoordinate))
 				return true;

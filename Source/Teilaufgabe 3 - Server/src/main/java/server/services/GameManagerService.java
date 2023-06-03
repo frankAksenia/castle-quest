@@ -1,16 +1,21 @@
 package server.services;
 
 import java.util.Map;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import server.model.Coordinate;
+import server.model.EMapShape;
 import server.model.GameData;
 import server.model.GameId;
+import server.model.GameMap;
 import server.model.GamePlayer;
 import server.model.GameRepository;
+import server.model.MapField;
 import server.model.PlayerId;
 
 @Service
@@ -56,6 +61,32 @@ public class GameManagerService {
 			gameData.setCurrentPlayer(gameData.getSecondPlayer().playerId());
 		else
 			gameData.setCurrentPlayer(gameData.getFirstPlayer().playerId());
+	}
+	
+	public void setGameMap(GameId gameId, Map<Coordinate, MapField> receivedMap) {
+		GameData gameData = this.gameRepository.getRunningGameById(gameId);
+		if(!gameData.isFirstMapReceived()) {
+			gameData.setGameMap(receivedMap);
+			gameData.setFirstMapReceived(true);
+		}
+		else {
+			Random random = new Random();
+			Map<Coordinate, MapField> result = this.adjustMapCoordinates(random.nextInt(2), receivedMap);	
+			gameData.setGameMap(result);
+		}
+	}
+
+	private Map<Coordinate, MapField> adjustMapCoordinates(int randomShape, Map<Coordinate, MapField> gameMap) {
+		 Map<Coordinate, MapField> result = gameMap;
+		 EMapShape[] mapShape = EMapShape.values();
+		 EMapShape shape = mapShape[randomShape];
+		 for(Coordinate eachCoordinate: gameMap.keySet()) {
+			 if(shape == EMapShape.HORIZONTAL) 
+				 eachCoordinate.setX(eachCoordinate.getX() + 10);
+			 else if(shape == EMapShape.VERTICAL)
+				 eachCoordinate.setY(eachCoordinate.getY() + 5);
+		 }
+		 return result;
 	}
 	
 	public void removeOldestGames(int amountToRemove) {

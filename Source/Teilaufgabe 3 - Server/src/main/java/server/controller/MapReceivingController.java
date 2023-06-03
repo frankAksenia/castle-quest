@@ -18,6 +18,7 @@ import server.exceptions.WrongPlayerIdException;
 import server.model.Coordinate;
 import server.model.GameData;
 import server.model.GameId;
+import server.model.GameMap;
 import server.model.MapField;
 import server.model.PlayerId;
 import server.services.GameIdVerificationService;
@@ -59,10 +60,10 @@ public class MapReceivingController {
 		this.verifyPlayerId(gameId, playerId);
 		
 		Map<Coordinate, MapField> playerHalfMap = this.clientServerConverter.convertGameMap(receivedMap);
-				
-		this.setGameMap(gameId, playerHalfMap);
+						
+		boolean approved = this.verifyGameMap(playerHalfMap); // use for win and loose state
 		
-		boolean approved = this.verifyGameMap(gameId);
+		this.setGameMap(gameId, playerHalfMap);
 		
 		this.switchPlayer(gameId, playerId);
 						
@@ -84,13 +85,12 @@ public class MapReceivingController {
 		return true;
 	}
 	
-	private boolean verifyGameMap(GameId gameId) {
-		GameData gameData = this.gameManagerService.getRunningGameById(gameId);
-		return this.mapValidationService.verifyGameMap(gameData);
+	private boolean verifyGameMap(Map<Coordinate, MapField> gameMap) {
+		return this.mapValidationService.verifyGameMap(gameMap);
 	}
 	
 	private void setGameMap(GameId gameId, Map<Coordinate, MapField> playerHalfMap) {
-		this.gameManagerService.getRunningGameById(gameId).setGameMap(playerHalfMap);
+		this.gameManagerService.setGameMap(gameId, playerHalfMap);
 	}
 	
 	private void switchPlayer(GameId gameId, PlayerId playerId) {

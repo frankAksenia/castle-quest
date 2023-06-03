@@ -17,7 +17,7 @@ public class GameData {
 	
 	private static Logger logger = LoggerFactory.getLogger(GameData.class);
 
-	private Map<Coordinate, MapField> gameMap;
+	private GameMap gameMap = new GameMap();
 	
 	GamePlayer firstPlayer = null;
 	
@@ -27,13 +27,26 @@ public class GameData {
 	
 	private GameStateId gameStateId;
 	
+	private boolean firstMapReceived = false;
+		
 	public GameData() {
 		logger.info("NEW GAME DATA");
-		this.gameMap = new HashMap<>();
 	}
 
-	public Map<Coordinate, MapField> getGameMap() {
+	public GameMap getGameMap() {
 		return gameMap;
+	}
+	
+	public void setGameMap(Map<Coordinate,MapField> gameMap) {
+		this.gameMap.setGameMap(gameMap);
+	}
+	
+	public boolean isFirstMapReceived() {
+		return firstMapReceived;
+	}
+
+	public void setFirstMapReceived(boolean firstMapReceived) {
+		this.firstMapReceived = firstMapReceived;
 	}
 	
 	public Set<GamePlayer> getGamePlayers() {
@@ -51,44 +64,6 @@ public class GameData {
 		else
 			secondPlayer = newPlayer;
 		logger.info("Added player {}", newPlayer.playerId());
-	}
-	
-	public Coordinate getCoordinate(int x, int y) {
-		for(Entry<Coordinate, MapField> entry: this.gameMap.entrySet()) {
-			if(entry.getKey().getX() == x && entry.getKey().getY() == y)
-				return entry.getKey();
-		}
-		return new Coordinate();
-	}
-	
-	public List<Coordinate> getCoordinatesAround(Coordinate coordinate) {
-		List<Coordinate> fieldsAround = new ArrayList<>();
-		
-		final int x = coordinate.getX();
-		final int y = coordinate.getY();
-		
-		Coordinate coordinateDown = this.getCoordinate(x, y+1);
-		if(this.getGameMap().containsKey(coordinateDown))
-			fieldsAround.add(coordinateDown);
-		
-		Coordinate coordinateUp = this.getCoordinate(x, y-1);
-		if(this.getGameMap().containsKey(coordinateUp))
-			fieldsAround.add(coordinateUp);
-		
-		Coordinate coordinateRight = this.getCoordinate(x+1, y);
-		if(this.getGameMap().containsKey(coordinateRight))
-			fieldsAround.add(coordinateRight);	
-		
-		Coordinate coordinateLeft = this.getCoordinate(x-1, y);
-		if(this.getGameMap().containsKey(coordinateLeft))
-			fieldsAround.add(coordinateLeft);	
-		
-		return fieldsAround;
-	}
-
-	public void setGameMap(Map<Coordinate, MapField> gameMap) {
-		logger.info("MAP WAS SET");
-		this.gameMap = gameMap;
 	}
 	
 	public PlayerId getCurrentPlayer() {
