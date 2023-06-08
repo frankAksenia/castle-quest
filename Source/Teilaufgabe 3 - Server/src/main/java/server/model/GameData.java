@@ -25,16 +25,14 @@ public class GameData {
 	
 	private boolean firstMapReceived = false;
 		
-	public GameData() {
-		logger.info("NEW GAME DATA");
-	}
+	public GameData() {}
 
 	public GameMap getGameMap() {
 		return gameMap;
 	}
 	
 	public void setGameMap(GameMap gameMap, PlayerId playerId) {
-		this.gameMap = gameMap;
+		this.gameMap.setGameMap(gameMap.getGameMap());
 	}
 	
 	public boolean isFirstMapReceived() {
@@ -59,7 +57,6 @@ public class GameData {
 			firstPlayer = newPlayer;
 		else
 			secondPlayer = newPlayer;
-		logger.info("Added player {}", newPlayer.playerId());
 	}
 	
 	public PlayerId getCurrentPlayer() {

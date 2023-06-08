@@ -76,7 +76,6 @@ public class MapReceivingController {
 	}
 	
 	private void verifyPlayerId(GameId gameId, PlayerId playerId) {
-		logger.info("Verifying player id: {}", playerId);
 		if(this.playerIdVerificationService.verifyPlayerId(gameId, playerId))
 			throw new WrongPlayerIdException("Wrong player id", "Client provided player id not existing in the given game!");
 	}
@@ -95,6 +94,6 @@ public class MapReceivingController {
 	
 	private void switchPlayer(GameId gameId, PlayerId playerId) {
 		this.gameManagerService.switchPlayer(gameId, playerId);
-	}
+	}            
 	
 }

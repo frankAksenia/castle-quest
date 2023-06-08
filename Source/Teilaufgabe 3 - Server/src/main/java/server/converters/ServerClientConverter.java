@@ -1,6 +1,7 @@
 package server.converters;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -68,16 +69,17 @@ public class ServerClientConverter {
 
 	public FullMap convertGameMap(GameMap gameMap, PlayerId playerId) {
 		Set<FullMapNode> allNodes = new HashSet<>();
-		Map<Coordinate,MapField> allFields = gameMap.getGameMap();
-		Map<PlayerId, Coordinate> playersPositions = gameMap.getPlayersPositions();
-		Map<PlayerId, Coordinate> fortsPositions = gameMap.getFortsPositions();
+		Map<Coordinate, MapField> allFields = new HashMap<>();
+		allFields.putAll(gameMap.getGameMap());
+		Map<PlayerId,Coordinate> playersPositions = gameMap.getPlayersPositions();
+		Map<PlayerId,Coordinate> fortsPositions = gameMap.getFortsPositions();
 		// Map<PlayerId, Coordinate> treasurePositions = gameMap.getTreasurePositions();
 		ETreasureState treasureState = ETreasureState.NoOrUnknownTreasureState;
 		EFortState fortState;
 		EPlayerPositionState playerPositionState = EPlayerPositionState.NoPlayerPresent;
 		ETerrain terrain = ETerrain.Grass;
 		FullMapNode fullMapNode;
-		for(Map.Entry<Coordinate, MapField> eachField: allFields.entrySet()) {
+		for(Map.Entry<Coordinate, MapField> eachField: gameMap.getGameMap().entrySet()) {
 			fortState = EFortState.NoOrUnknownFortState;
 			terrain = this.converMapTerrain(eachField.getValue().getTerrain());
 			if(Collections.frequency(playersPositions.values(), eachField.getKey()) == 2)
@@ -88,15 +90,16 @@ public class ServerClientConverter {
 				else 
 					playerPositionState = EPlayerPositionState.MyPlayerPosition;	
 			}
+//			logger.warn("SIZE OF FORTS {}", fortsPositions.size());
 			if(fortsPositions.containsValue(eachField.getKey())) {
-				logger.warn("SIze in converter: {}", fortsPositions.size());
-				logger.warn("CONTAINS FORT");
+				logger.warn("THERE IS DEFINITELY");
 				if(fortsPositions.get(playerId) == null) {
-					fortState = EFortState.EnemyFortPresent;
-					logger.warn("IS NULL");
+//					fortState = EFortState.EnemyFortPresent;
 				}
-				else 
+				else {
+					logger.warn("HERE IS MY FORT");
 					fortState = EFortState.MyFortPresent;
+				}
 			}
 //			if(treasurePositions.containsValue(eachField.getKey())) 
 //				if(!treasurePositions.get(playerId).equals(null))
@@ -108,14 +111,12 @@ public class ServerClientConverter {
 		return fullMap;
 	}
 	
-	
-	
 	private ETerrain converMapTerrain(EMapTerrain mapTerrain) {
 		ETerrain result = ETerrain.Grass;
 		switch(mapTerrain) {
-		case GRASS: result = ETerrain.Grass; break;
-		case MOUNTAIN: result = ETerrain.Mountain; break;
-		case WATER: result = ETerrain.Water; break;
+			case GRASS: result = ETerrain.Grass; break;
+			case MOUNTAIN: result = ETerrain.Mountain; break;
+			case WATER: result = ETerrain.Water; break;
 		}
 		return result;
 	}

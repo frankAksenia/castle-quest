@@ -1,5 +1,6 @@
 package server.services;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -66,27 +67,33 @@ public class GameManagerService {
 	public void setGameMap(GameId gameId, PlayerId playerId, GameMap receivedMap) {
 		GameData gameData = this.gameRepository.getRunningGameById(gameId);
 		if(!gameData.isFirstMapReceived()) {
-			gameData.setGameMap(receivedMap, playerId);
 			gameData.setFirstMapReceived(true);
 		}
 		else {
 			Random random = new Random();
-			receivedMap.setGameMap(this.adjustMapCoordinates(random.nextInt(2), receivedMap.getGameMap()));	
-			gameData.setGameMap(receivedMap, playerId);
+			this.adjustMapCoordinates(random.nextInt(2), receivedMap);
+			logger.info("Full map after the second player: {}", receivedMap.getGameMap());
 		}
+		gameData.setGameMap(receivedMap, playerId);
 	}
 
-	private Map<Coordinate, MapField> adjustMapCoordinates(int randomShape, Map<Coordinate, MapField> gameMap) {
-		 Map<Coordinate, MapField> result = gameMap;
+	private void adjustMapCoordinates(int randomShape, GameMap gameMap) {
 		 EMapShape[] mapShape = EMapShape.values();
 		 EMapShape shape = mapShape[randomShape];
-		 for(Coordinate eachCoordinate: gameMap.keySet()) {
-			 if(shape == EMapShape.HORIZONTAL) 
-				 eachCoordinate.setX(eachCoordinate.getX() + 10);
-			 else if(shape == EMapShape.VERTICAL)
-				 eachCoordinate.setY(eachCoordinate.getY() + 5);
+		 Map<Coordinate, MapField> updatedMap = new HashMap<>();
+		 logger.info("Chosen shape to set map: {}", shape);
+		 Coordinate newCoordinate;
+		 for(Map.Entry<Coordinate, MapField> eachEntry: gameMap.getGameMap().entrySet()) {
+			 if(shape == EMapShape.HORIZONTAL) {
+				 newCoordinate = new Coordinate(eachEntry.getKey().getX() + 10, eachEntry.getKey().getY());
+				 updatedMap.put(newCoordinate, eachEntry.getValue());
+			 }
+			 else if(shape == EMapShape.VERTICAL) {
+				 newCoordinate = new Coordinate(eachEntry.getKey().getX(), eachEntry.getKey().getY() + 5);
+				 updatedMap.put(newCoordinate, eachEntry.getValue());
+			 }
 		 }
-		 return result;
+		 gameMap.setGameMap(updatedMap);
 	}
 	
 	public void removeOldestGames(int amountToRemove) {

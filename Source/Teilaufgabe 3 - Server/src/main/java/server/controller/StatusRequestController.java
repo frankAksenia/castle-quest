@@ -3,6 +3,8 @@ package server.controller;
 import java.util.Collection;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +25,7 @@ import server.model.GamePlayer;
 import server.model.GameStateId;
 import server.model.PlayerId;
 import server.services.GameIdVerificationService;
+import server.services.GameManagerService;
 import server.services.PlayerIdVerificationSerivce;
 import server.services.StatusRequestService;
 
@@ -32,6 +35,8 @@ import server.services.StatusRequestService;
  */
 @RestController
 public class StatusRequestController {
+	
+	private static Logger logger = LoggerFactory.getLogger(StatusRequestController.class);
 	
 	private final StatusRequestService statusRequestService;
 	private final GameIdVerificationService gameIdVerificationService;
@@ -53,7 +58,7 @@ public class StatusRequestController {
 		GameId gameId = this.clientServiceConverter.convertGameId(receivedGameId);
 		
 		PlayerId playerId = this.clientServiceConverter.convertPlayerId(receivedPlayerId);
-		
+				
 		this.verifyGameId(gameId);
 		
 		PlayerId randomPlayerId = this.statusRequestService.getRandomPlayerId();
@@ -65,19 +70,20 @@ public class StatusRequestController {
 		this.verifyPlayerId(gameId, this.clientServiceConverter.convertPlayerId(receivedPlayerId));
 		
 		EPlayerState playerState = EPlayerState.WAIT;
-		
+	
 		if(this.statusRequestService.isCurrentPlayer(gameId, playerId))
 			playerState = EPlayerState.ACT;
 		
 		Collection<PlayerState> responsePlayers = this.serverClientConverter.convertGamePlayers(gamePlayers, playerState, playerId, randomPlayerId);
 		
-		GameMap gameMap = this.getGameMap(gameId);
+		GameMap gameMap = this.getGameMap(gameId);           
 		
 		FullMap fullMap = new FullMap();
 		
-		if(!gameMap.getGameMap().isEmpty())
+		if(!gameMap.getGameMap().isEmpty()) {
 			fullMap = this.serverClientConverter.convertGameMap(gameMap, playerId);
-		
+		}
+				
 		GameState gameState = new GameState(fullMap, responsePlayers, gameStateId.stateId());
 		
 		ResponseEnvelope<GameState> sendState = new ResponseEnvelope<>(gameState);

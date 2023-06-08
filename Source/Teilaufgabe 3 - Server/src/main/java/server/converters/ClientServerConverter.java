@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import messagesbase.UniqueGameIdentifier;
@@ -23,6 +25,8 @@ import server.model.PlayerId;
 
 @Component
 public class ClientServerConverter {
+	
+	private static Logger logger = LoggerFactory.getLogger(ClientServerConverter.class);
 	
 	public PlayerId convertPlayerId(UniquePlayerIdentifier receivedId) {
 		PlayerId playerId = new PlayerId(receivedId.getUniquePlayerID());

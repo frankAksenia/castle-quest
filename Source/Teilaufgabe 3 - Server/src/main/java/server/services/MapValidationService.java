@@ -74,7 +74,6 @@ public class MapValidationService {
 	
 	private void verifyMapSize() {
 		int size = this.gameMap.getGameMap().size();
-		logger.warn("Size of the map: {}", size);
 		if(size != this.MAP_SIZE) {
 			this.approved = false;
 			throw new WrongMapSizeException("Wrong map size!", "Wrong amount of fields on the map!");
@@ -88,14 +87,11 @@ public class MapValidationService {
 			Random random = new Random();
 	        int randomX = random.nextInt(MAX_WIDTH + 1);
 	        int randomY = random.nextInt(MAX_HEIGHT + 1);
-	        logger.info("X {}, Y {}", randomX, randomY);
 	        startCoordinate = this.gameMap.getCoordinate(randomX, randomY);
 		} while(this.gameMap.getGameMap().get(startCoordinate).getTerrain() == EMapTerrain.WATER);
         
 		this.floodFill(startCoordinate);
-		
-		logger.info("Water {}, visited {}", actualWaterCount, visitedFields.size());
-		
+				
 		boolean result = this.MAP_SIZE - this.actualWaterCount != this.visitedFields.size();
 				
 		if(result) {
