@@ -16,6 +16,7 @@ import messagesbase.messagesfromclient.PlayerRegistration;
 import server.model.Coordinate;
 import server.model.EMapTerrain;
 import server.model.GameId;
+import server.model.GameMap;
 import server.model.GamePlayer;
 import server.model.MapField;
 import server.model.PlayerId;
@@ -41,18 +42,22 @@ public class ClientServerConverter {
 		return gamePlayer;
 	}
 
-	public Map<Coordinate, MapField> convertGameMap(PlayerHalfMap playerHalfMap) {
+	public GameMap convertGameMap(PlayerHalfMap playerHalfMap, PlayerId playerId) {
+		GameMap gameMap = new GameMap();
 		Map<Coordinate, MapField> playerMap = new HashMap<Coordinate, MapField>();
 		List<PlayerHalfMapNode> mapFields = new ArrayList<>(playerHalfMap.getMapNodes());
 		for(PlayerHalfMapNode node: mapFields) {
 			EMapTerrain terrain = this.convertTerrain(node.getTerrain());
 			MapField mapField = new MapField(terrain);
 			Coordinate fieldCoordinate = new Coordinate(node.getX(), node.getY());
-			if(node.isFortPresent())
-				mapField.setFirstFort(true);
+			if(node.isFortPresent()) {
+				mapField.setFort(true);
+				gameMap.setFortsPosition(playerId, fieldCoordinate);
+			}
 			playerMap.put(fieldCoordinate, mapField);
 		}
-		return playerMap;
+		gameMap.setGameMap(playerMap);
+		return gameMap;
 	}
 	
 	private EMapTerrain convertTerrain(ETerrain terrain) {

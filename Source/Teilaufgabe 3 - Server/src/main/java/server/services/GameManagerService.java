@@ -63,16 +63,16 @@ public class GameManagerService {
 			gameData.setCurrentPlayer(gameData.getFirstPlayer().playerId());
 	}
 	
-	public void setGameMap(GameId gameId, Map<Coordinate, MapField> receivedMap) {
+	public void setGameMap(GameId gameId, PlayerId playerId, GameMap receivedMap) {
 		GameData gameData = this.gameRepository.getRunningGameById(gameId);
 		if(!gameData.isFirstMapReceived()) {
-			gameData.setGameMap(receivedMap);
+			gameData.setGameMap(receivedMap, playerId);
 			gameData.setFirstMapReceived(true);
 		}
 		else {
 			Random random = new Random();
-			Map<Coordinate, MapField> result = this.adjustMapCoordinates(random.nextInt(2), receivedMap);	
-			gameData.setGameMap(result);
+			receivedMap.setGameMap(this.adjustMapCoordinates(random.nextInt(2), receivedMap.getGameMap()));	
+			gameData.setGameMap(receivedMap, playerId);
 		}
 	}
 
@@ -90,6 +90,7 @@ public class GameManagerService {
 	}
 	
 	public void removeOldestGames(int amountToRemove) {
+		logger.warn("REMOVING");
 	}
 	
 	private boolean verifyMaxAmountOfGames() {

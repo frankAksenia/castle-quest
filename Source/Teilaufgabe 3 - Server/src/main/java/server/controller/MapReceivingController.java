@@ -59,11 +59,11 @@ public class MapReceivingController {
 		
 		this.verifyPlayerId(gameId, playerId);
 		
-		Map<Coordinate, MapField> playerHalfMap = this.clientServerConverter.convertGameMap(receivedMap);
+		GameMap playerHalfMap = this.clientServerConverter.convertGameMap(receivedMap, playerId);
 						
-		boolean approved = this.verifyGameMap(playerHalfMap); // use for win and loose state
+		boolean approved = this.verifyGameMap(playerHalfMap.getGameMap()); // use for win and loose state
 		
-		this.setGameMap(gameId, playerHalfMap);
+		this.setGameMap(gameId, playerId, playerHalfMap);
 		
 		this.switchPlayer(gameId, playerId);
 						
@@ -89,8 +89,8 @@ public class MapReceivingController {
 		return this.mapValidationService.verifyGameMap(gameMap);
 	}
 	
-	private void setGameMap(GameId gameId, Map<Coordinate, MapField> playerHalfMap) {
-		this.gameManagerService.setGameMap(gameId, playerHalfMap);
+	private void setGameMap(GameId gameId, PlayerId playerId, GameMap gameMap) {
+		this.gameManagerService.setGameMap(gameId, playerId, gameMap);
 	}
 	
 	private void switchPlayer(GameId gameId, PlayerId playerId) {

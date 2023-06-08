@@ -6,23 +6,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import server.services.GameManagerService;
 
 @Component
 public class GameMap {
 	
+	private static Logger logger = LoggerFactory.getLogger(GameMap.class);
+	
 	private Map<Coordinate, MapField> gameMap = new HashMap<>();
+	
+	private Map<PlayerId, Coordinate> playersPositions = new HashMap<>();
+	
+	private Map<PlayerId, Coordinate> fortsPositions = new HashMap<>();
+	
+	private Map<PlayerId, Coordinate> treasurePositions = new HashMap<>();
 			
 	public GameMap() {}
 
 	public Map<Coordinate, MapField> getGameMap() {
 		return this.gameMap;
-	}
-
-	public void setGameMap(Map<Coordinate, MapField> gameMap) {
-		for(Entry<Coordinate, MapField> eachEntry: gameMap.entrySet()) {
-			this.gameMap.put(eachEntry.getKey(), eachEntry.getValue());
-		}
 	}
 	
 	public Coordinate getCoordinate(int x, int y) {
@@ -57,4 +63,34 @@ public class GameMap {
 		
 		return fieldsAround;
 	}
+
+	public Map<PlayerId, Coordinate> getPlayersPositions() {
+		return playersPositions;
+	}
+
+	public void setPlayersPositions(Map<PlayerId, Coordinate> playersPositions) {
+		this.playersPositions = playersPositions;
+	}
+
+	public Map<PlayerId, Coordinate> getFortsPositions() {
+		return fortsPositions;
+	}
+
+	public void setFortsPosition(PlayerId playerId, Coordinate cordinate) {
+		this.fortsPositions.put(playerId, cordinate);
+		logger.warn("Setting fort positon. Size: {}", this.fortsPositions.size());
+	}
+
+	public Map<PlayerId, Coordinate> getTreasurePositions() {
+		return treasurePositions;
+	}
+
+	public void setTreasurePositions(PlayerId playerId, Coordinate cordinate) {
+		this.treasurePositions.put(playerId, cordinate);
+	}
+
+	public void setGameMap(Map<Coordinate, MapField> gameMap) {
+		this.gameMap = gameMap;
+	}
+	
 }

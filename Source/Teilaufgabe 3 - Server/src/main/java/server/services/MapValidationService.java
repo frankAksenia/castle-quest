@@ -136,7 +136,7 @@ public class MapValidationService {
 		int count = 0;
 		boolean isNotGrass = false;
 		for(MapField eachField: this.gameMap.getGameMap().values())
-			if(eachField.isFirstFort()) {
+			if(eachField.isFort()) {
 				++count;
 				if(!eachField.getTerrain().equals(EMapTerrain.GRASS))
 					isNotGrass = true;

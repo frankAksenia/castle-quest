@@ -18,6 +18,7 @@ import server.exceptions.WrongGameIdException;
 import server.exceptions.WrongPlayerIdException;
 import server.model.EPlayerState;
 import server.model.GameId;
+import server.model.GameMap;
 import server.model.GamePlayer;
 import server.model.GameStateId;
 import server.model.PlayerId;
@@ -70,7 +71,12 @@ public class StatusRequestController {
 		
 		Collection<PlayerState> responsePlayers = this.serverClientConverter.convertGamePlayers(gamePlayers, playerState, playerId, randomPlayerId);
 		
+		GameMap gameMap = this.getGameMap(gameId);
+		
 		FullMap fullMap = new FullMap();
+		
+		if(!gameMap.getGameMap().isEmpty())
+			fullMap = this.serverClientConverter.convertGameMap(gameMap, playerId);
 		
 		GameState gameState = new GameState(fullMap, responsePlayers, gameStateId.stateId());
 		
@@ -87,5 +93,9 @@ public class StatusRequestController {
 	private void verifyPlayerId(GameId gameId, PlayerId playerId) {
 		if(this.playerIdVerificationService.verifyPlayerId(gameId, playerId))
 			throw new WrongPlayerIdException("Wrong player id", "Client provided player id not existing in the given game!");
+	}
+	
+	private GameMap getGameMap(GameId gameId) {
+		return this.statusRequestService.getGameMap(gameId);
 	}
 }

@@ -1,6 +1,5 @@
 package server.services;
 
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 import server.model.Coordinate;
 import server.model.GameData;
 import server.model.GameId;
+import server.model.GameMap;
 import server.model.GamePlayer;
 import server.model.GameRepository;
 import server.model.GameStateId;
@@ -55,5 +55,10 @@ public class StatusRequestService {
 	
 	public boolean isCurrentPlayer(GameId gameId, PlayerId playerId) {
 		return this.gameRepository.getRunningGameById(gameId).getCurrentPlayer().equals(playerId);
+	}
+	
+	public GameMap getGameMap(GameId gameId) {
+		GameData gameData = this.gameRepository.getRunningGameById(gameId);
+		return gameData.getGameMap();
 	}
 }
