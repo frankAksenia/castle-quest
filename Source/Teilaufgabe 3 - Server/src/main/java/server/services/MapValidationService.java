@@ -44,8 +44,7 @@ public class MapValidationService {
 	private boolean approved = true;
 
 	public boolean verifyGameMap(Map<Coordinate, MapField> gameMap) {
-		this.gameMap = new GameMap();
-		this.gameMap.setGameMap(gameMap);
+		this.gameMap = new GameMap(gameMap);
 		this.actualWaterCount = 0;
 		this.visitedFields.clear();
 		this.verifyTerrainsCount(); 

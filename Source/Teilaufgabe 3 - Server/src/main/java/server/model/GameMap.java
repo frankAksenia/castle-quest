@@ -22,6 +22,10 @@ public class GameMap {
 	private Map<PlayerId, Coordinate> fortsPositions;
 	
 	private Map<PlayerId, Coordinate> treasurePositions;
+	
+	public GameMap(Map<Coordinate, MapField> gameMap) {
+		this.gameMap = gameMap;
+	}
 			
 	public GameMap() {
 		this.gameMap = new HashMap<>();
@@ -92,8 +96,12 @@ public class GameMap {
 		this.treasurePositions.put(playerId, cordinate);
 	}
 
-	public void setGameMap(Map<Coordinate, MapField> gameMap) {
-		this.gameMap.putAll(gameMap);
+	public void setGameMap(Map<Coordinate, MapField> gameMap, PlayerId playerId) {
+		for(Map.Entry<Coordinate, MapField> eachField: gameMap.entrySet()) {
+			if(eachField.getValue().isFort())
+				this.fortsPositions.put(playerId, eachField.getKey());
+			this.gameMap.put(eachField.getKey(), eachField.getValue());
+		}
 	}
 	
 }

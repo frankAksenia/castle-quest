@@ -64,26 +64,26 @@ public class GameManagerService {
 			gameData.setCurrentPlayer(gameData.getFirstPlayer().playerId());
 	}
 	
-	public void setGameMap(GameId gameId, PlayerId playerId, GameMap receivedMap) {
+	public void setGameMap(GameId gameId, PlayerId playerId, Map<Coordinate,MapField> receivedMap) {
 		GameData gameData = this.gameRepository.getRunningGameById(gameId);
-		if(!gameData.isFirstMapReceived()) {
-			gameData.setFirstMapReceived(true);
-		}
-		else {
+		GameMap gameMap = gameData.getGameMap();
+		if(!gameMap.getGameMap().isEmpty()) {
 			Random random = new Random();
-			this.adjustMapCoordinates(random.nextInt(2), receivedMap);
-			logger.info("Full map after the second player: {}", receivedMap.getGameMap());
-		}
+			Map<Coordinate, MapField> updatedMap = this.adjustMapCoordinates(random.nextInt(2), receivedMap);
+			logger.info("Full map after the second player: {}", receivedMap);
+			receivedMap.clear();
+			receivedMap.putAll(updatedMap);
+		}	
 		gameData.setGameMap(receivedMap, playerId);
 	}
 
-	private void adjustMapCoordinates(int randomShape, GameMap gameMap) {
+	private Map<Coordinate, MapField> adjustMapCoordinates(int randomShape, Map<Coordinate, MapField> gameMap) {
 		 EMapShape[] mapShape = EMapShape.values();
 		 EMapShape shape = mapShape[randomShape];
 		 Map<Coordinate, MapField> updatedMap = new HashMap<>();
 		 logger.info("Chosen shape to set map: {}", shape);
 		 Coordinate newCoordinate;
-		 for(Map.Entry<Coordinate, MapField> eachEntry: gameMap.getGameMap().entrySet()) {
+		 for(Map.Entry<Coordinate, MapField> eachEntry: gameMap.entrySet()) {
 			 if(shape == EMapShape.HORIZONTAL) {
 				 newCoordinate = new Coordinate(eachEntry.getKey().getX() + 10, eachEntry.getKey().getY());
 				 updatedMap.put(newCoordinate, eachEntry.getValue());
@@ -93,7 +93,7 @@ public class GameManagerService {
 				 updatedMap.put(newCoordinate, eachEntry.getValue());
 			 }
 		 }
-		 gameMap.setGameMap(updatedMap);
+		 return updatedMap;
 	}
 	
 	public void removeOldestGames(int amountToRemove) {

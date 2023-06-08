@@ -46,8 +46,7 @@ public class ClientServerConverter {
 		return gamePlayer;
 	}
 
-	public GameMap convertGameMap(PlayerHalfMap playerHalfMap, PlayerId playerId) {
-		GameMap gameMap = new GameMap();
+	public Map<Coordinate, MapField> convertGameMap(PlayerHalfMap playerHalfMap, PlayerId playerId) {
 		Map<Coordinate, MapField> playerMap = new HashMap<Coordinate, MapField>();
 		List<PlayerHalfMapNode> mapFields = new ArrayList<>(playerHalfMap.getMapNodes());
 		for(PlayerHalfMapNode node: mapFields) {
@@ -56,12 +55,10 @@ public class ClientServerConverter {
 			Coordinate fieldCoordinate = new Coordinate(node.getX(), node.getY());
 			if(node.isFortPresent()) {
 				mapField.setFort(true);
-				gameMap.setFortsPosition(playerId, fieldCoordinate);
 			}
 			playerMap.put(fieldCoordinate, mapField);
 		}
-		gameMap.setGameMap(playerMap);
-		return gameMap;
+		return playerMap;
 	}
 	
 	private EMapTerrain convertTerrain(ETerrain terrain) {

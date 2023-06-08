@@ -2,6 +2,7 @@ package server.model;
 
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -31,8 +32,8 @@ public class GameData {
 		return gameMap;
 	}
 	
-	public void setGameMap(GameMap gameMap, PlayerId playerId) {
-		this.gameMap.setGameMap(gameMap.getGameMap());
+	public void setGameMap(Map<Coordinate,MapField> gameMap, PlayerId playerId) {
+		this.gameMap.setGameMap(gameMap, playerId);
 	}
 	
 	public boolean isFirstMapReceived() {
