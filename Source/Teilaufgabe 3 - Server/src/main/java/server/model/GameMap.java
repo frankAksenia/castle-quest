@@ -98,8 +98,10 @@ public class GameMap {
 
 	public void setGameMap(Map<Coordinate, MapField> gameMap, PlayerId playerId) {
 		for(Map.Entry<Coordinate, MapField> eachField: gameMap.entrySet()) {
-			if(eachField.getValue().isFort())
+			if(eachField.getValue().isFort()) {
 				this.fortsPositions.put(playerId, eachField.getKey());
+				this.playersPositions.put(playerId, eachField.getKey());
+			}		
 			this.gameMap.put(eachField.getKey(), eachField.getValue());
 		}
 	}

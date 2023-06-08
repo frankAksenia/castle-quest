@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -73,14 +74,20 @@ public class ServerClientConverter {
 		allFields.putAll(gameMap.getGameMap());
 		Map<PlayerId,Coordinate> playersPositions = gameMap.getPlayersPositions();
 		Map<PlayerId,Coordinate> fortsPositions = gameMap.getFortsPositions();
+		Coordinate myFortCoordinate = fortsPositions.get(playerId);
+		Coordinate enemyFortCoordinate = new Coordinate();
+		for(Map.Entry<PlayerId,Coordinate> entry : fortsPositions.entrySet())
+			if(!entry.getKey().equals(playerId))
+				enemyFortCoordinate = entry.getValue();
 		// Map<PlayerId, Coordinate> treasurePositions = gameMap.getTreasurePositions();
 		ETreasureState treasureState = ETreasureState.NoOrUnknownTreasureState;
 		EFortState fortState;
-		EPlayerPositionState playerPositionState = EPlayerPositionState.NoPlayerPresent;
+		EPlayerPositionState playerPositionState;
 		ETerrain terrain = ETerrain.Grass;
 		FullMapNode fullMapNode;
 		for(Map.Entry<Coordinate, MapField> eachField: gameMap.getGameMap().entrySet()) {
 			fortState = EFortState.NoOrUnknownFortState;
+			playerPositionState = EPlayerPositionState.NoPlayerPresent;
 			terrain = this.converMapTerrain(eachField.getValue().getTerrain());
 			if(Collections.frequency(playersPositions.values(), eachField.getKey()) == 2)
 				playerPositionState = EPlayerPositionState.BothPlayerPosition;
@@ -92,13 +99,16 @@ public class ServerClientConverter {
 			}
 //			logger.warn("SIZE OF FORTS {}", fortsPositions.size());
 			if(fortsPositions.containsValue(eachField.getKey())) {
-				logger.warn("THERE IS DEFINITELY");
-				if(fortsPositions.get(playerId) == null) {
-//					fortState = EFortState.EnemyFortPresent;
-				}
-				else {
-					logger.warn("HERE IS MY FORT");
+				logger.warn("NUM OF FORTS {}", fortsPositions.size());
+				if(eachField.getKey().equals(fortsPositions.get(playerId))) {
 					fortState = EFortState.MyFortPresent;
+					playerPositionState = EPlayerPositionState.MyPlayerPosition;
+					logger.warn("MY FORT");
+				}
+				if(eachField.getKey().equals(enemyFortCoordinate)) {
+					logger.warn("NOT MY FORT");
+//					fortState = EFortState.EnemyFortPresent;
+					playerPositionState = EPlayerPositionState.EnemyPlayerPosition;
 				}
 			}
 //			if(treasurePositions.containsValue(eachField.getKey())) 

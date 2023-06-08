@@ -14,7 +14,8 @@ public class GamesManagingScheduler {
 	@Autowired
 	private GameManagerService gameManagingService;
 	
-	@Scheduled(fixedRate = 300000)
+	// 300000
+	@Scheduled(fixedRate = 1)
 	public void controlAmountOfGames() {
 		int activeGameAmount = gameManagingService.getAmountOfActiveGames();
 
