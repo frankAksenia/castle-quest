@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Component;
 public class GameMap {
 	
 	private static Logger logger = LoggerFactory.getLogger(GameMap.class);
+	
+	private int roundCounter = 32;
 	
 	private Map<Coordinate, MapField> gameMap;
 	
@@ -74,6 +78,13 @@ public class GameMap {
 	public Map<PlayerId, Coordinate> getPlayersPositions() {
 		return playersPositions;
 	}
+	
+	public Coordinate getRandomPlayerPosition() {
+		List<Coordinate> allCoordinates = new ArrayList<Coordinate>(this.gameMap.keySet());
+		Random random = new Random();
+        int randomIndex = random.nextInt(allCoordinates.size());
+        return allCoordinates.get(randomIndex);
+	}
 
 	public void setPlayersPositions(Map<PlayerId, Coordinate> playersPositions) {
 		this.playersPositions = playersPositions;
@@ -105,5 +116,8 @@ public class GameMap {
 			this.gameMap.put(eachField.getKey(), eachField.getValue());
 		}
 	}
-	
+
+	public int getRoundCounter() {
+		return roundCounter--;
+	}
 }

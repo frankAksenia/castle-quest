@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -76,6 +75,8 @@ public class ServerClientConverter {
 		Map<PlayerId,Coordinate> fortsPositions = gameMap.getFortsPositions();
 		Coordinate myFortCoordinate = fortsPositions.get(playerId);
 		Coordinate enemyFortCoordinate = new Coordinate();
+		Coordinate randomEnemyPlayerCoordinate = gameMap.getRandomPlayerPosition();
+		int counter = gameMap.getRoundCounter();
 		for(Map.Entry<PlayerId,Coordinate> entry : fortsPositions.entrySet())
 			if(!entry.getKey().equals(playerId))
 				enemyFortCoordinate = entry.getValue();
@@ -89,26 +90,33 @@ public class ServerClientConverter {
 			fortState = EFortState.NoOrUnknownFortState;
 			playerPositionState = EPlayerPositionState.NoPlayerPresent;
 			terrain = this.converMapTerrain(eachField.getValue().getTerrain());
+			if(eachField.getKey().equals(randomEnemyPlayerCoordinate) && counter > 0) {
+				logger.warn("SETTING RANDOM PLAYER POSITION {} player id {}", eachField.getKey(), playerId);
+				playerPositionState = EPlayerPositionState.EnemyPlayerPosition;
+			}	
 			if(Collections.frequency(playersPositions.values(), eachField.getKey()) == 2)
 				playerPositionState = EPlayerPositionState.BothPlayerPosition;
 			else if(playersPositions.containsValue(eachField.getKey())) {
-				if(playersPositions.get(playerId) == null)
-					playerPositionState = EPlayerPositionState.EnemyPlayerPosition;
-				else 
-					playerPositionState = EPlayerPositionState.MyPlayerPosition;	
+				if(playersPositions.get(playerId) == null) {
+					if(counter < 1) {
+						playerPositionState = EPlayerPositionState.EnemyPlayerPosition;
+					}
+				}
+				else  {
+					if(counter < 32)
+						playerPositionState = EPlayerPositionState.MyPlayerPosition;	
+				}
 			}
 //			logger.warn("SIZE OF FORTS {}", fortsPositions.size());
 			if(fortsPositions.containsValue(eachField.getKey())) {
-				logger.warn("NUM OF FORTS {}", fortsPositions.size());
 				if(eachField.getKey().equals(fortsPositions.get(playerId))) {
 					fortState = EFortState.MyFortPresent;
-					playerPositionState = EPlayerPositionState.MyPlayerPosition;
-					logger.warn("MY FORT");
+					if(counter > 31)
+						playerPositionState = EPlayerPositionState.MyPlayerPosition;
 				}
 				if(eachField.getKey().equals(enemyFortCoordinate)) {
-					logger.warn("NOT MY FORT");
 //					fortState = EFortState.EnemyFortPresent;
-					playerPositionState = EPlayerPositionState.EnemyPlayerPosition;
+//					playerPositionState = EPlayerPositionState.EnemyPlayerPosition;
 				}
 			}
 //			if(treasurePositions.containsValue(eachField.getKey())) 
