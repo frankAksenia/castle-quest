@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +17,8 @@ public class GameMap {
 	private static Logger logger = LoggerFactory.getLogger(GameMap.class);
 	
 	private int roundCounter = 32;
+	
+	private EMapShape shapeOfTheFirstMap;
 	
 	private Map<Coordinate, MapField> gameMap;
 	
@@ -119,5 +120,13 @@ public class GameMap {
 
 	public int getRoundCounter() {
 		return roundCounter--;
+	}
+
+	public EMapShape getShapeOfTheFirstMap() {
+		return shapeOfTheFirstMap;
+	}
+
+	public void setShapeOfTheFirstMap(EMapShape shapeOfTheFirstMap) {
+		this.shapeOfTheFirstMap = shapeOfTheFirstMap;
 	}
 }

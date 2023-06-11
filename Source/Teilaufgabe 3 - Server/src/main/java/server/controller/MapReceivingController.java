@@ -21,6 +21,7 @@ import server.model.GameId;
 import server.model.GameMap;
 import server.model.MapField;
 import server.model.PlayerId;
+import server.services.CombiningHalfmapsService;
 import server.services.GameIdVerificationService;
 import server.services.GameManagerService;
 import server.services.MapValidationService;
@@ -38,14 +39,16 @@ public class MapReceivingController {
 	private final MapValidationService mapValidationService;
 	private final GameIdVerificationService gameIdVerificationService;
 	private final PlayerIdVerificationSerivce playerIdVerificationService;
+	private final CombiningHalfmapsService combiningHalfmapsService;
 	private final ClientServerConverter clientServerConverter;
 	
 	@Autowired
-	public MapReceivingController(GameManagerService gameManagerService, MapValidationService mapValidationService, GameIdVerificationService gameIdVerificationService, PlayerIdVerificationSerivce playerIdVerificationService, ClientServerConverter clientServerConverter) {
+	public MapReceivingController(GameManagerService gameManagerService, MapValidationService mapValidationService, GameIdVerificationService gameIdVerificationService, PlayerIdVerificationSerivce playerIdVerificationService, CombiningHalfmapsService combiningHalfmapsService, ClientServerConverter clientServerConverter) {
 		this.gameManagerService = gameManagerService;
 		this.mapValidationService = mapValidationService;
 		this.gameIdVerificationService = gameIdVerificationService;
 		this.playerIdVerificationService = playerIdVerificationService;
+		this.combiningHalfmapsService = combiningHalfmapsService;
 		this.clientServerConverter = clientServerConverter;
 	}
 	
@@ -89,7 +92,7 @@ public class MapReceivingController {
 	}
 	
 	private void setGameMap(GameId gameId, PlayerId playerId, Map<Coordinate, MapField> gameMap) {
-		this.gameManagerService.setGameMap(gameId, playerId, gameMap);
+		this.combiningHalfmapsService.combineHalfmaps(gameId, playerId, gameMap);
 	}
 	
 	private void switchPlayer(GameId gameId, PlayerId playerId) {

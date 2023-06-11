@@ -1,28 +1,24 @@
 package server.services;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import server.model.Coordinate;
-import server.model.EMapShape;
+
 import server.model.GameData;
 import server.model.GameId;
-import server.model.GameMap;
 import server.model.GamePlayer;
 import server.model.GameRepository;
-import server.model.MapField;
 import server.model.PlayerId;
 
 @Service
 public class GameManagerService {
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(GameManagerService.class);
 	
 	private final int MAX_GAMES = 99;
@@ -67,38 +63,6 @@ public class GameManagerService {
 			gameData.setCurrentPlayer(gameData.getSecondPlayer().playerId());
 		else
 			gameData.setCurrentPlayer(gameData.getFirstPlayer().playerId());
-	}
-	
-	public void setGameMap(GameId gameId, PlayerId playerId, Map<Coordinate,MapField> receivedMap) {
-		GameData gameData = this.gameRepository.getRunningGameById(gameId);
-		GameMap gameMap = gameData.getGameMap();
-		if(!gameMap.getGameMap().isEmpty()) {
-			Random random = new Random();
-			Map<Coordinate, MapField> updatedMap = this.adjustMapCoordinates(random.nextInt(2), receivedMap);
-			logger.info("Full map after the second player: {}", receivedMap);
-			receivedMap.clear();
-			receivedMap.putAll(updatedMap);
-		}	
-		gameData.setGameMap(receivedMap, playerId);
-	}
-
-	private Map<Coordinate, MapField> adjustMapCoordinates(int randomShape, Map<Coordinate, MapField> gameMap) {
-		 EMapShape[] mapShape = EMapShape.values();
-		 EMapShape shape = mapShape[randomShape];
-		 Map<Coordinate, MapField> updatedMap = new HashMap<>();
-		 logger.info("Chosen shape to set map: {}", shape);
-		 Coordinate newCoordinate;
-		 for(Map.Entry<Coordinate, MapField> eachEntry: gameMap.entrySet()) {
-			 if(shape == EMapShape.HORIZONTAL) {
-				 newCoordinate = new Coordinate(eachEntry.getKey().getX() + 10, eachEntry.getKey().getY());
-				 updatedMap.put(newCoordinate, eachEntry.getValue());
-			 }
-			 else if(shape == EMapShape.VERTICAL) {
-				 newCoordinate = new Coordinate(eachEntry.getKey().getX(), eachEntry.getKey().getY() + 5);
-				 updatedMap.put(newCoordinate, eachEntry.getValue());
-			 }
-		 }
-		 return updatedMap;
 	}
 	
 	public void removeOldestGames(int amountToRemove) {

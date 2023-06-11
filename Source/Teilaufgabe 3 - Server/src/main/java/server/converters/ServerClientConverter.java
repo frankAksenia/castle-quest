@@ -91,7 +91,6 @@ public class ServerClientConverter {
 			playerPositionState = EPlayerPositionState.NoPlayerPresent;
 			terrain = this.converMapTerrain(eachField.getValue().getTerrain());
 			if(eachField.getKey().equals(randomEnemyPlayerCoordinate) && counter > 0) {
-				logger.warn("SETTING RANDOM PLAYER POSITION {} player id {}", eachField.getKey(), playerId);
 				playerPositionState = EPlayerPositionState.EnemyPlayerPosition;
 			}	
 			if(Collections.frequency(playersPositions.values(), eachField.getKey()) == 2)
