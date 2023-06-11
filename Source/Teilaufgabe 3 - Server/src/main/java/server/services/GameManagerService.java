@@ -1,6 +1,7 @@
 package server.services;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
@@ -24,6 +25,8 @@ public class GameManagerService {
 	
 	private static Logger logger = LoggerFactory.getLogger(GameManagerService.class);
 	
+	private final int MAX_GAMES = 99;
+	
 	private final GameRepository gameRepository;
 	
 	@Autowired
@@ -40,10 +43,12 @@ public class GameManagerService {
 	}
 	
 	public int getAmountOfActiveGames() {
-		return 0;
+		return this.gameRepository.getAmountOfActiveGames();
 	}
 	
 	public void addNewGame(GameId gameId, GameData gameData) {	
+		if(this.getAmountOfActiveGames() > this.MAX_GAMES)
+			this.removeOldestGames(10);
 		this.gameRepository.addNewGame(gameId, gameData);
 	}
 	
@@ -97,11 +102,13 @@ public class GameManagerService {
 	}
 	
 	public void removeOldestGames(int amountToRemove) {
-		logger.warn("REMOVING");
-	}
-	
-	private boolean verifyMaxAmountOfGames() {
-		return true;
+		Iterator<Map.Entry<GameId, GameData>> mapIterator = this.getAllRunningGames().entrySet().iterator();
+        int count = 0;
+        while (mapIterator.hasNext() && count < amountToRemove) {
+            mapIterator.next();
+            mapIterator.remove();
+            ++count;
+        }
 	}
 	
 	public boolean verifyActionSentInTurn(PlayerId playerId) {

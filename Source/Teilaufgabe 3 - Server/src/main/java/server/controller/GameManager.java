@@ -30,6 +30,7 @@ public class GameManager {
 	public UniqueGameIdentifier processGameCreation() {
 		GameId gameId = gameIdGeneratorService.generateRandomID();
 		gameManagerService.addNewGame(gameId, new GameData());
+		this.addNewGame(gameId);
 		return this.serverClientConverter.convertGameId(gameId);
 	}
 
@@ -37,7 +38,8 @@ public class GameManager {
 		return this.gameManagerService.getAllRunningGames();
 	}
 
-	public void addNewGame(GameId gameId, GameData gameData) {
+	private void addNewGame(GameId gameId) {
+		gameManagerService.addNewGame(gameId, new GameData());
 	}
 	
 	public void removeOldGames(int amountOfGamesToRemove) {

@@ -1,11 +1,10 @@
 package server.model;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -14,16 +13,14 @@ public class GameRepository {
 	/* Using LinkedHashMap to preserve order of added elements
 	 * to know which games are the oldest and can be removed if Server is overloaded
 	 * */
-	
-	private final int MAX_GAMES = 99;
-	
+		
 	private Map<GameId, GameData> runningGames;
 	
 	private static Logger logger = LoggerFactory.getLogger(GameRepository.class);
 	
 	public GameRepository() {
 		logger.info("NEW REPOSITORY");
-		this.runningGames = new HashMap<GameId, GameData>();
+		this.runningGames = new LinkedHashMap<GameId, GameData>();
 	}
 	
 	public Map<GameId,GameData> getAllRunningGames() {
@@ -35,7 +32,7 @@ public class GameRepository {
 	}
 	
 	public int getAmountOfActiveGames() {
-		return 0;
+		return this.runningGames.size();
 	}
 	
 	public void addNewGame(GameId gameId, GameData gameData) {
@@ -45,9 +42,4 @@ public class GameRepository {
 	
 	public void removeOldestGames(int amountToRemove) {
 	}
-
-	public int getMAX_GAMES() {
-		return MAX_GAMES;
-	}
-	
 }
