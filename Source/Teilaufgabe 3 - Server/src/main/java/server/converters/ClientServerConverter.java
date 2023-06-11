@@ -42,7 +42,7 @@ public class ClientServerConverter {
 		String firstName = receivedRegistration.getStudentFirstName();
 		String lastName = receivedRegistration.getStudentLastName();
 		String uaccount = receivedRegistration.getStudentUAccount();
-		GamePlayer gamePlayer = new GamePlayer(playerId, firstName, lastName, uaccount, false, false);
+		GamePlayer gamePlayer = new GamePlayer(playerId, firstName, lastName, uaccount);
 		return gamePlayer;
 	}
 

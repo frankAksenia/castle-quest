@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GameData {
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(GameData.class);
 
 	private GameMap gameMap = new GameMap();
@@ -20,12 +21,12 @@ public class GameData {
 	
 	GamePlayer secondPlayer = null;
 	
+	Set<PlayerId> receivedMapFrom = new HashSet<>();
+	
 	private PlayerId currentPlayer;
 	
 	private GameStateId gameStateId;
-	
-	private boolean firstMapReceived = false;
-		
+			
 	public GameData() {}
 
 	public GameMap getGameMap() {
@@ -34,14 +35,6 @@ public class GameData {
 	
 	public void setGameMap(Map<Coordinate,MapField> gameMap, PlayerId playerId) {
 		this.gameMap.setGameMap(gameMap, playerId);
-	}
-	
-	public boolean isFirstMapReceived() {
-		return firstMapReceived;
-	}
-
-	public void setFirstMapReceived(boolean firstMapReceived) {
-		this.firstMapReceived = firstMapReceived;
 	}
 	
 	public Set<GamePlayer> getGamePlayers() {
@@ -86,5 +79,13 @@ public class GameData {
 
 	public void setGameStateId(GameStateId gameStateId) {
 		this.gameStateId = gameStateId;
+	}
+
+	public Set<PlayerId> getReceivedMapFrom() {
+		return receivedMapFrom;
+	}
+
+	public void setIfReceivedPlayerMap(PlayerId playerId) {
+		this.receivedMapFrom.add(playerId);
 	}
 }

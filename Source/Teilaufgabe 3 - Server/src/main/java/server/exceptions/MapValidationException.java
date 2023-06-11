@@ -1,7 +1,5 @@
 package server.exceptions;
 
-import server.model.EMapTerrain;
-
 /*
  * Generic map validation exception.
  */

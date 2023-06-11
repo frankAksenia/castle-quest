@@ -68,8 +68,8 @@ public class GameManagerServiceTest {
 		
 		// Arrange 
 		GameManagerService gameManagerService = new GameManagerService(new GameRepository());
-		GamePlayer correctPlayer = new GamePlayer(new PlayerId("xxxxx"), "Max", "Mustermann", "maxMust", false, false);
-		GamePlayer wrongPlayer = new GamePlayer(new PlayerId("yyyyy"), "Maxin", "Musterfrau", "maxinMust", false, false);
+		GamePlayer correctPlayer = new GamePlayer(new PlayerId("xxxxx"), "Max", "Mustermann", "maxMust");
+		GamePlayer wrongPlayer = new GamePlayer(new PlayerId("yyyyy"), "Maxin", "Musterfrau", "maxinMust");
 		GameData gameData = new GameData();
 		gameData.addPlayer(correctPlayer);
 		gameData.addPlayer(wrongPlayer);
@@ -87,8 +87,8 @@ public class GameManagerServiceTest {
 		
 		// Arrange 
 		GameManagerService gameManagerService = new GameManagerService(new GameRepository());
-		GamePlayer correctPlayer = new GamePlayer(new PlayerId("xxxxx"), "Max", "Mustermann", "maxMust", false, false);
-		GamePlayer wrongPlayer = new GamePlayer(new PlayerId("yyyyy"), "Maxin", "Musterfrau", "maxinMust", false, false);
+		GamePlayer correctPlayer = new GamePlayer(new PlayerId("xxxxx"), "Max", "Mustermann", "maxMust");
+		GamePlayer wrongPlayer = new GamePlayer(new PlayerId("yyyyy"), "Maxin", "Musterfrau", "maxinMust");
 		GameData gameData = new GameData();
 		gameData.addPlayer(correctPlayer);
 		gameData.addPlayer(wrongPlayer);

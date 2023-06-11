@@ -50,7 +50,7 @@ public class ServerClientConverter {
 			if(!eachPlayer.playerId().equals(requestPlayer))
 				uniquePlayerId = this.convertPlayerId(randomPlayer);
 			EPlayerGameState convertedSate = this.convertEPlayerGameState(playerState);
-			PlayerState player = new PlayerState(eachPlayer.firstName(), eachPlayer.lastName(), eachPlayer.uaccount(), convertedSate, uniquePlayerId, eachPlayer.foundTreasure());
+			PlayerState player = new PlayerState(eachPlayer.firstName(), eachPlayer.lastName(), eachPlayer.uaccount(), convertedSate, uniquePlayerId, false);
 			result.add(player);
 		}
 		return result;

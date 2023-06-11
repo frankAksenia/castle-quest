@@ -2,6 +2,7 @@ package server.services;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,4 +83,18 @@ public class GameManagerService {
 	public boolean verifyBothPlayersRegistered() {
 		return true;
 	}
+
+	public boolean verifyMapSentFirstTime(GameId gameId, PlayerId playerId) {
+		boolean mapWasReceived = false;
+		GameData gameData = this.gameRepository.getRunningGameById(gameId);
+		Set<PlayerId> receivedMaps = gameData.getReceivedMapFrom();
+		for(PlayerId eachPlayerId: receivedMaps) {
+			if(eachPlayerId.equals(playerId))
+				mapWasReceived = true;
+		}
+		gameData.setIfReceivedPlayerMap(playerId);
+		return mapWasReceived;
+	}
+	
+
 }

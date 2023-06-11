@@ -2,8 +2,6 @@ package server.controller;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +11,11 @@ import messagesbase.ResponseEnvelope;
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.messagesfromclient.PlayerHalfMap;
 import server.converters.ClientServerConverter;
+import server.exceptions.MapReceivingException;
 import server.exceptions.WrongGameIdException;
 import server.exceptions.WrongPlayerIdException;
 import server.model.Coordinate;
-import server.model.GameData;
 import server.model.GameId;
-import server.model.GameMap;
 import server.model.MapField;
 import server.model.PlayerId;
 import server.services.CombiningHalfmapsService;
@@ -34,6 +31,7 @@ import server.services.PlayerIdVerificationSerivce;
 @RestController
 public class MapReceivingController {
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(MapReceivingController.class);
 	private final GameManagerService gameManagerService;
 	private final MapValidationService mapValidationService;
@@ -62,6 +60,8 @@ public class MapReceivingController {
 		
 		this.verifyPlayerId(gameId, playerId);
 		
+		this.verifyMapSentFirstTime(gameId, playerId);
+		
 		Map<Coordinate, MapField> playerHalfMap = this.clientServerConverter.convertGameMap(receivedMap, playerId);
 						
 		boolean approved = this.verifyGameMap(playerHalfMap); // use for win and loose state
@@ -85,6 +85,11 @@ public class MapReceivingController {
 	
 	private boolean verifyActionSentInTurn(PlayerId playerId) {
 		return true;
+	}
+	
+	private void verifyMapSentFirstTime(GameId gameId, PlayerId playerId) {
+		if(this.gameManagerService.verifyMapSentFirstTime(gameId, playerId))
+			throw new MapReceivingException("Second map", "Client has sent the map already!");
 	}
 	
 	private boolean verifyGameMap(Map<Coordinate, MapField> gameMap) {
