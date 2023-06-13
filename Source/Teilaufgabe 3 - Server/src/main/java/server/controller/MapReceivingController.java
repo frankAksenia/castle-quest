@@ -55,10 +55,10 @@ public class MapReceivingController {
 		
 		GameId gameId = this.clientServerConverter.convertGameId(receivedGameID);
 		
-		this.verifyGameId(gameId);
-		
 		PlayerId playerId = new PlayerId(receivedMap.getUniquePlayerID());
-		
+
+		this.verifyGameId(gameId);
+				
 		this.verifyPlayerId(gameId, playerId);
 		
 		this.verifyMapSentFirstTime(gameId, playerId);
@@ -66,7 +66,7 @@ public class MapReceivingController {
 		Map<Coordinate, MapField> playerHalfMap = this.clientServerConverter.convertGameMap(receivedMap, playerId);
 						
 		try{
-			this.verifyGameMap(playerHalfMap); // use for win and loose state
+			this.verifyGameMap(playerHalfMap);
 		} catch(MapValidationException ex) {
 			this.setLooser(gameId, playerId);
 			throw ex;

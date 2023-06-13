@@ -28,20 +28,14 @@ public class MapValidationService {
 	
 	private static Logger logger = LoggerFactory.getLogger(MapValidationService.class);
 	
-	private final int MIN_WATER = 7;
-	private final int MIN_MOUNTAIN = 5;
-	private final int MIN_GRASS = 24;
-	private final int MAX_HEIGHT = 4;
-	private final int MAX_WIDTH = 9;
-	private final int MAP_SIZE = 50;
-	
+	private final int MIN_WATER = 7, MIN_MOUNTAIN = 5, MIN_GRASS = 24, MAX_HEIGHT = 4, MAX_WIDTH = 9, MAP_SIZE = 50, MIN_HEIGHT = 0, MIN_WIDTH = 0, HALF_BORDER_FACTOR = 2;
 	private int actualWaterCount = 0;
-	
 	private GameMap gameMap;
 	
 	private Set<Coordinate> visitedFields = new HashSet<Coordinate>();
 	
 	public void verifyGameMap(Map<Coordinate, MapField> gameMap) {
+		// reset validation related variables for next validation
 		this.gameMap = new GameMap(gameMap);
 		this.actualWaterCount = 0;
 		this.visitedFields.clear();
@@ -94,23 +88,23 @@ public class MapValidationService {
 		int upper = 0, lower = 0, left  = 0, right = 0;
 		
 		for(Map.Entry<Coordinate, MapField> entry : gameMap.getGameMap().entrySet()) {
-			if(entry.getKey().getY() == 0 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
+			if(entry.getKey().getY() == this.MIN_HEIGHT && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
 				++upper;
 			
-			if(entry.getKey().getY() == 4 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
+			if(entry.getKey().getY() == this.MAX_HEIGHT && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
 				++lower;
 			
-			if(entry.getKey().getX() == 0 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
+			if(entry.getKey().getX() == this.MIN_WIDTH && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
 				++left;
 			
-			if(entry.getKey().getX() == 9 && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
+			if(entry.getKey().getX() == this.MAX_WIDTH && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
 				++right;
 		}
 		
-		boolean result =  upper >= Math.ceil(Double.valueOf(MAX_WIDTH)/2) ||
-				lower >= Math.ceil(Double.valueOf(MAX_WIDTH)/2) ||
-				left >= Math.ceil(Double.valueOf(MAX_HEIGHT)/2) ||
-				right >= Math.ceil(Double.valueOf(MAX_HEIGHT)/2);
+		boolean result =  upper >= Math.ceil(Double.valueOf(MAX_WIDTH) / this.HALF_BORDER_FACTOR) ||
+				lower >= Math.ceil(Double.valueOf(MAX_WIDTH) / this.HALF_BORDER_FACTOR) ||
+				left >= Math.ceil(Double.valueOf(MAX_HEIGHT) / this.HALF_BORDER_FACTOR) ||
+				right >= Math.ceil(Double.valueOf(MAX_HEIGHT) / this.HALF_BORDER_FACTOR);
 				
 		if(result) 
 			throw new WaterOnBoardersException("Borders exception","Too many water fields on map borders were detected!");
