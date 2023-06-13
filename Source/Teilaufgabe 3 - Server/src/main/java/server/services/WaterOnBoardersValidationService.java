@@ -16,26 +16,32 @@ public class WaterOnBoardersValidationService {
 	private final int MAX_HEIGHT = 4, MAX_WIDTH = 9, MIN_HEIGHT = 0, MIN_WIDTH = 0, HALF_BORDER_FACTOR = 2;
 
 	public void validateWaterOnBoarders(GameMap gameMap) {
-		int upper = 0, lower = 0, left  = 0, right = 0;
+		int upperBoarder = 0, lowerBoarder = 0, leftBorder  = 0, rightBoarder = 0;
 		
-		for(Map.Entry<Coordinate, MapField> entry : gameMap.getGameMap().entrySet()) {
-			if(entry.getKey().getY() == this.MIN_HEIGHT && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
-				++upper;
+		EMapTerrain currentTerrain;
+		
+		int currentX, currentY;
+		
+		for(Map.Entry<Coordinate, MapField> eachField : gameMap.getGameMap().entrySet()) {
 			
-			if(entry.getKey().getY() == this.MAX_HEIGHT && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
-				++lower;
+			currentTerrain = eachField.getValue().getTerrain();
+			currentX = eachField.getKey().getX();
+			currentY = eachField.getKey().getY();
 			
-			if(entry.getKey().getX() == this.MIN_WIDTH && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
-				++left;
-			
-			if(entry.getKey().getX() == this.MAX_WIDTH && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
-				++right;
+			if(currentY == this.MIN_HEIGHT && currentTerrain.equals(EMapTerrain.WATER)) 
+				++upperBoarder;
+			if(currentY == this.MAX_HEIGHT && currentTerrain.equals(EMapTerrain.WATER)) 
+				++lowerBoarder;
+			if(currentX == this.MIN_WIDTH && currentTerrain.equals(EMapTerrain.WATER)) 
+				++leftBorder;
+			if(currentX == this.MAX_WIDTH && currentTerrain.equals(EMapTerrain.WATER)) 
+				++rightBoarder;
 		}
 		
-		boolean result =  upper >= Math.ceil(Double.valueOf(MAX_WIDTH) / this.HALF_BORDER_FACTOR) ||
-				lower >= Math.ceil(Double.valueOf(MAX_WIDTH) / this.HALF_BORDER_FACTOR) ||
-				left >= Math.ceil(Double.valueOf(MAX_HEIGHT) / this.HALF_BORDER_FACTOR) ||
-				right >= Math.ceil(Double.valueOf(MAX_HEIGHT) / this.HALF_BORDER_FACTOR);
+		boolean result =  upperBoarder >= Math.ceil(Double.valueOf(MAX_WIDTH) / this.HALF_BORDER_FACTOR) ||
+				lowerBoarder >= Math.ceil(Double.valueOf(MAX_WIDTH) / this.HALF_BORDER_FACTOR) ||
+				leftBorder >= Math.ceil(Double.valueOf(MAX_HEIGHT) / this.HALF_BORDER_FACTOR) ||
+				rightBoarder >= Math.ceil(Double.valueOf(MAX_HEIGHT) / this.HALF_BORDER_FACTOR);
 				
 		if(result) 
 			throw new WaterOnBoardersException("Borders exception","Too many water fields on map borders were detected!");

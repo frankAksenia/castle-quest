@@ -38,10 +38,15 @@ public class MapValidationService {
 				
 	public void verifyGameMap(Map<Coordinate, MapField> playerHalfmap) {
 		GameMap gameMap = new GameMap(playerHalfmap);
+		
 		int waterCount = this.terrainCountVerificationService.validateTerrainsCount(gameMap);
+		
 		this.mapSizeVerificationService.validateMapSize(gameMap);
+		
 		this.islandsPresenceVerificationService.validateIslandPresent(gameMap, waterCount);
+		
 		this.waterOnBoardersValidationService.validateWaterOnBoarders(gameMap);
+		
 		this.fortPlacementValidationService.validateFortPlacement(gameMap);
 	}
 }

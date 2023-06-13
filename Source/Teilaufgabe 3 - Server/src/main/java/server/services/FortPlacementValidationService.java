@@ -9,17 +9,19 @@ import server.model.MapField;
 
 @Service
 public class FortPlacementValidationService {
+	
+	private final int MAX_FORTS = 1;
 
 	public void validateFortPlacement(GameMap gameMap) {
-		int count = 0;
+		int fortCounter = 0;
 		boolean isNotGrass = false;
 		for(MapField eachField: gameMap.getGameMap().values())
 			if(eachField.isFort()) {
-				++count;
+				++fortCounter;
 				if(!eachField.getTerrain().equals(EMapTerrain.GRASS))
 					isNotGrass = true;
 			}
-		if(count != 1) 
+		if(fortCounter != this.MAX_FORTS) 
 			throw new WrongArtefactPlacementException("Wrong fort placement","Amount of forts exceeded!");
 		
 		if(isNotGrass) 
