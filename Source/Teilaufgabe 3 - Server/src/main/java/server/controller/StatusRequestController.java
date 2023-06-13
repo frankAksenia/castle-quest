@@ -24,8 +24,8 @@ import server.model.GameMap;
 import server.model.GamePlayer;
 import server.model.GameStateId;
 import server.model.PlayerId;
-import server.services.GameIdVerificationService;
-import server.services.PlayerIdVerificationSerivce;
+import server.services.GameIdValidationService;
+import server.services.PlayerIdValidationService;
 import server.services.StatusRequestService;
 
 /*
@@ -39,13 +39,13 @@ public class StatusRequestController {
 	private static Logger logger = LoggerFactory.getLogger(StatusRequestController.class);
 	
 	private final StatusRequestService statusRequestService;
-	private final GameIdVerificationService gameIdVerificationService;
-	private final PlayerIdVerificationSerivce playerIdVerificationService;
+	private final GameIdValidationService gameIdVerificationService;
+	private final PlayerIdValidationService playerIdVerificationService;
 	private final ServerClientConverter serverClientConverter;
 	private final ClientServerConverter clientServiceConverter;
 	
 	@Autowired
-	public StatusRequestController(StatusRequestService statusRequestService, GameIdVerificationService gameIdVerificationService, PlayerIdVerificationSerivce playerIdVerificationService, ServerClientConverter serverClientConverter, ClientServerConverter clientServerConverter) {
+	public StatusRequestController(StatusRequestService statusRequestService, GameIdValidationService gameIdVerificationService, PlayerIdValidationService playerIdVerificationService, ServerClientConverter serverClientConverter, ClientServerConverter clientServerConverter) {
 		this.statusRequestService = statusRequestService;
 		this.gameIdVerificationService = gameIdVerificationService;
 		this.playerIdVerificationService = playerIdVerificationService;

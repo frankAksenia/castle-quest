@@ -18,15 +18,15 @@ import server.model.PlayerId;
  * Throws exceptions if rules are violated.
  */
 @Service
-public class PlayerIdVerificationSerivce {
+public class PlayerIdValidationService {
 	
 	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(PlayerIdVerificationSerivce.class);
+	private static Logger logger = LoggerFactory.getLogger(PlayerIdValidationService.class);
 	
 	private final GameRepository gameRepository;
 	
 	@Autowired
-	public PlayerIdVerificationSerivce(GameRepository gameRepository) {
+	public PlayerIdValidationService(GameRepository gameRepository) {
 		this.gameRepository = gameRepository;
 	}
 	

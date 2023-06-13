@@ -14,15 +14,15 @@ import server.model.GameRepository;
  * Throws exceptions if rules are violated.
  */
 @Service
-public class GameIdVerificationService {
+public class GameIdValidationService {
 	
 	@SuppressWarnings("unused")
-	private static Logger logger = LoggerFactory.getLogger(GameIdVerificationService.class);
+	private static Logger logger = LoggerFactory.getLogger(GameIdValidationService.class);
 	
 	private final GameRepository gameRepository;
 	
 	@Autowired
-	public GameIdVerificationService(GameRepository gameRepository) {
+	public GameIdValidationService(GameRepository gameRepository) {
 		this.gameRepository = gameRepository;
 	}
 	

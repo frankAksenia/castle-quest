@@ -12,13 +12,13 @@ import server.model.GameRepository;
 public class GameIdVerificationServiceTest {
 	
 	private static GameRepository gameRepository;
-	private static GameIdVerificationService gameIdVerificationService;
+	private static GameIdValidationService gameIdVerificationService;
 	private static GameId existingId;
 	
 	@BeforeAll
 	public static void initialize() {
 		gameRepository = new GameRepository();
-		gameIdVerificationService = new GameIdVerificationService(gameRepository);
+		gameIdVerificationService = new GameIdValidationService(gameRepository);
 		existingId = new GameId("xxxxx");
 	}
 

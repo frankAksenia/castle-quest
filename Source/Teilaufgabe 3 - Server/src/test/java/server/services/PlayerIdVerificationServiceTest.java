@@ -13,7 +13,7 @@ import server.model.PlayerId;
 public class PlayerIdVerificationServiceTest {
 	
 	private static GameRepository gameRepository;
-	private static PlayerIdVerificationSerivce playerIdVerificationService;
+	private static PlayerIdValidationService playerIdVerificationService;
 	private static GameId gameId;
 	private static GameData gameData;
 	private static GamePlayer checkPlayer;
@@ -22,7 +22,7 @@ public class PlayerIdVerificationServiceTest {
 	public static void initialize() {
 		// Arrange
 		gameRepository = new GameRepository();
-		playerIdVerificationService = new PlayerIdVerificationSerivce(gameRepository);
+		playerIdVerificationService = new PlayerIdValidationService(gameRepository);
 		gameId = new GameId("xxxxx");
 		gameData = new GameData();
 		gameRepository.addNewGame(gameId, gameData);

@@ -20,10 +20,10 @@ import server.model.GameId;
 import server.model.MapField;
 import server.model.PlayerId;
 import server.services.CombiningHalfmapsService;
-import server.services.GameIdVerificationService;
+import server.services.GameIdValidationService;
 import server.services.GameManagerService;
 import server.services.MapValidationService;
-import server.services.PlayerIdVerificationSerivce;
+import server.services.PlayerIdValidationService;
 
 /*
  * Controller for processing map received from a client.
@@ -36,13 +36,13 @@ public class MapReceivingController {
 	private static Logger logger = LoggerFactory.getLogger(MapReceivingController.class);
 	private final GameManagerService gameManagerService;
 	private final MapValidationService mapValidationService;
-	private final GameIdVerificationService gameIdVerificationService;
-	private final PlayerIdVerificationSerivce playerIdVerificationService;
+	private final GameIdValidationService gameIdVerificationService;
+	private final PlayerIdValidationService playerIdVerificationService;
 	private final CombiningHalfmapsService combiningHalfmapsService;
 	private final ClientServerConverter clientServerConverter;
 	
 	@Autowired
-	public MapReceivingController(GameManagerService gameManagerService, MapValidationService mapValidationService, GameIdVerificationService gameIdVerificationService, PlayerIdVerificationSerivce playerIdVerificationService, CombiningHalfmapsService combiningHalfmapsService, ClientServerConverter clientServerConverter) {
+	public MapReceivingController(GameManagerService gameManagerService, MapValidationService mapValidationService, GameIdValidationService gameIdVerificationService, PlayerIdValidationService playerIdVerificationService, CombiningHalfmapsService combiningHalfmapsService, ClientServerConverter clientServerConverter) {
 		this.gameManagerService = gameManagerService;
 		this.mapValidationService = mapValidationService;
 		this.gameIdVerificationService = gameIdVerificationService;

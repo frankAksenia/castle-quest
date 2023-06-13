@@ -17,7 +17,7 @@ import server.exceptions.WrongGameIdException;
 import server.model.GameId;
 import server.model.GamePlayer;
 import server.model.PlayerId;
-import server.services.GameIdVerificationService;
+import server.services.GameIdValidationService;
 import server.services.GameManagerService;
 
 /*
@@ -30,13 +30,13 @@ public class PlayerRegistrationController {
 	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(PlayerRegistrationController.class);
 	
-	private final GameIdVerificationService gameIdVerificationService;
+	private final GameIdValidationService gameIdVerificationService;
 	private final GameManagerService gameManagerService;
 	private final ClientServerConverter clientServerConverter;
 	private final ServerClientConverter serverClientConverter;
 	
 	@Autowired
-	public PlayerRegistrationController(GameIdVerificationService gameIdVerificationService, GameManagerService gameManagerService, ClientServerConverter clientServerConverter, ServerClientConverter serverClientConverter) {
+	public PlayerRegistrationController(GameIdValidationService gameIdVerificationService, GameManagerService gameManagerService, ClientServerConverter clientServerConverter, ServerClientConverter serverClientConverter) {
 		this.gameIdVerificationService = gameIdVerificationService;
 		this.gameManagerService = gameManagerService;
 		this.clientServerConverter = clientServerConverter;
