@@ -60,14 +60,14 @@ public class CombiningHalfmapsService {
 		 logger.info("Chosen shape to set map: {}", shape);
 		 Coordinate newCoordinate;
 		 for(Map.Entry<Coordinate, MapField> eachEntry: gameMap.entrySet()) {
-			 if(shape == EMapShape.HORIZONTAL_SECOND) {
-				 newCoordinate = new Coordinate(eachEntry.getKey().getX() + EMapShape.HORIZONTAL_SECOND.getMapAdjustingFactor(), eachEntry.getKey().getY());
-				 updatedMap.put(newCoordinate, eachEntry.getValue());
-			 }
-			 else if(shape == EMapShape.VERTICAL_SECOND) {
+			 if(shape == EMapShape.HORIZONTAL_SECOND) 
+				 newCoordinate = new Coordinate(eachEntry.getKey().getX() + EMapShape.HORIZONTAL_SECOND.getMapAdjustingFactor(), eachEntry.getKey().getY());			 
+			 else if(shape == EMapShape.VERTICAL_SECOND) 
 				 newCoordinate = new Coordinate(eachEntry.getKey().getX(), eachEntry.getKey().getY() + EMapShape.VERTICAL_SECOND.getMapAdjustingFactor());
-				 updatedMap.put(newCoordinate, eachEntry.getValue());
-			 }
+			 else
+				 break;
+			 
+			 updatedMap.put(newCoordinate, eachEntry.getValue());
 		 }
 		 if(updatedMap.isEmpty())
 			 updatedMap.putAll(gameMap);
@@ -78,14 +78,14 @@ public class CombiningHalfmapsService {
 		 Map<Coordinate, MapField> updatedMap = new LinkedHashMap<>();
 		 Coordinate newCoordinate;
 		 for(Map.Entry<Coordinate, MapField> eachEntry: gameMap.entrySet()) {
-			 if(firstMapShape == EMapShape.HORIZONTAL_FIRST) {
+			 if(firstMapShape == EMapShape.HORIZONTAL_FIRST) 
 				 newCoordinate = new Coordinate(eachEntry.getKey().getX() + EMapShape.HORIZONTAL_FIRST.getMapAdjustingFactor(), eachEntry.getKey().getY());
-				 updatedMap.put(newCoordinate, eachEntry.getValue());
-			 }
-			 else if(firstMapShape == EMapShape.VERTICAL_FIRST) {
+			 else if(firstMapShape == EMapShape.VERTICAL_FIRST) 
 				 newCoordinate = new Coordinate(eachEntry.getKey().getX(), eachEntry.getKey().getY() + EMapShape.VERTICAL_FIRST.getMapAdjustingFactor());
-				 updatedMap.put(newCoordinate, eachEntry.getValue());
-			 }
+			 else
+				 break;
+		
+			 updatedMap.put(newCoordinate, eachEntry.getValue());
 		 }
 		 if(updatedMap.isEmpty())
 			 updatedMap.putAll(gameMap);
