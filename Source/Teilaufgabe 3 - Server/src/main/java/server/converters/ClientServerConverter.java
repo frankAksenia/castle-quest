@@ -18,7 +18,6 @@ import messagesbase.messagesfromclient.PlayerRegistration;
 import server.model.Coordinate;
 import server.model.EMapTerrain;
 import server.model.GameId;
-import server.model.GameMap;
 import server.model.GamePlayer;
 import server.model.MapField;
 import server.model.PlayerId;
@@ -26,6 +25,7 @@ import server.model.PlayerId;
 @Component
 public class ClientServerConverter {
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(ClientServerConverter.class);
 	
 	public PlayerId convertPlayerId(UniquePlayerIdentifier receivedId) {

@@ -28,11 +28,11 @@ import server.model.GameMap;
 import server.model.GamePlayer;
 import server.model.MapField;
 import server.model.PlayerId;
-import server.services.GameManagerService;
 
 @Component
 public class ServerClientConverter {
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(ServerClientConverter.class);
 
 	public UniqueGameIdentifier convertGameId(GameId sendGameId) {
@@ -73,7 +73,7 @@ public class ServerClientConverter {
 		allFields.putAll(gameMap.getGameMap());
 		Map<PlayerId,Coordinate> playersPositions = gameMap.getPlayersPositions();
 		Map<PlayerId,Coordinate> fortsPositions = gameMap.getFortsPositions();
-		Coordinate myFortCoordinate = fortsPositions.get(playerId);
+//		Coordinate myFortCoordinate = fortsPositions.get(playerId);
 		Coordinate enemyFortCoordinate = new Coordinate();
 		Coordinate randomEnemyPlayerCoordinate = gameMap.getRandomPlayerPosition();
 		int counter = gameMap.getRoundCounter();

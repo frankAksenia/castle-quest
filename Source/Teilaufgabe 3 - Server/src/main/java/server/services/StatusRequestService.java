@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import server.model.Coordinate;
+import server.model.EPlayerState;
 import server.model.GameData;
 import server.model.GameId;
 import server.model.GameMap;
@@ -53,12 +54,21 @@ public class StatusRequestService {
 		return players;
 	}
 	
-	public boolean isCurrentPlayer(GameId gameId, PlayerId playerId) {
-		return this.gameRepository.getRunningGameById(gameId).getCurrentPlayer().equals(playerId);
-	}
-	
 	public GameMap getGameMap(GameId gameId) {
 		GameData gameData = this.gameRepository.getRunningGameById(gameId);
 		return gameData.getGameMap();
+	}
+
+	public EPlayerState getPlayerState(GameId gameId, PlayerId playerId) {
+		GameData gameData = this.gameRepository.getRunningGameById(gameId);
+		PlayerId looser = gameData.getLooser();
+		if(looser != null) {
+			if(looser.equals(playerId))
+				return EPlayerState.LOST;
+			else
+				return EPlayerState.WON;
+		} else if(gameData.getCurrentPlayer().equals(playerId))
+			return EPlayerState.ACT;
+		return EPlayerState.WAIT;
 	}
 }

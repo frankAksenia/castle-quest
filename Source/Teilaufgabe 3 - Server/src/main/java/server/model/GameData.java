@@ -23,6 +23,8 @@ public class GameData {
 	
 	Set<PlayerId> receivedMapFrom = new HashSet<>();
 	
+	private PlayerId looser = null;
+	
 	private PlayerId currentPlayer;
 	
 	private GameStateId gameStateId;
@@ -88,4 +90,13 @@ public class GameData {
 	public void setIfReceivedPlayerMap(PlayerId playerId) {
 		this.receivedMapFrom.add(playerId);
 	}
+
+	public PlayerId getLooser() {
+		return this.looser;
+	}
+
+	public void setLooser(PlayerId looser) {
+		this.looser = looser;
+	}
+	
 }

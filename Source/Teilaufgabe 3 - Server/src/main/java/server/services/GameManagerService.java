@@ -95,6 +95,11 @@ public class GameManagerService {
 		gameData.setIfReceivedPlayerMap(playerId);
 		return mapWasReceived;
 	}
+
+	public void setLooser(GameId gameId, PlayerId playerId) {
+		GameData gameData = this.gameRepository.getRunningGameById(gameId);
+		gameData.setLooser(playerId);
+	}
 	
 
 }

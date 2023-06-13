@@ -27,6 +27,7 @@ import server.services.GameManagerService;
 @RestController
 public class PlayerRegistrationController {
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(PlayerRegistrationController.class);
 	
 	private final GameIdVerificationService gameIdVerificationService;

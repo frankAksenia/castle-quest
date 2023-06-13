@@ -41,9 +41,7 @@ public class MapValidationService {
 	
 	private Set<Coordinate> visitedFields = new HashSet<Coordinate>();
 	
-	private boolean approved = true;
-
-	public boolean verifyGameMap(Map<Coordinate, MapField> gameMap) {
+	public void verifyGameMap(Map<Coordinate, MapField> gameMap) {
 		this.gameMap = new GameMap(gameMap);
 		this.actualWaterCount = 0;
 		this.visitedFields.clear();
@@ -52,7 +50,6 @@ public class MapValidationService {
 		this.verifyIslandPresent();
 		this.verifyWaterOnBoarders();
 		this.verifyFort();
-		return this.approved;
 	}
 	
 	private void verifyTerrainsCount() {
@@ -65,18 +62,14 @@ public class MapValidationService {
 			case MOUNTAIN: ++mountainCount; break;
 			}
 		}
-		if(this.actualWaterCount < MIN_WATER || grassCount < MIN_GRASS || mountainCount < MIN_MOUNTAIN) {
-			this.approved = false;
+		if(this.actualWaterCount < MIN_WATER || grassCount < MIN_GRASS || mountainCount < MIN_MOUNTAIN) 
 			throw new WrongTerrainCountException("Wrong terrain count!", "Not enought fields for required terrains!");
-		}
 	}
 	
 	private void verifyMapSize() {
 		int size = this.gameMap.getGameMap().size();
-		if(size != this.MAP_SIZE) {
-			this.approved = false;
-			throw new WrongMapSizeException("Wrong map size!", "Wrong amount of fields on the map!");
-		}
+		if(size != this.MAP_SIZE) 
+			throw new WrongMapSizeException("Wrong map size!", "Wrong amount of fields on the map!");	
 	}
 	
 	private void verifyIslandPresent() {
@@ -93,10 +86,8 @@ public class MapValidationService {
 				
 		boolean result = this.MAP_SIZE - this.actualWaterCount != this.visitedFields.size();
 				
-		if(result) {
-			this.approved = false;
+		if(result) 
 			throw new IslandOnMapException("Island exception", "Map contains one or more islands!");
-		}
 	}
 	
 	private void verifyWaterOnBoarders() {
@@ -121,10 +112,8 @@ public class MapValidationService {
 				left >= Math.ceil(Double.valueOf(MAX_HEIGHT)/2) ||
 				right >= Math.ceil(Double.valueOf(MAX_HEIGHT)/2);
 				
-		if(result) {
-			this.approved = false;
+		if(result) 
 			throw new WaterOnBoardersException("Borders exception","Too many water fields on map borders were detected!");
-		}
 	}
 	
 	private void verifyFort() {
@@ -136,14 +125,11 @@ public class MapValidationService {
 				if(!eachField.getTerrain().equals(EMapTerrain.GRASS))
 					isNotGrass = true;
 			}
-		if(count != 1) {
-			this.approved = false;
+		if(count != 1) 
 			throw new WrongArtefactPlacementException("Wrong fort placement","Amount of forts exceeded!");
-		}
-		if(isNotGrass) {
-			this.approved = false;
+		
+		if(isNotGrass) 
 			throw new WrongArtefactPlacementException("Wrong fort placement","Fort was placed not on the grass field!");
-		}
 	}
 	
 	private boolean floodFill(Coordinate currentCoordinate) {

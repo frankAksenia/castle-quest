@@ -25,7 +25,6 @@ import server.model.GamePlayer;
 import server.model.GameStateId;
 import server.model.PlayerId;
 import server.services.GameIdVerificationService;
-import server.services.GameManagerService;
 import server.services.PlayerIdVerificationSerivce;
 import server.services.StatusRequestService;
 
@@ -36,6 +35,7 @@ import server.services.StatusRequestService;
 @RestController
 public class StatusRequestController {
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(StatusRequestController.class);
 	
 	private final StatusRequestService statusRequestService;
@@ -69,10 +69,9 @@ public class StatusRequestController {
 				
 		this.verifyPlayerId(gameId, this.clientServiceConverter.convertPlayerId(receivedPlayerId));
 		
-		EPlayerState playerState = EPlayerState.WAIT;
-	
-		if(this.statusRequestService.isCurrentPlayer(gameId, playerId))
-			playerState = EPlayerState.ACT;
+		EPlayerState playerState = this.getPlayerState(gameId, playerId);
+		
+		logger.warn("PLAYER STATE: {}", playerState);
 		
 		Collection<PlayerState> responsePlayers = this.serverClientConverter.convertGamePlayers(gamePlayers, playerState, playerId, randomPlayerId);
 		
@@ -103,5 +102,9 @@ public class StatusRequestController {
 	
 	private GameMap getGameMap(GameId gameId) {
 		return this.statusRequestService.getGameMap(gameId);
+	}
+	
+	private EPlayerState getPlayerState(GameId gameId, PlayerId playerId) {
+		return this.statusRequestService.getPlayerState(gameId, playerId);
 	}
 }

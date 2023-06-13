@@ -12,6 +12,7 @@ import messagesbase.UniqueGameIdentifier;
 import messagesbase.messagesfromclient.PlayerHalfMap;
 import server.converters.ClientServerConverter;
 import server.exceptions.MapReceivingException;
+import server.exceptions.MapValidationException;
 import server.exceptions.WrongGameIdException;
 import server.exceptions.WrongPlayerIdException;
 import server.model.Coordinate;
@@ -64,7 +65,12 @@ public class MapReceivingController {
 		
 		Map<Coordinate, MapField> playerHalfMap = this.clientServerConverter.convertGameMap(receivedMap, playerId);
 						
-		boolean approved = this.verifyGameMap(playerHalfMap); // use for win and loose state
+		try{
+			this.verifyGameMap(playerHalfMap); // use for win and loose state
+		} catch(MapValidationException ex) {
+			this.setLooser(gameId, playerId);
+			throw ex;
+		}
 		
 		this.setGameMap(gameId, playerId, playerHalfMap);
 		
@@ -83,17 +89,13 @@ public class MapReceivingController {
 			throw new WrongPlayerIdException("Wrong player id", "Client provided player id not existing in the given game!");
 	}
 	
-	private boolean verifyActionSentInTurn(PlayerId playerId) {
-		return true;
-	}
-	
 	private void verifyMapSentFirstTime(GameId gameId, PlayerId playerId) {
 		if(this.gameManagerService.verifyMapSentFirstTime(gameId, playerId))
 			throw new MapReceivingException("Second map", "Client has sent the map already!");
 	}
 	
-	private boolean verifyGameMap(Map<Coordinate, MapField> gameMap) {
-		return this.mapValidationService.verifyGameMap(gameMap);
+	private void verifyGameMap(Map<Coordinate, MapField> gameMap) {
+		this.mapValidationService.verifyGameMap(gameMap);
 	}
 	
 	private void setGameMap(GameId gameId, PlayerId playerId, Map<Coordinate, MapField> gameMap) {
@@ -102,6 +104,10 @@ public class MapReceivingController {
 	
 	private void switchPlayer(GameId gameId, PlayerId playerId) {
 		this.gameManagerService.switchPlayer(gameId, playerId);
-	}            
+	}         
+	
+	private void setLooser(GameId gameId, PlayerId playerId) {
+		this.gameManagerService.setLooser(gameId, playerId);
+	}
 	
 }

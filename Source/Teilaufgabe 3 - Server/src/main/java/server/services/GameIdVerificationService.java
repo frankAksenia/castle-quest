@@ -16,6 +16,7 @@ import server.model.GameRepository;
 @Service
 public class GameIdVerificationService {
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(GameIdVerificationService.class);
 	
 	private final GameRepository gameRepository;

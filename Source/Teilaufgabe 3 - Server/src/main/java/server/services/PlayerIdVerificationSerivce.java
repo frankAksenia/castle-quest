@@ -20,6 +20,7 @@ import server.model.PlayerId;
 @Service
 public class PlayerIdVerificationSerivce {
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(PlayerIdVerificationSerivce.class);
 	
 	private final GameRepository gameRepository;

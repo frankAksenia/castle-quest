@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import server.exceptions.WrongPlayerIdException;
 import server.model.GameData;
 import server.model.GameId;
 import server.model.GamePlayer;
