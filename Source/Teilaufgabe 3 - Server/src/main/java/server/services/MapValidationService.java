@@ -1,21 +1,13 @@
 package server.services;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import server.exceptions.IslandOnMapException;
-import server.exceptions.WaterOnBoardersException;
-import server.exceptions.WrongArtefactPlacementException;
-import server.exceptions.WrongMapSizeException;
-import server.exceptions.WrongTerrainCountException;
 import server.model.Coordinate;
-import server.model.EMapTerrain;
 import server.model.GameMap;
 import server.model.MapField;
 
@@ -26,118 +18,30 @@ import server.model.MapField;
 @Service
 public class MapValidationService {
 	
+	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(MapValidationService.class);
 	
-	private final int MIN_WATER = 7, MIN_MOUNTAIN = 5, MIN_GRASS = 24, MAX_HEIGHT = 4, MAX_WIDTH = 9, MAP_SIZE = 50, MIN_HEIGHT = 0, MIN_WIDTH = 0, HALF_BORDER_FACTOR = 2;
-	private int actualWaterCount = 0;
-	private GameMap gameMap;
+	@Autowired
+	private TerrainCountValidationService terrainCountVerificationService;
 	
-	private Set<Coordinate> visitedFields = new HashSet<Coordinate>();
+	@Autowired
+	private MapSizeValidationService mapSizeVerificationService;
 	
-	public void verifyGameMap(Map<Coordinate, MapField> gameMap) {
-		// reset validation related variables for next validation
-		this.gameMap = new GameMap(gameMap);
-		this.actualWaterCount = 0;
-		this.visitedFields.clear();
-		this.verifyTerrainsCount(); 
-		this.verifyMapSize();
-		this.verifyIslandPresent();
-		this.verifyWaterOnBoarders();
-		this.verifyFort();
-	}
+	@Autowired
+	private IslandsPresenceValidationService islandsPresenceVerificationService;
 	
-	private void verifyTerrainsCount() {
-		int grassCount = 0, mountainCount = 0;
-		for(MapField eachField: this.gameMap.getGameMap().values()) {
-			EMapTerrain currentTerrain = eachField.getTerrain();
-			switch(currentTerrain) {
-			case WATER: ++this.actualWaterCount; break;
-			case GRASS: ++grassCount; break;
-			case MOUNTAIN: ++mountainCount; break;
-			}
-		}
-		if(this.actualWaterCount < MIN_WATER || grassCount < MIN_GRASS || mountainCount < MIN_MOUNTAIN) 
-			throw new WrongTerrainCountException("Wrong terrain count!", "Not enought fields for required terrains!");
-	}
+	@Autowired
+	private WaterOnBoardersValidationService waterOnBoardersValidationService;
 	
-	private void verifyMapSize() {
-		int size = this.gameMap.getGameMap().size();
-		if(size != this.MAP_SIZE) 
-			throw new WrongMapSizeException("Wrong map size!", "Wrong amount of fields on the map!");	
-	}
-	
-	private void verifyIslandPresent() {
-		logger.info("GameMap {}", this.gameMap.getGameMap());
-		Coordinate startCoordinate = new Coordinate();
-		do {
-			Random random = new Random();
-	        int randomX = random.nextInt(MAX_WIDTH + 1);
-	        int randomY = random.nextInt(MAX_HEIGHT + 1);
-	        startCoordinate = this.gameMap.getCoordinate(randomX, randomY);
-		} while(this.gameMap.getGameMap().get(startCoordinate).getTerrain() == EMapTerrain.WATER);
-        
-		this.floodFill(startCoordinate);
+	@Autowired
+	private FortPlacementValidationService fortPlacementValidationService;
 				
-		boolean result = this.MAP_SIZE - this.actualWaterCount != this.visitedFields.size();
-				
-		if(result) 
-			throw new IslandOnMapException("Island exception", "Map contains one or more islands!");
+	public void verifyGameMap(Map<Coordinate, MapField> playerHalfmap) {
+		GameMap gameMap = new GameMap(playerHalfmap);
+		int waterCount = this.terrainCountVerificationService.validateTerrainsCount(gameMap);
+		this.mapSizeVerificationService.validateMapSize(gameMap);
+		this.islandsPresenceVerificationService.validateIslandPresent(gameMap, waterCount);
+		this.waterOnBoardersValidationService.validateWaterOnBoarders(gameMap);
+		this.fortPlacementValidationService.validateFortPlacement(gameMap);
 	}
-	
-	private void verifyWaterOnBoarders() {
-		int upper = 0, lower = 0, left  = 0, right = 0;
-		
-		for(Map.Entry<Coordinate, MapField> entry : gameMap.getGameMap().entrySet()) {
-			if(entry.getKey().getY() == this.MIN_HEIGHT && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
-				++upper;
-			
-			if(entry.getKey().getY() == this.MAX_HEIGHT && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
-				++lower;
-			
-			if(entry.getKey().getX() == this.MIN_WIDTH && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
-				++left;
-			
-			if(entry.getKey().getX() == this.MAX_WIDTH && entry.getValue().getTerrain().equals(EMapTerrain.WATER)) 
-				++right;
-		}
-		
-		boolean result =  upper >= Math.ceil(Double.valueOf(MAX_WIDTH) / this.HALF_BORDER_FACTOR) ||
-				lower >= Math.ceil(Double.valueOf(MAX_WIDTH) / this.HALF_BORDER_FACTOR) ||
-				left >= Math.ceil(Double.valueOf(MAX_HEIGHT) / this.HALF_BORDER_FACTOR) ||
-				right >= Math.ceil(Double.valueOf(MAX_HEIGHT) / this.HALF_BORDER_FACTOR);
-				
-		if(result) 
-			throw new WaterOnBoardersException("Borders exception","Too many water fields on map borders were detected!");
-	}
-	
-	private void verifyFort() {
-		int count = 0;
-		boolean isNotGrass = false;
-		for(MapField eachField: this.gameMap.getGameMap().values())
-			if(eachField.isFort()) {
-				++count;
-				if(!eachField.getTerrain().equals(EMapTerrain.GRASS))
-					isNotGrass = true;
-			}
-		if(count != 1) 
-			throw new WrongArtefactPlacementException("Wrong fort placement","Amount of forts exceeded!");
-		
-		if(isNotGrass) 
-			throw new WrongArtefactPlacementException("Wrong fort placement","Fort was placed not on the grass field!");
-	}
-	
-	private boolean floodFill(Coordinate currentCoordinate) {
-		if(this.gameMap.getGameMap().get(currentCoordinate).getTerrain() == EMapTerrain.WATER)
-			return false;
-		
-		this.visitedFields.add(currentCoordinate);
-		
-		for(Coordinate neighbourCoordinate: this.gameMap.getCoordinatesAround(currentCoordinate)) 
-			if(this.gameMap.getGameMap().containsKey(neighbourCoordinate)
-					&& !visitedFields.contains(neighbourCoordinate)
-					&& floodFill(neighbourCoordinate))
-				return true;
-		
-		return false;
-	}	
 }
