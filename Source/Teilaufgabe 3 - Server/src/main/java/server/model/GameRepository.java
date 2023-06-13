@@ -1,5 +1,6 @@
 package server.model;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -41,5 +42,12 @@ public class GameRepository {
 	}
 	
 	public void removeOldestGames(int amountToRemove) {
+		Iterator<Map.Entry<GameId, GameData>> mapIterator = this.getAllRunningGames().entrySet().iterator();
+        int count = 0;
+        while (mapIterator.hasNext() && count < amountToRemove) {
+            mapIterator.next();
+            mapIterator.remove();
+            ++count;
+        }
 	}
 }

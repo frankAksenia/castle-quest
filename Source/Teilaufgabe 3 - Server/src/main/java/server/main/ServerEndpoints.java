@@ -21,7 +21,7 @@ import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
-import server.controller.GameManager;
+import server.controller.GameCreationController;
 import server.controller.MapReceivingController;
 import server.controller.PlayerRegistrationController;
 import server.controller.StatusRequestController;
@@ -32,7 +32,7 @@ import server.exceptions.GenericExampleException;
 @RequestMapping(value = "/games")
 public class ServerEndpoints {
 		
-	private final GameManager gameManager;
+	private final GameCreationController gameManager;
 	
 	private final PlayerRegistrationController playerRegistrationController;
 	
@@ -41,7 +41,7 @@ public class ServerEndpoints {
 	private final StatusRequestController statusRequestController;
 	
 	@Autowired
-	public ServerEndpoints(GameManager gameManager, PlayerRegistrationController playerRegistrationController, MapReceivingController mapReceivingController, StatusRequestController statusRequestController) {
+	public ServerEndpoints(GameCreationController gameManager, PlayerRegistrationController playerRegistrationController, MapReceivingController mapReceivingController, StatusRequestController statusRequestController) {
 		this.gameManager = gameManager;
 		this.playerRegistrationController = playerRegistrationController;
 		this.mapReceivingController = mapReceivingController;

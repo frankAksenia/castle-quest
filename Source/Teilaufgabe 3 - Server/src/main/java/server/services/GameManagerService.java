@@ -1,6 +1,5 @@
 package server.services;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,23 +30,12 @@ public class GameManagerService {
 		this.gameRepository = gameRepository;
 	}
 	
-	public Map<GameId,GameData> getAllRunningGames() {
-		return this.gameRepository.getAllRunningGames();
-	}
-	
-	public GameData getRunningGameById(GameId gameId) {
-		return this.getAllRunningGames().get(gameId);
-	}
-	
-	public int getAmountOfActiveGames() {
-		return this.gameRepository.getAmountOfActiveGames();
-	}
-	
 	public void addNewGame(GameId gameId, GameData gameData) {	
 		if(this.getAmountOfActiveGames() > this.MAX_GAMES)
 			this.removeOldestGames(10);
 		this.gameRepository.addNewGame(gameId, gameData);
 	}
+	
 	
 	public void addNewPlayer(GameId gameId, GamePlayer gamePlayer) {
 		GameData gameToAddPlayer = this.getRunningGameById(gameId);
@@ -55,35 +43,20 @@ public class GameManagerService {
 	}
 	
 	public void setCurrentPlayer(GameId gameId, PlayerId playerId) {
-		this.gameRepository.getRunningGameById(gameId).setCurrentPlayer(playerId);
+		GameData gameData = this.gameRepository.getRunningGameById(gameId);
+		gameData.setCurrentPlayer(playerId);
 	}
 	
 	public void switchPlayer(GameId gameId, PlayerId playerId) {
 		GameData gameData = this.gameRepository.getRunningGameById(gameId);
-		if(gameData.getFirstPlayer().playerId().equals(playerId))
-			gameData.setCurrentPlayer(gameData.getSecondPlayer().playerId());
+		PlayerId firstPlayer = gameData.getFirstPlayer().playerId();
+		PlayerId secondPlayer = gameData.getSecondPlayer().playerId();
+		if(firstPlayer.equals(playerId))
+			gameData.setCurrentPlayer(secondPlayer);
 		else
-			gameData.setCurrentPlayer(gameData.getFirstPlayer().playerId());
+			gameData.setCurrentPlayer(firstPlayer);
 	}
 	
-	public void removeOldestGames(int amountToRemove) {
-		Iterator<Map.Entry<GameId, GameData>> mapIterator = this.getAllRunningGames().entrySet().iterator();
-        int count = 0;
-        while (mapIterator.hasNext() && count < amountToRemove) {
-            mapIterator.next();
-            mapIterator.remove();
-            ++count;
-        }
-	}
-	
-	public boolean verifyActionSentInTurn(PlayerId playerId) {
-		return true;
-	}
-	
-	public boolean verifyBothPlayersRegistered() {
-		return true;
-	}
-
 	public boolean verifyMapSentFirstTime(GameId gameId, PlayerId playerId) {
 		boolean mapWasReceived = false;
 		GameData gameData = this.gameRepository.getRunningGameById(gameId);
@@ -95,11 +68,25 @@ public class GameManagerService {
 		gameData.setIfReceivedPlayerMap(playerId);
 		return mapWasReceived;
 	}
-
+	
 	public void setLooser(GameId gameId, PlayerId playerId) {
 		GameData gameData = this.gameRepository.getRunningGameById(gameId);
 		gameData.setLooser(playerId);
 	}
 	
-
+	private Map<GameId,GameData> getAllRunningGames() {
+		return this.gameRepository.getAllRunningGames();
+	}
+	
+	private GameData getRunningGameById(GameId gameId) {
+		return this.getAllRunningGames().get(gameId);
+	}
+	
+	private int getAmountOfActiveGames() {
+		return this.gameRepository.getAmountOfActiveGames();
+	}
+	
+	private void removeOldestGames(int amountToRemove) {
+		this.gameRepository.removeOldestGames(amountToRemove);
+	}
 }
