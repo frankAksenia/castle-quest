@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import server.exceptions.AmountOfPlayersException;
+
 @Component
 public class GameData {
 	
@@ -41,18 +43,18 @@ public class GameData {
 	
 	public Set<GamePlayer> getGamePlayers() {
 		Set<GamePlayer> gamePlayers = new HashSet<>();
-		if(this.firstPlayer != null)
-			gamePlayers.add(firstPlayer);
-		if(this.secondPlayer != null)
-			gamePlayers.add(secondPlayer);
+		gamePlayers.add(firstPlayer);
+		gamePlayers.add(secondPlayer);
 		return gamePlayers;
 	}
 	
-	public void addPlayer(GamePlayer newPlayer) {
+	public void addPlayer(GamePlayer newPlayer) throws AmountOfPlayersException {
 		if(firstPlayer == null)
 			firstPlayer = newPlayer;
-		else
+		else if(secondPlayer == null)
 			secondPlayer = newPlayer;
+		else
+			throw new AmountOfPlayersException("Two players have already been registered!");
 	}
 	
 	public PlayerId getCurrentPlayer() {
@@ -62,21 +64,17 @@ public class GameData {
 	public void setCurrentPlayer(PlayerId currentPlayer) {
 		this.currentPlayer = currentPlayer;
 	}
-	
-	public boolean areBothPlayersRegistered() {
-		return true;
-	}
 
 	public GamePlayer getFirstPlayer() {
-		return firstPlayer;
+		return this.firstPlayer;
 	}
 
 	public GamePlayer getSecondPlayer() {
-		return secondPlayer;
+		return this.secondPlayer;
 	}
 
 	public GameStateId getGameStateId() {
-		return gameStateId;
+		return this.gameStateId;
 	}
 
 	public void setGameStateId(GameStateId gameStateId) {

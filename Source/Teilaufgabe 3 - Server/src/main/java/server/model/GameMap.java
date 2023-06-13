@@ -16,6 +16,8 @@ public class GameMap {
 	
 	private static Logger logger = LoggerFactory.getLogger(GameMap.class);
 	
+	private final int coordinateShiftFactor = 1;
+	
 	private int roundCounter = 32;
 	
 	private EMapShape shapeOfTheFirstMap;
@@ -57,19 +59,19 @@ public class GameMap {
 		final int x = coordinate.getX();
 		final int y = coordinate.getY();
 		
-		Coordinate coordinateDown = this.getCoordinate(x, y+1);
+		Coordinate coordinateDown = this.getCoordinate(x, y + this.coordinateShiftFactor);
 		if(this.gameMap.containsKey(coordinateDown))
 			fieldsAround.add(coordinateDown);
 		
-		Coordinate coordinateUp = this.getCoordinate(x, y-1);
+		Coordinate coordinateUp = this.getCoordinate(x, y - this.coordinateShiftFactor);
 		if(this.gameMap.containsKey(coordinateUp))
 			fieldsAround.add(coordinateUp);
 		
-		Coordinate coordinateRight = this.getCoordinate(x+1, y);
+		Coordinate coordinateRight = this.getCoordinate(x + this.coordinateShiftFactor, y);
 		if(this.gameMap.containsKey(coordinateRight))
 			fieldsAround.add(coordinateRight);	
 		
-		Coordinate coordinateLeft = this.getCoordinate(x-1, y);
+		Coordinate coordinateLeft = this.getCoordinate(x - this.coordinateShiftFactor, y);
 		if(this.gameMap.containsKey(coordinateLeft))
 			fieldsAround.add(coordinateLeft);	
 		
@@ -77,7 +79,7 @@ public class GameMap {
 	}
 
 	public Map<PlayerId, Coordinate> getPlayersPositions() {
-		return playersPositions;
+		return this.playersPositions;
 	}
 	
 	public Coordinate getRandomPlayerPosition() {

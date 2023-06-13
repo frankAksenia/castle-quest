@@ -20,7 +20,6 @@ public class GameRepository {
 	private static Logger logger = LoggerFactory.getLogger(GameRepository.class);
 	
 	public GameRepository() {
-		logger.info("NEW REPOSITORY");
 		this.runningGames = new LinkedHashMap<GameId, GameData>();
 	}
 	

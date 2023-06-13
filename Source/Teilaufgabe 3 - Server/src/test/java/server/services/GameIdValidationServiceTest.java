@@ -9,7 +9,7 @@ import server.model.GameData;
 import server.model.GameId;
 import server.model.GameRepository;
 
-public class GameIdVerificationServiceTest {
+public class GameIdValidationServiceTest {
 	
 	private static GameRepository gameRepository;
 	private static GameIdValidationService gameIdVerificationService;

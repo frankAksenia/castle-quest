@@ -4,13 +4,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import server.exceptions.AmountOfPlayersException;
 import server.model.GameData;
 import server.model.GameId;
 import server.model.GamePlayer;
 import server.model.GameRepository;
 import server.model.PlayerId;
 
-public class PlayerIdVerificationServiceTest {
+public class PlayerIdValidationServiceTest {
 	
 	private static GameRepository gameRepository;
 	private static PlayerIdValidationService playerIdVerificationService;
@@ -19,7 +20,7 @@ public class PlayerIdVerificationServiceTest {
 	private static GamePlayer checkPlayer;
 	
 	@BeforeAll
-	public static void initialize() {
+	public static void initialize() throws AmountOfPlayersException {
 		// Arrange
 		gameRepository = new GameRepository();
 		playerIdVerificationService = new PlayerIdValidationService(gameRepository);

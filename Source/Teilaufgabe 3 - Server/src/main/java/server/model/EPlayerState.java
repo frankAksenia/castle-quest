@@ -4,5 +4,5 @@ public enum EPlayerState {
 	WAIT,
 	ACT,
 	WON,
-	LOST,
+	LOST;
 }

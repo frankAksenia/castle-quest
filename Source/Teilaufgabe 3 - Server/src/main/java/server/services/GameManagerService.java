@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import server.exceptions.AmountOfPlayersException;
 import server.model.GameData;
 import server.model.GameId;
 import server.model.GamePlayer;
@@ -39,7 +39,11 @@ public class GameManagerService {
 	
 	public void addNewPlayer(GameId gameId, GamePlayer gamePlayer) {
 		GameData gameToAddPlayer = this.getRunningGameById(gameId);
-		gameToAddPlayer.addPlayer(gamePlayer);
+		try {
+			gameToAddPlayer.addPlayer(gamePlayer);
+		} catch (AmountOfPlayersException exception) {
+			
+		}
 	}
 	
 	public void setCurrentPlayer(GameId gameId, PlayerId playerId) {
