@@ -33,21 +33,26 @@ public class CombiningHalfmapsService {
 	public void combineHalfmaps(GameId gameId, PlayerId playerId, Map<Coordinate,MapField> receivedMap) {
 		GameData gameData = this.gameRepository.getRunningGameById(gameId);
 		GameMap gameMap = gameData.getGameMap();
-		Random random = new Random();
 		Map<Coordinate, MapField> updatedMap;
 		if(gameMap.getGameMap().isEmpty()) {
-			EMapShape[] mapShape = EMapShape.values();
-			EMapShape shape = mapShape[random.nextInt(4)];
-			gameMap.setShapeOfTheFirstMap(shape);
-			updatedMap = this.adjustFirstMapCoordinates(shape, receivedMap);		
+			EMapShape chosenShape = this.chooseRandomMapShape();
+			gameMap.setShapeOfTheFirstMap(chosenShape);
+			updatedMap = this.adjustFirstMapCoordinates(chosenShape, receivedMap);		
 		}
-		else {
+		else 
 			updatedMap = this.adjustSecondMapCoordinates(gameMap.getShapeOfTheFirstMap(), receivedMap);
-		}
+
 		receivedMap.clear();
 		receivedMap.putAll(updatedMap);
 		gameData.setGameMap(receivedMap, playerId);
 		logger.info("Full map after the second player: {}", gameData.getGameMap().getGameMap());
+	}
+	
+	private EMapShape chooseRandomMapShape() {
+		Random random = new Random();
+		EMapShape[] mapShape = EMapShape.values();
+		EMapShape shape = mapShape[random.nextInt(4)];
+		return shape;
 	}
 
 	private Map<Coordinate, MapField> adjustFirstMapCoordinates(EMapShape shape, Map<Coordinate, MapField> gameMap) {
@@ -56,11 +61,11 @@ public class CombiningHalfmapsService {
 		 Coordinate newCoordinate;
 		 for(Map.Entry<Coordinate, MapField> eachEntry: gameMap.entrySet()) {
 			 if(shape == EMapShape.HORIZONTAL_SECOND) {
-				 newCoordinate = new Coordinate(eachEntry.getKey().getX() + 10, eachEntry.getKey().getY());
+				 newCoordinate = new Coordinate(eachEntry.getKey().getX() + EMapShape.HORIZONTAL_SECOND.getMapAdjustingFactor(), eachEntry.getKey().getY());
 				 updatedMap.put(newCoordinate, eachEntry.getValue());
 			 }
 			 else if(shape == EMapShape.VERTICAL_SECOND) {
-				 newCoordinate = new Coordinate(eachEntry.getKey().getX(), eachEntry.getKey().getY() + 5);
+				 newCoordinate = new Coordinate(eachEntry.getKey().getX(), eachEntry.getKey().getY() + EMapShape.VERTICAL_SECOND.getMapAdjustingFactor());
 				 updatedMap.put(newCoordinate, eachEntry.getValue());
 			 }
 		 }
@@ -74,11 +79,11 @@ public class CombiningHalfmapsService {
 		 Coordinate newCoordinate;
 		 for(Map.Entry<Coordinate, MapField> eachEntry: gameMap.entrySet()) {
 			 if(firstMapShape == EMapShape.HORIZONTAL_FIRST) {
-				 newCoordinate = new Coordinate(eachEntry.getKey().getX() + 10, eachEntry.getKey().getY());
+				 newCoordinate = new Coordinate(eachEntry.getKey().getX() + EMapShape.HORIZONTAL_FIRST.getMapAdjustingFactor(), eachEntry.getKey().getY());
 				 updatedMap.put(newCoordinate, eachEntry.getValue());
 			 }
 			 else if(firstMapShape == EMapShape.VERTICAL_FIRST) {
-				 newCoordinate = new Coordinate(eachEntry.getKey().getX(), eachEntry.getKey().getY() + 5);
+				 newCoordinate = new Coordinate(eachEntry.getKey().getX(), eachEntry.getKey().getY() + EMapShape.VERTICAL_FIRST.getMapAdjustingFactor());
 				 updatedMap.put(newCoordinate, eachEntry.getValue());
 			 }
 		 }

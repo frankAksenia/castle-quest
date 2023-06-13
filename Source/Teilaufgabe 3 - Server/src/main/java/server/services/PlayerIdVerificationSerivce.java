@@ -37,10 +37,10 @@ public class PlayerIdVerificationSerivce {
 				
 		boolean playerExists = false;
 		
-		for(GamePlayer gamePlayer : gamePlayers) {
+		for(GamePlayer gamePlayer : gamePlayers) 
 			if(gamePlayer.playerId().equals(playerId))
 				playerExists = true;
-		}
+		
 		return !playerExists;
 	}
 }
