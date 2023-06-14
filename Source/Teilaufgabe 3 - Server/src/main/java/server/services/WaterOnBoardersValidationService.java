@@ -2,6 +2,8 @@ package server.services;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import server.exceptions.WaterOnBoardersException;
@@ -12,11 +14,14 @@ import server.model.MapField;
 
 @Service
 public class WaterOnBoardersValidationService {
+
+	@SuppressWarnings("unused")
+	private static Logger logger = LoggerFactory.getLogger(WaterOnBoardersValidationService.class);
 	
 	private final int MAX_HEIGHT = 4, MAX_WIDTH = 9, MIN_HEIGHT = 0, MIN_WIDTH = 0, HALF_BORDER_FACTOR = 2;
 
 	public void validateWaterOnBoarders(GameMap gameMap) {
-		int upperBoarder = 0, lowerBoarder = 0, leftBorder  = 0, rightBoarder = 0;
+		int upperBorder = 0, lowerBorder = 0, leftBorder  = 0, rightBorder = 0;
 		
 		EMapTerrain currentTerrain;
 		
@@ -29,20 +34,20 @@ public class WaterOnBoardersValidationService {
 			currentY = eachField.getKey().getY();
 			
 			if(currentY == this.MIN_HEIGHT && currentTerrain.equals(EMapTerrain.WATER)) 
-				++upperBoarder;
+				++upperBorder;
 			if(currentY == this.MAX_HEIGHT && currentTerrain.equals(EMapTerrain.WATER)) 
-				++lowerBoarder;
+				++lowerBorder;
 			if(currentX == this.MIN_WIDTH && currentTerrain.equals(EMapTerrain.WATER)) 
 				++leftBorder;
 			if(currentX == this.MAX_WIDTH && currentTerrain.equals(EMapTerrain.WATER)) 
-				++rightBoarder;
+				++rightBorder;
 		}
 		
-		boolean result =  upperBoarder >= Math.ceil(Double.valueOf(MAX_WIDTH) / this.HALF_BORDER_FACTOR) ||
-				lowerBoarder >= Math.ceil(Double.valueOf(MAX_WIDTH) / this.HALF_BORDER_FACTOR) ||
-				leftBorder >= Math.ceil(Double.valueOf(MAX_HEIGHT) / this.HALF_BORDER_FACTOR) ||
-				rightBoarder >= Math.ceil(Double.valueOf(MAX_HEIGHT) / this.HALF_BORDER_FACTOR);
-				
+		boolean result =  upperBorder > Math.ceil(Double.valueOf(MAX_WIDTH) / this.HALF_BORDER_FACTOR) ||
+				lowerBorder > Math.ceil(Double.valueOf(MAX_WIDTH) / this.HALF_BORDER_FACTOR) ||
+				leftBorder > Math.ceil(Double.valueOf(MAX_HEIGHT) / this.HALF_BORDER_FACTOR) ||
+				rightBorder > Math.ceil(Double.valueOf(MAX_HEIGHT) / this.HALF_BORDER_FACTOR);
+								
 		if(result) 
 			throw new WaterOnBoardersException("Borders exception","Too many water fields on map borders were detected!");
 	}

@@ -70,9 +70,7 @@ public class StatusRequestController {
 		this.verifyPlayerId(gameId, this.clientServiceConverter.convertPlayerId(receivedPlayerId));
 		
 		EPlayerState playerState = this.getPlayerState(gameId, playerId);
-		
-		logger.warn("PLAYER STATE: {}", playerState);
-		
+				
 		Collection<PlayerState> responsePlayers = this.serverClientConverter.convertGamePlayers(gamePlayers, playerState, playerId, randomPlayerId);
 		
 		GameMap gameMap = this.getGameMap(gameId);           

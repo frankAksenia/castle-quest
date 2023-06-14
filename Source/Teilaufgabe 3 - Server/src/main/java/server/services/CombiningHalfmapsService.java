@@ -52,7 +52,7 @@ public class CombiningHalfmapsService {
         receivedMap.clear();
         receivedMap.putAll(updatedMap);
         gameData.setGameMap(receivedMap, playerId);
-        logger.info("Full map after the second player: {}", gameData.getGameMap().getGameMap());
+        logger.trace("Full map after the second player: {}", gameData.getGameMap().getGameMap());
     }
 
     private EMapShape chooseRandomMapShape() {

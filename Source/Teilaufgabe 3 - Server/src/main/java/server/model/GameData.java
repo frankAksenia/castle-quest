@@ -49,6 +49,7 @@ public class GameData {
 	}
 	
 	public void addPlayer(GamePlayer newPlayer) throws AmountOfPlayersException {
+		logger.trace("New player with id {} was added. Number of active players: {}", newPlayer.playerId(), this.getGamePlayers().size());
 		if(firstPlayer == null)
 			firstPlayer = newPlayer;
 		else if(secondPlayer == null)

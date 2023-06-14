@@ -37,7 +37,7 @@ public class GameRepository {
 	
 	public void addNewGame(GameId gameId, GameData gameData) {
 		this.runningGames.put(gameId, gameData);
-		logger.info("New game with id {} was added. Number of active games: {}", gameId, runningGames.size());
+		logger.trace("New game with id {} was added. Number of active games: {}", gameId, runningGames.size());
 	}
 	
 	public void removeOldestGames(int amountToRemove) {

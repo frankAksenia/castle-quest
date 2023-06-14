@@ -19,10 +19,12 @@ import messagesbase.ResponseEnvelope;
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
 import messagesbase.messagesfromclient.PlayerHalfMap;
+import messagesbase.messagesfromclient.PlayerMove;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import messagesbase.messagesfromserver.GameState;
 import server.controller.GameCreationController;
 import server.controller.MapReceivingController;
+import server.controller.MoveReceivingController;
 import server.controller.PlayerRegistrationController;
 import server.controller.StatusRequestController;
 import server.exceptions.GenericExampleException;
@@ -32,7 +34,7 @@ import server.exceptions.GenericExampleException;
 @RequestMapping(value = "/games")
 public class ServerEndpoints {
 		
-	private final GameCreationController gameManager;
+	private final GameCreationController gameManagerController;
 	
 	private final PlayerRegistrationController playerRegistrationController;
 	
@@ -40,12 +42,15 @@ public class ServerEndpoints {
 	
 	private final StatusRequestController statusRequestController;
 	
+	private final MoveReceivingController moveReceivingController;
+	
 	@Autowired
-	public ServerEndpoints(GameCreationController gameManager, PlayerRegistrationController playerRegistrationController, MapReceivingController mapReceivingController, StatusRequestController statusRequestController) {
-		this.gameManager = gameManager;
+	public ServerEndpoints(GameCreationController gameManager, PlayerRegistrationController playerRegistrationController, MapReceivingController mapReceivingController, StatusRequestController statusRequestController, MoveReceivingController moveReceivingController) {
+		this.gameManagerController = gameManager;
 		this.playerRegistrationController = playerRegistrationController;
 		this.mapReceivingController = mapReceivingController;
 		this.statusRequestController = statusRequestController;
+		this.moveReceivingController = moveReceivingController;
 	}
 
 	// GET 
@@ -54,7 +59,7 @@ public class ServerEndpoints {
 			@RequestParam(required = false, defaultValue = "false", value = "enableDebugMode") boolean enableDebugMode,
 			@RequestParam(required = false, defaultValue = "false", value = "enableDummyCompetition") boolean enableDummyCompetition) {
 		
-		return this.gameManager.processGameCreation();
+		return this.gameManagerController.processGameCreation();
 	}
 
 	// POST /games/{gameID}/players
@@ -78,6 +83,14 @@ public class ServerEndpoints {
 	public @ResponseBody ResponseEnvelope<GameState> receiveStatusRequest(@Validated @PathVariable UniqueGameIdentifier gameID,
 			@Validated @PathVariable UniquePlayerIdentifier playerID) {
 		return this.statusRequestController.processGameStateRequest(gameID, playerID);
+	}
+	
+	// POST /games/{gameID}/moves
+	@RequestMapping(value = "/{gameID}/moves", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
+	public @ResponseBody ResponseEnvelope<?> receivePlayerMove(
+			@Validated @PathVariable UniqueGameIdentifier gameID,
+			@Validated @RequestBody PlayerMove playerMove) {
+		return this.moveReceivingController.processPlayerMove(gameID, playerMove);
 	}
 	
 	@ExceptionHandler({ GenericExampleException.class })
