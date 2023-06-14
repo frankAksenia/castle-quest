@@ -26,7 +26,7 @@ public class GameIdValidationService {
 		this.gameRepository = gameRepository;
 	}
 	
-	public boolean verifyGameId(GameId gameId) {
+	public boolean validateGameId(GameId gameId) {
 		return !this.gameRepository.getAllRunningGames().containsKey(gameId);		
 	}
 }

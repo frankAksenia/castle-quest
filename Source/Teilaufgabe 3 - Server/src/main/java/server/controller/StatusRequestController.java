@@ -39,16 +39,16 @@ public class StatusRequestController {
 	private static Logger logger = LoggerFactory.getLogger(StatusRequestController.class);
 	
 	private final StatusRequestService statusRequestService;
-	private final GameIdValidationService gameIdVerificationService;
-	private final PlayerIdValidationService playerIdVerificationService;
+	private final GameIdValidationService gameIdValidationService;
+	private final PlayerIdValidationService playerIdValidationService;
 	private final ServerClientConverter serverClientConverter;
 	private final ClientServerConverter clientServiceConverter;
 	
 	@Autowired
-	public StatusRequestController(StatusRequestService statusRequestService, GameIdValidationService gameIdVerificationService, PlayerIdValidationService playerIdVerificationService, ServerClientConverter serverClientConverter, ClientServerConverter clientServerConverter) {
+	public StatusRequestController(StatusRequestService statusRequestService, GameIdValidationService gameIdValidationService, PlayerIdValidationService playerIdValidationService, ServerClientConverter serverClientConverter, ClientServerConverter clientServerConverter) {
 		this.statusRequestService = statusRequestService;
-		this.gameIdVerificationService = gameIdVerificationService;
-		this.playerIdVerificationService = playerIdVerificationService;
+		this.gameIdValidationService = gameIdValidationService;
+		this.playerIdValidationService = playerIdValidationService;
 		this.serverClientConverter = serverClientConverter;
 		this.clientServiceConverter = clientServerConverter;
 	}
@@ -89,12 +89,12 @@ public class StatusRequestController {
 	}
 	
 	private void verifyGameId(GameId gameId) {
-		if(this.gameIdVerificationService.verifyGameId(gameId))
+		if(this.gameIdValidationService.validateGameId(gameId))
 			throw new WrongGameIdException("Wrong game id", "Client provided non-existing game id!");			
 	}
 	
 	private void verifyPlayerId(GameId gameId, PlayerId playerId) {
-		if(this.playerIdVerificationService.verifyPlayerId(gameId, playerId))
+		if(this.playerIdValidationService.validatePlayerId(gameId, playerId))
 			throw new WrongPlayerIdException("Wrong player id", "Client provided player id not existing in the given game!");
 	}
 	

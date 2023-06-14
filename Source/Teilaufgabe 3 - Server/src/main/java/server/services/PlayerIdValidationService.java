@@ -30,7 +30,7 @@ public class PlayerIdValidationService {
 		this.gameRepository = gameRepository;
 	}
 	
-	public boolean verifyPlayerId(GameId gameId, PlayerId playerId) {
+	public boolean validatePlayerId(GameId gameId, PlayerId playerId) {
 		GameData gameData = this.gameRepository.getRunningGameById(gameId);
 				
 		Set<GamePlayer> gamePlayers = gameData.getGamePlayers();

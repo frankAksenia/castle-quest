@@ -36,17 +36,17 @@ public class MapReceivingController {
 	private static Logger logger = LoggerFactory.getLogger(MapReceivingController.class);
 	private final GameManagerService gameManagerService;
 	private final MapValidationService mapValidationService;
-	private final GameIdValidationService gameIdVerificationService;
-	private final PlayerIdValidationService playerIdVerificationService;
+	private final GameIdValidationService gameIdValidationService;
+	private final PlayerIdValidationService playerIdValidationService;
 	private final CombiningHalfmapsService combiningHalfmapsService;
 	private final ClientServerConverter clientServerConverter;
 	
 	@Autowired
-	public MapReceivingController(GameManagerService gameManagerService, MapValidationService mapValidationService, GameIdValidationService gameIdVerificationService, PlayerIdValidationService playerIdVerificationService, CombiningHalfmapsService combiningHalfmapsService, ClientServerConverter clientServerConverter) {
+	public MapReceivingController(GameManagerService gameManagerService, MapValidationService mapValidationService, GameIdValidationService gameIdValidationService, PlayerIdValidationService playerIdValidationService, CombiningHalfmapsService combiningHalfmapsService, ClientServerConverter clientServerConverter) {
 		this.gameManagerService = gameManagerService;
 		this.mapValidationService = mapValidationService;
-		this.gameIdVerificationService = gameIdVerificationService;
-		this.playerIdVerificationService = playerIdVerificationService;
+		this.gameIdValidationService = gameIdValidationService;
+		this.playerIdValidationService = playerIdValidationService;
 		this.combiningHalfmapsService = combiningHalfmapsService;
 		this.clientServerConverter = clientServerConverter;
 	}
@@ -81,12 +81,12 @@ public class MapReceivingController {
 	}
 	
 	private void verifyGameId(GameId gameId) {
-		if(this.gameIdVerificationService.verifyGameId(gameId))
+		if(this.gameIdValidationService.validateGameId(gameId))
 			throw new WrongGameIdException("Wrong game id", "Client provided non-existing game id!");			
 	}
 	
 	private void verifyPlayerId(GameId gameId, PlayerId playerId) {
-		if(this.playerIdVerificationService.verifyPlayerId(gameId, playerId))
+		if(this.playerIdValidationService.validatePlayerId(gameId, playerId))
 			throw new WrongPlayerIdException("Wrong player id", "Client provided player id not existing in the given game!");
 	}
 	

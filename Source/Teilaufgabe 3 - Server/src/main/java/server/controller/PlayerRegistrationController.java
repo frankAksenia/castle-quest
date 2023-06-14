@@ -30,14 +30,14 @@ public class PlayerRegistrationController {
 	@SuppressWarnings("unused")
 	private static Logger logger = LoggerFactory.getLogger(PlayerRegistrationController.class);
 	
-	private final GameIdValidationService gameIdVerificationService;
+	private final GameIdValidationService gameIdValidationService;
 	private final GameManagerService gameManagerService;
 	private final ClientServerConverter clientServerConverter;
 	private final ServerClientConverter serverClientConverter;
 	
 	@Autowired
-	public PlayerRegistrationController(GameIdValidationService gameIdVerificationService, GameManagerService gameManagerService, ClientServerConverter clientServerConverter, ServerClientConverter serverClientConverter) {
-		this.gameIdVerificationService = gameIdVerificationService;
+	public PlayerRegistrationController(GameIdValidationService gameIdValidationService, GameManagerService gameManagerService, ClientServerConverter clientServerConverter, ServerClientConverter serverClientConverter) {
+		this.gameIdValidationService = gameIdValidationService;
 		this.gameManagerService = gameManagerService;
 		this.clientServerConverter = clientServerConverter;
 		this.serverClientConverter = serverClientConverter;
@@ -64,7 +64,7 @@ public class PlayerRegistrationController {
 	
 	private void verifyGameId(GameId receivedId) {
 		
-		if(this.gameIdVerificationService.verifyGameId(receivedId))
+		if(this.gameIdValidationService.validateGameId(receivedId))
 			throw new WrongGameIdException("Wrong game id", "Client provided non-existing game id!");
 	}
 	

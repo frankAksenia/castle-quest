@@ -35,7 +35,7 @@ public class PlayerIdValidationServiceTest {
 	@Test
 	public void receivedRequest_checkingCorrectPlayerId_playerIdIsAccepted() {
 		// Act 
-		boolean result = playerIdVerificationService.verifyPlayerId(gameId, checkPlayer.playerId());
+		boolean result = playerIdVerificationService.validatePlayerId(gameId, checkPlayer.playerId());
 		// Assert
 		Assertions.assertFalse(result);
 	}
@@ -43,7 +43,7 @@ public class PlayerIdValidationServiceTest {
 	@Test
 	public void receivedRequest_checkingWrongPlayerId_throwsException() {
 		// Act 
-		boolean result = playerIdVerificationService.verifyPlayerId(gameId, new PlayerId("xxxxx"));
+		boolean result = playerIdVerificationService.validatePlayerId(gameId, new PlayerId("xxxxx"));
 		// Assert
 		Assertions.assertTrue(result);
 	}

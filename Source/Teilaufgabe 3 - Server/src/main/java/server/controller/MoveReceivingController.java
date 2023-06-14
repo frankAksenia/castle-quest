@@ -7,24 +7,28 @@ import messagesbase.ResponseEnvelope;
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.messagesfromclient.PlayerMove;
 import server.converters.ClientServerConverter;
+import server.exceptions.ActionOutOfOrderException;
 import server.exceptions.WrongGameIdException;
 import server.exceptions.WrongPlayerIdException;
 import server.model.GameId;
 import server.model.PlayerId;
 import server.services.GameIdValidationService;
+import server.services.MoveValidationService;
 import server.services.PlayerIdValidationService;
 
 @RestController
 public class MoveReceivingController {
 	
-	private final GameIdValidationService gameIdVerificationService;
-	private final PlayerIdValidationService playerIdVerificationService;
+	private final GameIdValidationService gameIdValidationService;
+	private final PlayerIdValidationService playerIdValidationService;
+	private final MoveValidationService moveValidationService;
 	private final ClientServerConverter clientServerConverter;
 	
 	@Autowired
-	public MoveReceivingController(GameIdValidationService gameIdVerificationService, PlayerIdValidationService playerIdVerificationService, ClientServerConverter clientServerConverter) {
-		this.gameIdVerificationService = gameIdVerificationService;
-		this.playerIdVerificationService = playerIdVerificationService;
+	public MoveReceivingController(GameIdValidationService gameIdValidationService, PlayerIdValidationService playerIdValidationService, MoveValidationService moveValidationService, ClientServerConverter clientServerConverter) {
+		this.gameIdValidationService = gameIdValidationService;
+		this.playerIdValidationService = playerIdValidationService;
+		this.moveValidationService = moveValidationService;
 		this.clientServerConverter = clientServerConverter;
 	}
 	
@@ -34,21 +38,28 @@ public class MoveReceivingController {
 		
 		PlayerId playerId = new PlayerId(playerMove.getUniquePlayerID());
 
-		this.verifyGameId(gameId);
+		this.validateGameId(gameId);
 				
 		this.verifyPlayerId(gameId, playerId);
+		
+		this.validateBothHalfmapsReceived(gameId);
 		
 		return new ResponseEnvelope<>();
 	}
 	
-	private void verifyGameId(GameId gameId) {
-		if(this.gameIdVerificationService.verifyGameId(gameId))
+	private void validateGameId(GameId gameId) {
+		if(this.gameIdValidationService.validateGameId(gameId))
 			throw new WrongGameIdException("Wrong game id", "Client provided non-existing game id!");			
 	}
 	
 	private void verifyPlayerId(GameId gameId, PlayerId playerId) {
-		if(this.playerIdVerificationService.verifyPlayerId(gameId, playerId))
+		if(this.playerIdValidationService.validatePlayerId(gameId, playerId))
 			throw new WrongPlayerIdException("Wrong player id", "Client provided player id not existing in the given game!");
+	}
+	
+	private void validateBothHalfmapsReceived(GameId gameId) {
+		if(this.moveValidationService.validateBothHalfmapsReceived(gameId))
+			throw new ActionOutOfOrderException("Move sent too early","One one the halfmaps has not been yet received!");
 	}
 
 }

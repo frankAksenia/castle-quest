@@ -28,11 +28,11 @@ public class GameIdValidationServiceTest {
 		gameRepository.addNewGame(existingId, new GameData());
 		
 		// Act
-		gameIdVerificationService.verifyGameId(existingId);
+		gameIdVerificationService.validateGameId(existingId);
 		
 		// Assert 
 		Assertions.assertDoesNotThrow(() -> {
-            gameIdVerificationService.verifyGameId(existingId);
+            gameIdVerificationService.validateGameId(existingId);
         });
 	}
 	
@@ -44,7 +44,7 @@ public class GameIdValidationServiceTest {
 				
 		// Act and Assert
 		Assertions.assertThrows(WrongGameIdException.class, () -> {
-            gameIdVerificationService.verifyGameId(notExistingId);
+            gameIdVerificationService.validateGameId(notExistingId);
         });
 	}
 }
