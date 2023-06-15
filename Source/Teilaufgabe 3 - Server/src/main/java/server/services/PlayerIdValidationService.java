@@ -38,7 +38,7 @@ public class PlayerIdValidationService {
 		boolean playerExists = false;
 		
 		for(GamePlayer gamePlayer : gamePlayers) 
-			if(gamePlayer.playerId().equals(playerId))
+			if((gamePlayer != null) && gamePlayer.playerId().equals(playerId))
 				playerExists = true;
 		
 		return !playerExists;
