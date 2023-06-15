@@ -69,7 +69,7 @@ public class MapReceivingController {
 			this.verifyGameMap(playerHalfMap);
 		} catch(MapValidationException exception) {
 			this.setLooser(gameId, playerId);
-			logger.error(exception.getErrorName(), exception.getMessage());
+			logger.trace(exception.getErrorName(), exception.getMessage());
 			throw exception;
 		}
 		
