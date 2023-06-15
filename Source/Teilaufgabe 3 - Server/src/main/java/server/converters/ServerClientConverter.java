@@ -46,12 +46,14 @@ public class ServerClientConverter {
 	public Set<PlayerState> convertGamePlayers(Set<GamePlayer> gamePlayers, EPlayerState playerState, PlayerId requestPlayer, PlayerId randomPlayer) {
 		Set<PlayerState> result = new HashSet<PlayerState>();
 		for(GamePlayer eachPlayer: gamePlayers) {
-			UniquePlayerIdentifier uniquePlayerId = this.convertPlayerId(eachPlayer.playerId());
-			if(!eachPlayer.playerId().equals(requestPlayer))
-				uniquePlayerId = this.convertPlayerId(randomPlayer);
-			EPlayerGameState convertedSate = this.convertEPlayerGameState(playerState);
-			PlayerState player = new PlayerState(eachPlayer.firstName(), eachPlayer.lastName(), eachPlayer.uaccount(), convertedSate, uniquePlayerId, false);
-			result.add(player);
+			if(eachPlayer != null) {
+				UniquePlayerIdentifier uniquePlayerId = this.convertPlayerId(eachPlayer.playerId());
+				if(!eachPlayer.playerId().equals(requestPlayer))
+					uniquePlayerId = this.convertPlayerId(randomPlayer);
+				EPlayerGameState convertedSate = this.convertEPlayerGameState(playerState);
+				PlayerState player = new PlayerState(eachPlayer.firstName(), eachPlayer.lastName(), eachPlayer.uaccount(), convertedSate, uniquePlayerId, false);
+				result.add(player);
+			}
 		}
 		return result;
 	}
