@@ -1,0 +1,75 @@
+# Gradle
+.gradle/
+build/
+out/
+
+# Java build artifacts
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Keep Gradle wrapper files
+!gradle/wrapper/gradle-wrapper.jar
+!gradlew
+!gradlew.bat
+
+# Downloaded/generated libraries
+build/download/
+
+# Logs
+*.log
+logs/
+
+# Executables
+Executables/
+
+# Spring Boot / local config
+application-local.properties
+application-local.yml
+application-*.local.properties
+application-*.local.yml
+
+# Environment variables / secrets
+.env
+.env.*
+*.env
+
+# Database files - local SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Eclipse
+.project
+.classpath
+.settings/
+.metadata/
+bin/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+
+# OS / misc
+Thumbs.db

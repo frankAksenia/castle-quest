@@ -28,6 +28,8 @@ public class GameMap {
 	
 	private Map<PlayerId, Coordinate> fortsPositions;
 	
+	private Map<PlayerId, Integer> remainingMoves;
+	
 	private Map<PlayerId, Coordinate> treasurePositions;
 	
 	public GameMap(Map<Coordinate, MapField> gameMap) {
@@ -39,6 +41,7 @@ public class GameMap {
 		this.playersPositions = new HashMap<>();
 		this.fortsPositions = new HashMap<>();
 		this.treasurePositions = new HashMap<>();
+		this.remainingMoves = new HashMap<>();
 	}
 
 	public Map<Coordinate, MapField> getGameMap() {
@@ -130,5 +133,17 @@ public class GameMap {
 
 	public void setShapeOfTheFirstMap(EMapShape shapeOfTheFirstMap) {
 		this.shapeOfTheFirstMap = shapeOfTheFirstMap;
+	}
+
+	public Integer getRemainingMoves(PlayerId playerId) {
+		for(Map.Entry<PlayerId, Integer> eachPlayer: this.remainingMoves.entrySet()) 
+			if(eachPlayer.getKey().equals(playerId))
+				return eachPlayer.getValue();
+		assert(true);
+		return 0;
+	}
+
+	public void setRemainingMoves(PlayerId playerId, Integer remainingSteps) {
+		this.remainingMoves.replace(playerId, remainingSteps);
 	}
 }

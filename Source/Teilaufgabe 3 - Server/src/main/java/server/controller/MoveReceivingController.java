@@ -10,6 +10,7 @@ import server.converters.ClientServerConverter;
 import server.exceptions.ActionOutOfOrderException;
 import server.exceptions.WrongGameIdException;
 import server.exceptions.WrongPlayerIdException;
+import server.model.EPlayerMove;
 import server.model.GameId;
 import server.model.PlayerId;
 import server.services.GameIdValidationService;
@@ -32,11 +33,11 @@ public class MoveReceivingController {
 		this.clientServerConverter = clientServerConverter;
 	}
 	
-	public ResponseEnvelope<?> processPlayerMove(UniqueGameIdentifier receivedGameID, PlayerMove playerMove) {
+	public ResponseEnvelope<?> processPlayerMove(UniqueGameIdentifier receivedGameID, PlayerMove receivedMove) {
 		
 		GameId gameId = this.clientServerConverter.convertGameId(receivedGameID);
 		
-		PlayerId playerId = new PlayerId(playerMove.getUniquePlayerID());
+		PlayerId playerId = new PlayerId(receivedMove.getUniquePlayerID());
 
 		this.validateGameId(gameId);
 				
@@ -44,9 +45,17 @@ public class MoveReceivingController {
 		
 		this.validateBothHalfmapsReceived(gameId);
 		
+		EPlayerMove playerMove = this.clientServerConverter.convertPlayerMove(receivedMove.getMove());
+		
+		this.evaluatePlayerMove(gameId, playerId, playerMove);
+		
 		return new ResponseEnvelope<>();
 	}
 	
+	private void evaluatePlayerMove(GameId gameId, PlayerId playerId, EPlayerMove playerMove) {
+		this.moveValidationService.evaluatePlayerMove(gameId, playerId, playerMove);
+	}
+
 	private void validateGameId(GameId gameId) {
 		if(this.gameIdValidationService.validateGameId(gameId))
 			throw new WrongGameIdException("Wrong game id", "Client provided non-existing game id!");			

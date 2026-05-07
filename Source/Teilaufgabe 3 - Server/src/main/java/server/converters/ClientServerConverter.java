@@ -11,12 +11,14 @@ import org.springframework.stereotype.Component;
 
 import messagesbase.UniqueGameIdentifier;
 import messagesbase.UniquePlayerIdentifier;
+import messagesbase.messagesfromclient.EMove;
 import messagesbase.messagesfromclient.ETerrain;
 import messagesbase.messagesfromclient.PlayerHalfMap;
 import messagesbase.messagesfromclient.PlayerHalfMapNode;
 import messagesbase.messagesfromclient.PlayerRegistration;
 import server.model.Coordinate;
 import server.model.EMapTerrain;
+import server.model.EPlayerMove;
 import server.model.GameId;
 import server.model.GamePlayer;
 import server.model.MapField;
@@ -64,11 +66,22 @@ public class ClientServerConverter {
 	private EMapTerrain convertTerrain(ETerrain terrain) {
 		EMapTerrain serverTerrain = EMapTerrain.GRASS;
 		switch(terrain) {
-		case Water : serverTerrain = EMapTerrain.WATER; break;
-		case Grass : serverTerrain = EMapTerrain.GRASS; break;
-		case Mountain : serverTerrain = EMapTerrain.MOUNTAIN; break;
+			case Water: serverTerrain = EMapTerrain.WATER; break;
+			case Grass: serverTerrain = EMapTerrain.GRASS; break;
+			case Mountain: serverTerrain = EMapTerrain.MOUNTAIN; break;
 		}
 		return serverTerrain; 
+	}
+	
+	public EPlayerMove convertPlayerMove(EMove move) {
+		EPlayerMove serverMove = EPlayerMove.UP;
+		switch(move) {
+			case Down: serverMove = EPlayerMove.DOWN; break;
+			case Left: serverMove = EPlayerMove.LEFT; break;
+			case Right: serverMove = EPlayerMove.RIGHT; break;
+			case Up: serverMove = EPlayerMove.UP; break;
+		}
+		return serverMove;
 	}
 	
 }
